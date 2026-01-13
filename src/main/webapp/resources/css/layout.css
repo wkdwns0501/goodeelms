@@ -1,0 +1,162 @@
+@charset "UTF-8";
+
+:root{
+  --header-h: 56px;
+  --footer-h: 44px;
+
+  --sidebar-w: 240px;
+  --sidebar-w-collapsed: 72px;
+
+  --green-700: #2f6f4e;
+  --green-50:  #f3faf6;
+  --border:    #e6eee9;
+  
+  --handle-w: 16px;
+}
+
+body{
+  background: var(--green-50);
+}
+
+/* ===== Header / Footer fixed ===== */
+.app-header{
+  height: var(--header-h);
+  background: var(--green-700);
+  color: #fff;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1030;
+  border-bottom: 1px solid rgba(255,255,255,.15);
+}
+
+.app-footer{
+  height: var(--footer-h);
+  background: #ffffff;
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 1020;
+  border-top: 1px solid var(--border);
+  color: #5b6b62;
+  font-size: 0.875rem;
+}
+
+/* ===== Sidebar ===== */
+.sidebar{
+  width: var(--sidebar-w);
+  position: fixed;
+  top: var(--header-h);
+  bottom: var(--footer-h);
+  left: 0;
+  background: #ffffff;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  transition: transform .2s ease;
+  transform: translateX(0);
+}
+
+/* 핸들: 사이드바 오른쪽 끝에 붙어있음 */
+.sidebar-handle{
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--handle-w);
+  height: 100%;
+  cursor: pointer;
+  background: rgba(47, 111, 78, 0.06); /* 은은한 그린 */
+  border-left: 1px solid var(--border);
+}
+
+/* 핸들 안에 3줄 */
+.sidebar-handle::before{
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 2px;
+  background: rgba(47, 111, 78, 0.55);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 -6px 0 rgba(47, 111, 78, 0.55),
+              0  6px 0 rgba(47, 111, 78, 0.55);
+}
+
+.sidebar-handle:hover{
+  background: rgba(47, 111, 78, 0.12);
+}
+
+
+/* ===== Main content ===== */
+.content{
+  padding-top: calc(var(--header-h) + 16px);
+  padding-bottom: calc(var(--footer-h) + 16px);
+
+  margin-left: var(--sidebar-w);
+  width: calc(100% - var(--sidebar-w));
+
+  transition: margin-left .2s ease, width .2s ease; 
+  overflow-x: auto;
+}
+
+/* ===== Collapsed state ===== */
+body.sidebar-collapsed .sidebar{
+  transform: translateX(calc(-1 * (var(--sidebar-w) - var(--handle-w))));
+}
+body.sidebar-collapsed .content{
+  margin-left: var(--handle-w);
+  width: calc(100% - var(--handle-w));
+}
+
+/* 메뉴 텍스트 숨김(접힘 상태) */
+body.sidebar-collapsed .nav-label{
+  display: none;
+}
+
+/* 메뉴 스타일 */
+.sidebar .nav-link{
+  color: #2d3a33;
+  border-radius: .5rem;
+  margin: 2px 8px;
+  padding: .6rem .75rem;
+  white-space: nowrap;
+}
+.sidebar .nav-link:hover{
+  background: #eef6f1;
+}
+.sidebar .nav-link.active{
+  background: #e3f2ea;
+  color: var(--green-700);
+  font-weight: 600;
+}
+
+/* 작은 화면에서는 오버레이 */
+@media (max-width: 991.98px){
+  .sidebar{
+    transform: translateX(-100%);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.12);
+    z-index: 1040;
+  }
+  .sidebar-handle{
+    display: none;
+  }
+  body.sidebar-open .sidebar{
+    transform: translateX(0);
+  }
+  .content{
+    margin-left: 0;
+  }
+  body.sidebar-collapsed .content{
+    margin-left: 0;
+  }
+  body.sidebar-collapsed .nav-label{
+    display: inline;
+  }
+}
+
+/* 본문 shell */
+.page-shell{
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  min-height: 60vh;
+}
