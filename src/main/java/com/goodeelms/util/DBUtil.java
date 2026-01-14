@@ -11,6 +11,7 @@ public class DBUtil {
 
 	// 커넥션 생성 메소드
 
+	
 	public static Connection getConnection() {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
@@ -21,16 +22,6 @@ public class DBUtil {
 		}
 	}
 
-	// 리소스 해제 메소드
-	public static void close(AutoCloseable...resources) {
-		for (AutoCloseable r : resources) {
-			if (r != null) {
-				try {
-					r.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
+	
+	
 }
