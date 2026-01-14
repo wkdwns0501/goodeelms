@@ -10,4 +10,13 @@ public class StudentStatusService {
 		StudentStatusUpdateDAO dao = StudentStatusUpdateDAO.getInstance();
 		return dao.getStudentList(studentName, majorName, studentNo);
 	}
+	
+	public int processStatusUpdate (String studentId, String studentNo, String newStudentStatus, String statusReason, String adminId) {
+		StudentStatusUpdateDAO dao = StudentStatusUpdateDAO.getInstance();
+		int updateResult = dao.updateStudentStatus(studentId, newStudentStatus);
+		if (updateResult > 0) {
+		return dao.writeStatusHistory(studentId, studentNo, newStudentStatus, statusReason, adminId);
+		}
+		return 0;
+	}
 }
