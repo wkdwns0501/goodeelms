@@ -17,6 +17,14 @@
 
     <a class="nav-link" href="<c:url value='/admin'/>"><span class="nav-label">관리자</span></a>
     <a class="nav-link" href="<c:url value='/settings'/>"><span class="nav-label">설정</span></a>
+  	<%-- <c:if test="${not empty sessionScope.professor_id}"> --%>
+		  <a class="nav-link" href="<c:url value='/lecture/add'/>">
+		    <span class="nav-label">강의 등록</span>
+		  </a>
+		  <a class="nav-link" href="<c:url value='/lecture/list'/>">
+		    <span class="nav-label">강의 목록</span>
+		  </a>
+		<%-- </c:if> --%>
   </nav>
   <div class="sidebar-handle" id="sidebarHandle" title="메뉴 열기/닫기"></div>
 </aside>
