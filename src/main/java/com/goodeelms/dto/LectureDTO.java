@@ -21,9 +21,8 @@ public class LectureDTO {
 	private int lectureCurrentPeople;
 	private int lectureCapacity;
 	private int professorId;
+	private String majorName;
 	private int majorId;
-	
-	// 교수 이름 출력용
 	private String professorName;
 	
 	// 강의 코드 출력용
