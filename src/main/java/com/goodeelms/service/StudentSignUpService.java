@@ -5,12 +5,14 @@ import com.goodeelms.dto.StudentDTO;
 
 public class StudentSignUpService {
 
-	public void signUpStudent(String login_student_no, String student_no, String student_password, String student_name, String student_phone, 
-			String student_identity_number, String student_gender, String student_address, String student_email, String student_bank) {
-
-		StudentDAO dao = new StudentDAO();
-		dao.addStudent(login_student_no, student_no, student_password, student_name, student_phone, 
-				student_identity_number, student_gender, student_address, student_email, student_bank);
+	public int signUpStudent(StudentDTO dto, String orgin_student_password) {
+		StudentDAO dao = StudentDAO.getInstance();
 		
+		if(dto.getStudentPassword().equals(orgin_student_password)) {
+			System.out.println("서로 다른 비밀번호를 입력하세요.");
+			return -1;
+		}
+		
+		return dao.updateStudent(dto, orgin_student_password);
 	}
 }
