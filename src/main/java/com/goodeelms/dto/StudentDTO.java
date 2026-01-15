@@ -19,4 +19,5 @@ public class StudentDTO {
 	private String studentStatus;
 	private String studentEmail;
 	private String studentBank;
+	private String majorName;
 }

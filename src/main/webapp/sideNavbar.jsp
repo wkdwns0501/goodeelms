@@ -6,16 +6,11 @@
 
   <nav class="nav flex-column">
     <a class="nav-link" href="<c:url value='/dashboard'/>"><span class="nav-label">대시보드</span></a>
-    <a class="nav-link" href="<c:url value='/enroll'/>"><span class="nav-label">수강신청</span></a>
-    <a class="nav-link" href="<c:url value='/my-lectures'/>"><span class="nav-label">내 강의</span></a>
-    <a class="nav-link" href="<c:url value='/assignments'/>"><span class="nav-label">과제</span></a>
-    <a class="nav-link" href="<c:url value='/exams'/>"><span class="nav-label">시험</span></a>
-    <a class="nav-link" href="<c:url value='/grades'/>"><span class="nav-label">성적조회</span></a>
-    <a class="nav-link" href="<c:url value='/notice'/>"><span class="nav-label">공지사항</span></a>
+    <a class="nav-link" href="<c:url value='/student/status'/>"><span class="nav-label">학사관리</span></a>
+    <a class="nav-link" href="<c:url value='/my-lectures'/>"><span class="nav-label">계정관리</span></a>
+    <a class="nav-link" href="<c:url value='/assignments'/>"><span class="nav-label">장학관리</span></a>
 
     <hr class="my-2 mx-3" />
-
-    <a class="nav-link" href="<c:url value='/admin'/>"><span class="nav-label">관리자</span></a>
     <a class="nav-link" href="<c:url value='/settings'/>"><span class="nav-label">설정</span></a>
   	<%-- <c:if test="${not empty sessionScope.professor_id}"> --%>
 		  <a class="nav-link" href="<c:url value='/lecture/add'/>">
