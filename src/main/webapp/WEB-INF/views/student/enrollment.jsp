@@ -26,30 +26,35 @@
 			      <h5 class="mb-1">수강신청</h5>
 			      <p class="text-muted mb-0">강의 목록에서 장바구니에 담고, 최종 신청을 진행하세요.</p>
 			    </div>
-			
-			    <!-- 검색/필터 -->
-			    <form class="d-flex gap-2" method="get" action="">
-			      <input type="text" name="q" class="form-control form-control-sm" style="width:260px"
-			             placeholder="과목명/교수명 검색" value="${param.q}">
-			      <button class="btn btn-sm btn-primary" type="submit">검색</button>
-			    </form>
 			  </div>
 			
-			  <!-- 카테고리 버튼 -->
-			  <div class="btn-group btn-group-sm mb-3" role="group" aria-label="category">
-			    <!-- active 처리: param.cat 값으로 분기 -->
-			    <%-- <input type="hidden" id="sessionUserId" value="${sessionScope.login_student_id}"> --%>
-			    <input type="hidden" id="sessionUserId" value="20230051">
-			    <button class="btn btn-outline-dark is-cat active" data-cat="all">전체 강의</button>
-			    <button class="btn btn-outline-dark is-cat" data-cat="major">전공</button>
-			    <button class="btn btn-outline-dark is-cat" data-cat="minor">부전공</button>
-			    <button class="btn btn-outline-dark is-cat" data-cat="liberal">교양</button>
-			  </div>
+			  <!-- 카테고리 + 검색 (같은 줄) -->
+				<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3 col-12 col-lg-8 px-2">
+				
+				  <!-- 좌측: 카테고리 버튼 -->
+				  <div class="btn-group btn-group-sm" role="group" aria-label="category">
+				    <input type="hidden" id="sessionUserId" value="20230050">
+				    <button class="btn btn-outline-dark is-cat active" data-cat="all">전체 강의</button>
+				    <button class="btn btn-outline-dark is-cat" data-cat="major">전공</button>
+				    <button class="btn btn-outline-dark is-cat" data-cat="minor">부전공</button>
+				    <button class="btn btn-outline-dark is-cat" data-cat="liberal">교양</button>
+				  </div>
+				
+				  <!-- 우측: 검색 바 -->
+				  <!-- 이거 js에서 이벤트 감지 -->
+				  <form class="ms-auto" id="lectureSearchForm">
+				    <div class="input-group input-group-sm" style="width: 320px;">
+				      <input type="search" class="form-control" id="lectureKeyword" placeholder="과목명/교수명 검색"
+				             aria-label="lecture search" name="search_word">
+				      <button class="btn btn-primary" type="submit" id="btnLectureSearch">검색</button>
+				    </div>
+				  </form>
+				
+				</div>
 			
 			  <div class="row g-3">
 			    <!-- 좌측: 강의 리스트 -->
 			    <div class="col-12 col-lg-8" id="lectureListArea">
-			      <jsp:include page="/WEB-INF/views/student/loadLectureList.jsp"/>
 			    </div>
 			
 			    <!-- 우측: 장바구니 -->
@@ -116,6 +121,6 @@
 	<%@ include file="/footer.jsp" %>
 	
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-	<script type="text/javascript" src="/resources/js/loadLectures.js"></script>
+	<script type="text/javascript" src="/resources/js/loadLectures.js" defer="defer"></script>
 </body>
 </html>

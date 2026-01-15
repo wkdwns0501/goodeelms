@@ -12,10 +12,10 @@ import java.io.IOException;
  * Servlet implementation class StudentURLForwardServlet
  */
 @WebServlet("/student")
-public class StudentURLForwardServlet extends HttpServlet {
+public class StudentURLForwardController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    public StudentURLForwardServlet() {
+    public StudentURLForwardController() {
         super();
     }
 
