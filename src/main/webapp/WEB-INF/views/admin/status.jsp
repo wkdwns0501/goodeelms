@@ -15,17 +15,19 @@
 
 <script type="text/javascript">
 function checkForm(form) {
-    // form.elements['name'] 방식을 사용하면 해당 폼 객체 내부의 요소만 정확히 집어냅니다.
+	<%-- 폼 내부 value 값 저장 --%>
     const currentStatus = form.elements['currentStatus'].value;
     const newStudentStatus = form.elements['newStudentStatus'].value;
     const studentName = form.elements['studentName'].value;
     const studentNo = form.elements['studentNo'].value;
     
+    <%-- 기존 상태에 두고 저장 누를 시 return --%>
     if(currentStatus === newStudentStatus) {
         alert('기존 상태로는 변경할 수 없습니다.');
         return false;
     }
     
+    <%-- 다를 시 confirm 창 진행 --%>
     return confirm(
     	    studentName + " (" + studentNo + ") : " +
     	    currentStatus + " -> " +
@@ -66,7 +68,7 @@ function checkForm(form) {
           </div>
         </form>
 
-        <!-- 학생 테이블 -->
+        <!-- 학생 테이블 출력 영역 -->
         <div class="card">
           <div class="card-body p-0">
             <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
@@ -77,6 +79,7 @@ function checkForm(form) {
                     <th style="width:20%;">이름</th>
                     <th style="width:30%;">학과</th>
                     <th style="width:20%;">학적 상태</th>
+                    <!-- 사유 : input or select ? -->
                     <th style="width:20%;">관리(사유)</th>
                   </tr>
                 </thead>
@@ -100,10 +103,11 @@ function checkForm(form) {
                           <button type="submit" class="btn btn-sm btn-outline-primary flex-shrink-0" style="width: 100px"
                            onclick="return checkForm(this.form)">저장</button>
                            
+                          <!-- 현재 검색 정보 hidden으로 같이 넘기기 -->
                           <input type="hidden" name="searchName" value="${param.studentName}">
       					  <input type="hidden" name="searchMajor" value="${param.majorName}">
-        				  <input type="hidden" name="searchNo" value="${param.studentNo}">
-        				  
+        				  <input type="hidden" name="searchNo" value="${param.studentNo}">     				  
+        				
                           <input type="hidden" name="studentId" value="${s.studentId}">
                           <input type="hidden" name="studentName" value="${s.studentName}">
                           <input type="hidden" name="studentNo" value="${s.studentNo}">

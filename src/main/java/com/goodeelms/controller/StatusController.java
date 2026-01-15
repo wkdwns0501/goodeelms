@@ -1,6 +1,5 @@
 package com.goodeelms.controller;
 
-import jakarta.security.auth.message.callback.PrivateKeyCallback.Request;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -33,6 +32,7 @@ public class StatusController extends HttpServlet {
 			String majorName = request.getParameter("majorName");
 			String studentNo = request.getParameter("studentNo");
 			
+			// 서비스 호출
 			StudentStatusService ss = new StudentStatusService();
 			ArrayList<StudentDTO> list = ss.getStudentList(studentName,majorName,studentNo);
 			
@@ -82,8 +82,8 @@ public class StatusController extends HttpServlet {
 		    String encMajor = (searchMajor != null) ? java.net.URLEncoder.encode(searchMajor, "UTF-8") : "";
 		    String sNo = (searchNo != null) ? searchNo : "";
 
-		        // 6. 리다이렉트 실행
-		        // 결과(res)와 검색 조건들을 다시 붙여서 /student/search로 보냅니다.
+		    // 6. 리다이렉트 실행
+		    // 결과(res)와 검색 조건들을 다시 붙여서 /student/search로 보냅니다.
 		    String redirectUrl = contextPath + "/student/search?res=" + result 
 		                          + "&studentName=" + encName 
 		                          + "&majorName=" + encMajor 
