@@ -6,7 +6,7 @@
     ☰
   </button>
 
-  <div class="fw-semibold"> LMS</div>
+  <div class="fw-semibold">LMS</div>
 
   <div class="ms-auto d-flex align-items-center gap-2">
     <a class="btn btn-sm btn-outline-light" href="<c:url value='/mypage'/>">마이페이지</a>

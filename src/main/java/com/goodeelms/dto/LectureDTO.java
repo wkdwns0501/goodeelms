@@ -14,12 +14,19 @@ public class LectureDTO {
 	private String lectureDescription;
 	private String lectureRoom;
 	private int lectureCredit;
+	private String lectureYear;
 	private int lectureSemester;
+	private String lectureSection;
 	private String lectureType;
 	private int lectureCurrentPeople;
 	private int lectureCapacity;
-	private int majorId;
 	private int professorId;
 	private String majorName;
+	private int majorId;
 	private String professorName;
+	
+	// 강의 코드 출력용
+	public String getLectureCodeDisplay() {
+	    return String.format("%07d", lectureCode);
+	}
 }
