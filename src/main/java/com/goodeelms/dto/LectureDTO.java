@@ -20,4 +20,6 @@ public class LectureDTO {
 	private int lectureCapacity;
 	private int majorId;
 	private int professorId;
+	private String majorName;
+	private String professorName;
 }
