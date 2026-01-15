@@ -23,9 +23,4 @@ Servers/
 # ==========================
 /build/ 
 /bin/    
-/target/  
-<<<<<<< HEAD
-/build/
-=======
-/build/
->>>>>>> origin/develop
+/target/
