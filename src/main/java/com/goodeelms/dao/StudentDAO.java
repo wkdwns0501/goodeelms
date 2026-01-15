@@ -11,7 +11,7 @@ import com.goodeelms.util.DBUtil;
 import com.goodeelms.dto.StudentDTO;
 
 public class StudentDAO {
-private static final StudentDAO instance = new StudentDAO();
+	private static final StudentDAO instance = new StudentDAO();
 	
 	private StudentDAO() {
 	}
@@ -21,9 +21,9 @@ private static final StudentDAO instance = new StudentDAO();
 	}
 	
 	public StudentDTO checkStudent(String student_no, String student_password) {
-		String sql = "SELECT * FROM student WHERE " + " student_no = ? AND student_password = ? ";
+		String sql = "SELECT * FROM student WHERE student_no = ? AND student_password = ? ";
 
-		StudentDTO dto = new StudentDTO();
+		StudentDTO dto = null;
 
 		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -32,49 +32,48 @@ private static final StudentDAO instance = new StudentDAO();
 			
 			try (ResultSet rs = pstmt.executeQuery()) {
 				if (rs == null) {
-					System.out.println("student 테이블에 일치하는 데이터가 없습니다.");
 					return null;
 				}
 
 				if (rs.next()) {
+					dto = new StudentDTO();	// 세션에 추가할 속성이 있다면, dto를 이용
+					
 					dto.setStudentId(rs.getInt("student_id"));
 					dto.setStudentNo(rs.getString("student_no"));
 					dto.setStudentName(rs.getString("student_name"));
+					dto.setStudentPassword(rs.getString("student_password"));  
 				}
 			}
 		} catch (Exception e) {
-			System.out.println("searchStudent() 메서드 예외 발생: " + e.getMessage());
+			e.printStackTrace();
 		}
 		return dto;
 	}
 
-	public int updateStudent(StudentDTO dto , String orgin_student_password) {
-		
-		String sql = "UPDATE student SET student_password = ? , student_name = ? , "
-				+ " student_phone = ? , student_identity_number = ? , student_gender = ? , "
-				+ " student_address = ?, student_email = ? , student_bank = ? "
-				+ "	WHERE student_no = ?";
-		
-		int result = 0;
-		try (Connection conn = DBUtil.getConnection(); 
-				PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-			pstmt.setString(1, dto.getStudentPassword());
-			pstmt.setString(2, dto.getStudentName());
-			pstmt.setString(3, dto.getStudentPhone());
-			pstmt.setString(4, dto.getStudentIdentityNumber());
-			pstmt.setString(5, dto.getStudentGender());
-			pstmt.setString(6, dto.getStudentAddress());
-			pstmt.setString(7, dto.getStudentEmail());
-			pstmt.setString(8, dto.getStudentBank());
-			pstmt.setString(9, orgin_student_password);
-			
-			result = pstmt.executeUpdate();
-			
-		} catch (Exception e) {
-			System.out.println("addStudent() 메서드 예외 발생: " + e.getMessage());
-		}
-		return result;
+	public int updateStudent(StudentDTO dto, int student_id) throws SQLException {
+	    String sql = "UPDATE student SET student_password = ?, student_phone = ?, "
+	               + "student_address = ?, "
+	               + "student_email = ?, student_bank = ? "
+	               + "WHERE student_id = ?";
+	        
+	    int result = 0;
+	    
+	    try (Connection conn = DBUtil.getConnection(); 
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        
+	        pstmt.setString(1, dto.getStudentPassword());
+	        pstmt.setString(2, dto.getStudentPhone());
+	        pstmt.setString(3, dto.getStudentAddress());
+	        pstmt.setString(4, dto.getStudentEmail());
+	        pstmt.setString(5, dto.getStudentBank());
+	        pstmt.setInt(6, student_id);
+	        
+	        result = pstmt.executeUpdate();
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return result;
 	}
 
 	public List<StudentMajorDTO> getMajors(String studentId) {
