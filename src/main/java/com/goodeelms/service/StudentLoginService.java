@@ -7,7 +7,6 @@ public class StudentLoginService {
     private StudentDAO dao = StudentDAO.getInstance();
 
     public StudentDTO checkIdAndPass(String student_no, String student_password) {
-        StudentDTO loginStudent = dao.checkStudent(student_no, student_password);
-        return loginStudent; 
+        return dao.checkStudent(student_no, student_password); 
     }
 }

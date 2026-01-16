@@ -7,17 +7,15 @@
 document.querySelectorAll(".add-cart").forEach(btn => {
 	btn.addEventListener('click', async ()=> {
 		const lecId = btn.dataset.lec;
-		const proName = btn.dataset.pro;
-		const lecType = btn.dataset.major;
+		const stuId = btn.dataset.stu;
 		await addCart(lecId, proName, lecType);
 	});
 });
 
-async function addCart(lecId, professorName, lecType){
+async function addCart(lecId, stuId){
 	const url = new URL(window.location.origin + "/addLectureCart");
 	url.searchParams.set('lectureId', lecId);
-	url.searchParams.set('lectureType', lecType);
-	url.searchParams.set('professorName', professorName);
+	url.searchParams.set('studentId', stuId);
 	
 	const res = await fetch(url.toString(), {
 		method: 'POST',
