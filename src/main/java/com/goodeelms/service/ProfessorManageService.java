@@ -14,4 +14,8 @@ public class ProfessorManageService {
 		ProfessorManageDAO dao = ProfessorManageDAO.getInstance();
 		return dao.updateProfessorStatus(professorId, newProfessorStatus);
 	}
+	public ArrayList<ProfessorDTO> getAllProfessorList() {
+		ProfessorManageDAO dao = ProfessorManageDAO.getInstance();
+		return dao.getAllProfessorList();
+	}
 }

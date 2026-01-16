@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Map;
 
+import com.goodeelms.dto.LectureDTO;
+import com.goodeelms.dto.MajorDTO;
 import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.util.DBUtil;
 
@@ -38,7 +40,29 @@ public class StudentRegisterDAO {
 	public static StudentRegisterDAO getInstance() {
 		return instance;
 	}
-
+	
+	public ArrayList<MajorDTO> getMajorList() {
+		String sql = "SELECT major_id, major_name FROM major ";
+		
+		ArrayList<MajorDTO> majorList = new ArrayList<MajorDTO>();
+		
+		try(Connection conn = DBUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			
+			try(ResultSet rs = pstmt.executeQuery()) {
+				while(rs.next()) {
+					MajorDTO majorDTO = new MajorDTO();
+					majorDTO.setMajorId(rs.getInt("major_id"));
+					majorDTO.setMajorName(rs.getString("major_name"));
+					majorList.add(majorDTO);
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("getMajorList() 예외 발생: " + e);
+		} return majorList;
+	}
+	
+	
 	public int studentExistCheck(String studentNo) {
 		String sql = "SELECT COUNT(*) FROM student WHERE student_no = ? ";
 		
@@ -140,9 +164,13 @@ public class StudentRegisterDAO {
 	}
 
 	public ArrayList<StudentDTO> getAllStudentList() {
-		String sql = "SELECT *, GROUP_CONCAT(DISTINCT m.major_name ORDER BY m.major_name SEPARATOR ', ') as major_name, "
-				   + " FROM student s JOIN"
-				   + "ORDER BY student_id DESC " +
+		String sql = "SELECT s.student_id, student_no, student_name, student_identity_number, " +
+				     "GROUP_CONCAT(DISTINCT m.major_name ORDER BY m.major_name SEPARATOR ', ') as major_name, " +
+				     "student_phone, student_gender, student_address, student_status, student_bank " +
+					 "FROM student s JOIN student_major sm ON s.student_id = sm.student_id " +
+				     "JOIN major m ON sm.major_id = m.major_id " +
+				     "GROUP BY s.student_id " +
+					 "ORDER BY s.student_id DESC ";
 	
 		
 		ArrayList<StudentDTO> list = new ArrayList<StudentDTO>();
@@ -164,10 +192,42 @@ public class StudentRegisterDAO {
 					list.add(studentDTO);
 				}
 			}
-			
-			
 		} catch (SQLException e) {
 			System.out.println("getAllStudentList() 예외 발생: " + e);
 		}	return list;
 	}
+
+	public int getNewStudentId() {
+		String sql = "SELECT MAX(student_id) as new_id FROM student";
+		
+		int newStudentId = 0;
+		try(Connection conn = DBUtil.getConnection();
+		    PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			
+			try(ResultSet rs = pstmt.executeQuery()) {
+				if(rs.next()) {
+					newStudentId = rs.getInt("new_id");
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("getNewStudentId() 예외 발생: " + e);
+		} return newStudentId;
+	}
+
+	public int writeStudentMajor(int newStudentId, int majorId) {
+		String sql = "INSERT INTO student_major (student_id, major_id) VALUES (?, ?) ";
+		
+		try(Connection conn = DBUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setInt(1, newStudentId);
+			pstmt.setInt(2, majorId);
+			return pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			System.out.println("writeStudentMajor() 예외 발생: " + e);
+			return 0;
+		}
+	}
+	
 }
+

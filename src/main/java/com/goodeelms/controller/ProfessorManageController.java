@@ -24,6 +24,11 @@ public class ProfessorManageController extends HttpServlet {
 		String command = requestURI.substring(contextPath.length());
 		
 		if(command.equals("/professorManage/page")) {
+			ProfessorManageService pms = new ProfessorManageService();
+			ArrayList<ProfessorDTO> list = pms.getAllProfessorList();
+			
+			request.setAttribute("professorList", list);
+			
 			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/admin/professorManage.jsp");
 			rd.forward(request, response);
 		}

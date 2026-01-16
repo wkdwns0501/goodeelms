@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import com.goodeelms.dto.LectureDTO;
+import com.goodeelms.dto.MajorDTO;
 import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.service.StudentRegisterService;
 
@@ -23,10 +25,15 @@ public class AddStudentController extends HttpServlet {
 		String command = requestURI.substring(contextPath.length());
 		
 		if(command.equals("/addStudent/list")) {
-			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/admin/addStudent.jsp");
-			rd.forward(request, response);
 			StudentRegisterService srs = new StudentRegisterService();
+			
 			ArrayList<StudentDTO> list = srs.getAllStudentList();
+			request.setAttribute("studentList", list);
+			
+			ArrayList<MajorDTO> majorList = srs.getMajorList();
+			request.setAttribute("majorList", majorList);
+			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/admin/addStudent.jsp");
+			rd.forward(request, response);			
 		}
 		if(command.equals("/addStudent/search")) {
 			String studentName = request.getParameter("studentName");
@@ -56,7 +63,7 @@ public class AddStudentController extends HttpServlet {
 			(request.getParameter("identityFront")+"-"+request.getParameter("identityBack")); 
 			studentDTO.setStudentNo(request.getParameter("studentNo")); 
 			studentDTO.setStudentPhone(request.getParameter("studentPhone"));
-			
+			int majorId = Integer.parseInt(request.getParameter("majorId"));
 			StudentRegisterService srs = new StudentRegisterService();
 			int checkResult = srs.studentExistCheck(request.getParameter("studentNo"));
 			
@@ -71,7 +78,11 @@ public class AddStudentController extends HttpServlet {
 		        out.close();
 			} else {
 				int registerResult = srs.studentRegister(studentDTO);
-				if(registerResult > 0) {
+				
+				int newStudentId = srs.getNewStudentId();
+				System.out.println(newStudentId);
+				int writeResult = srs.writeStudentMajor(newStudentId, majorId);
+				if(registerResult > 0 && writeResult > 0) {
 				response.sendRedirect(request.getContextPath() + "/addStudent/list");	
 				}
 				else {
@@ -80,6 +91,8 @@ public class AddStudentController extends HttpServlet {
 			}
 			
 		}
+		
+		
 	}	
 }
 

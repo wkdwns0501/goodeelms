@@ -3,6 +3,8 @@ package com.goodeelms.service;
 import java.util.ArrayList;
 
 import com.goodeelms.dao.StudentRegisterDAO;
+import com.goodeelms.dto.LectureDTO;
+import com.goodeelms.dto.MajorDTO;
 import com.goodeelms.dto.StudentDTO;
 
 public class StudentRegisterService {
@@ -25,6 +27,21 @@ public class StudentRegisterService {
 	public ArrayList<StudentDTO> getAllStudentList() {
 		StudentRegisterDAO dao = StudentRegisterDAO.getInstance();
 		return dao.getAllStudentList();
+	}
+
+	public ArrayList<MajorDTO> getMajorList() {
+		StudentRegisterDAO dao = StudentRegisterDAO.getInstance();
+		return dao.getMajorList();
+	}
+
+	public int getNewStudentId() {
+		StudentRegisterDAO dao = StudentRegisterDAO.getInstance();
+		return dao.getNewStudentId();
+	}
+
+	public int writeStudentMajor(int newStudentId, int majorId) {
+		StudentRegisterDAO dao = StudentRegisterDAO.getInstance();
+		return dao.writeStudentMajor(newStudentId, majorId);
 	}
 
 }

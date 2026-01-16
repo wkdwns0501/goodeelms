@@ -109,4 +109,35 @@ public class StudentStatusUpdateDAO {
 		}
 	}
 
+	public ArrayList<StudentDTO> getAllStudentList() {
+		String sql = "SELECT s.student_id, s.student_no, s.student_name, "
+	               + "GROUP_CONCAT(m.major_name ORDER BY m.major_name SEPARATOR ', ') as major_name, "
+	               + "s.student_status "
+	               + "FROM student s "
+	               + "JOIN student_major sm ON s.student_id = sm.student_id " 
+	               + "JOIN major m ON sm.major_id = m.major_id " 
+	               + "GROUP BY s.student_id "
+	               + "ORDER BY major_name, student_name"; 
+		
+		ArrayList<StudentDTO> list = new ArrayList<StudentDTO>();
+		
+		try(Connection conn = DBUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			
+			try(ResultSet rs = pstmt.executeQuery()) {
+				while(rs.next()) {
+				StudentDTO studentDTO = new StudentDTO();
+				studentDTO.setStudentId(rs.getInt("student_id"));
+				studentDTO.setStudentNo(rs.getString("student_no"));
+				studentDTO.setStudentName(rs.getString("student_name"));
+				studentDTO.setMajorName(rs.getString("major_name"));
+				studentDTO.setStudentStatus(rs.getString("student_status"));
+				list.add(studentDTO);
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("getAllStudentList() 예외 발생: " + e);
+		} return list;
+	}
+
 }
