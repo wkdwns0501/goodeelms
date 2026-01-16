@@ -35,6 +35,8 @@ public class LectureCartController extends HttpServlet {
 		HttpSession session = request.getSession();
 		int studentId = (Integer)session.getAttribute("student_id");
 		
+		System.out.println("cartDoGet 호출됨");
+		
 		// 한 학생이 갖고있는 강의ID 다 긁어오기
 		LectureCartService selectCartService = new LectureCartService();
 		List<PreEnrollmentDTO> cartList = selectCartService.getCartDataOfStudent(studentId);
@@ -56,6 +58,8 @@ public class LectureCartController extends HttpServlet {
 		
 		request.setAttribute("totalCount", lectureList.size());
 		request.setAttribute("lectureList", lectureList);
+		// 강의 리스트에서 장바구니 담긴 강의 빼야해서 세션에 저장함
+		session.setAttribute("lectureIdSet", lectureIdSet);
 		
 		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/student/loadCartList.jsp");
 		rd.forward(request, response);
@@ -109,7 +113,6 @@ public class LectureCartController extends HttpServlet {
 			}
 			System.out.println("DELETE 성공");
 		}
-		
 	}
 
 	private boolean invaildString(String target) {

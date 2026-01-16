@@ -24,16 +24,16 @@ public class SelectLectureDAO {
 		
 	}
 	
-	public List<LectureDTO> SelectLectureOnCartDuration(String cat, String searchWord, int viewPage, int viewLen, int ...majorIds){
+	public List<LectureDTO> SelectLectureOnCartDuration(String cat, String searchWord, int viewPage, int viewLen, Set<Integer> idSet, int ...majorIds){
 		String sql = "SELECT  lecture_id, lecture_code, lecture_name, lecture_description, lecture_room, lecture_credit, lecture_type, "
 				+ "lecture_capacity, major.major_name, pro.professor_name, lecture_current_people ";
 		
 		// 공통 쿼리 조건 삽입
-		sql += getQueryString(sql, searchWord, cat, majorIds);
+		sql += getQueryString(sql, searchWord, cat, idSet, majorIds);
 
 		sql += "ORDER BY lecture_id DESC LIMIT ? OFFSET ?";
 		
-		try(PreparedStatement pstmt = getPrepareStatement(sql, searchWord, cat, majorIds)){
+		try(PreparedStatement pstmt = getPrepareStatement(sql, searchWord, cat, idSet, majorIds)){
 			// Limit, Offset
 			pstmt.setInt(queryIndex++, viewLen);
 			pstmt.setInt(queryIndex++, (viewPage - 1) * viewLen);
@@ -64,13 +64,13 @@ public class SelectLectureDAO {
 		return null;
 	}
 	
-	public int getLectureListOnCartCount(String cat, String searchWord, int ...majorIds) {
+	public int getLectureListOnCartCount(String cat, String searchWord, Set<Integer> idSet, int ...majorIds) {
 		String sql = "SELECT COUNT(*) as cnt ";
 
 		// 공통 쿼리 조건 삽입
-		sql += getQueryString(sql, searchWord, cat, majorIds);
+		sql += getQueryString(sql, searchWord, cat, idSet, majorIds);
 		
-		try(PreparedStatement pstmt = getPrepareStatement(sql, searchWord, cat, majorIds)){
+		try(PreparedStatement pstmt = getPrepareStatement(sql, searchWord, cat, idSet, majorIds)){
 
 			try(ResultSet rs = pstmt.executeQuery()){
 				if(rs.next()) {
@@ -142,7 +142,7 @@ public class SelectLectureDAO {
 		return null;
 	}
 	
-	public String getQueryString(String sql, String searchWord, String cat, int ...majorIds) {
+	public String getQueryString(String sql, String searchWord, String cat, Set<Integer> idSet, int ...majorIds) {
 		// 공통 조건
 		StringBuilder sb = new StringBuilder();
 		sb.append("FROM lecture AS lec ");
@@ -155,12 +155,14 @@ public class SelectLectureDAO {
 		if(!"liberal".equals(cat) && !"all".equals(cat)) sb.append("AND lec.major_id = ? ");	// 학생 major_id를 어디서 받아야함
 		// else if("all".equals(cat) && majorIds.length > 1) sb.append("AND (lec.major_id = ? OR lec.major_id = ?) ");
 		if(searchWord != null && !searchWord.isBlank()) sb.append("AND (lec.lecture_name LIKE ? OR pro.professor_name LIKE ?)");
-		
+		if(idSet.size() > 0) {
+			sb.append(" AND lecture_id NOT IN (" + idSet.stream().map(item -> "?").collect(Collectors.joining(",")) + ")");
+		}
 		
 		return sb.toString();
 	}
 	
-	public PreparedStatement getPrepareStatement(String sql, String searchWord, String cat, int ...majorIds) throws SQLException{
+	public PreparedStatement getPrepareStatement(String sql, String searchWord, String cat, Set<Integer> idSet, int ...majorIds) throws SQLException{
 		queryIndex = 1;
 		// 날짜
 		LocalDateTime dateTime = LocalDateTime.now();
@@ -184,10 +186,14 @@ public class SelectLectureDAO {
 		}
 		if("major".equals(cat) || majorIds.length == 1) pstmt.setInt(queryIndex++, majorIds[0]);
 		else if("minor".equals(cat)) pstmt.setInt(queryIndex++, majorIds[1]);
-		// if("all".equals(cat) && majorIds.length > 1) pstmt.setInt(queryIndex++, majorIds[1]);
 		if(searchWord != null && !searchWord.isBlank()) {
 			pstmt.setString(queryIndex++, "%" + searchWord.trim() + "%");
 			pstmt.setString(queryIndex++, "%" + searchWord.trim() + "%");
+		}
+		if(idSet.size() > 0) {
+			for(Integer id : idSet) {
+				pstmt.setInt(queryIndex++, id);
+			}
 		}
 		
 		return pstmt;

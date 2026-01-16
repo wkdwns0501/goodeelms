@@ -17,7 +17,6 @@ function setActiveBtn(cat){
 }
 
 async function loadLectures(cat, word, page = 1){
-	// 나중에 검색어도 같이 넘겨야함
 	
 	const url = new URL(window.location.origin + '/loadLecture');
 	
@@ -49,6 +48,7 @@ async function loadLectures(cat, word, page = 1){
 }
 
 async function loadCart(){
+	console.log("loadCart 호출됨");
 	const url = new URL(window.location.origin + "/student/cart");
 	
 	const res = await fetch(url.toString(), {
@@ -64,6 +64,7 @@ async function loadCart(){
 	const html = await res.text();
 	cartArea.innerHTML = html;
 	
+	loadLectures(currentCat,currentWord);
 }
 
 async function addCartLecture(lecId, stuId){
@@ -85,6 +86,7 @@ async function addCartLecture(lecId, stuId){
     console.error('장바구니 추가 실패', res.status);
     return;
   }
+	
 	loadCart();
 }
 
@@ -107,7 +109,7 @@ async function deleteCartLecture(lectureId, studentId){
 	    console.error('장바구니 삭제 실패', res.status);
 	    return;
 	  }
-		console.log(res.status);
+		
 		loadCart();
 }
 
@@ -164,5 +166,4 @@ searchForm.addEventListener('submit', async (e) => {
 	await loadLectures(currentCat, word);
 })
 
-loadLectures(currentCat, currentWord);
 loadCart();

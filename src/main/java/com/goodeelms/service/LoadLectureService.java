@@ -18,7 +18,7 @@ public class LoadLectureService {
 	MajorDAO majorDAO = MajorDAO.getInstance();
 	ProfessorDAO professorDAO = ProfessorDAO.getInstance();
 	
-	public List<LectureDTO> getLectureList(String cat, String searchWord, int viewPage, int viewLen, int ...majorIds){
+	public List<LectureDTO> getLectureList(String cat, String searchWord, int viewPage, int viewLen, Set<Integer> idSet, int ...majorIds){
 		
 		if(!validLectureListParams(cat)) {
 			System.out.println("LoadLectureS에서 cat이 null일 수 없음");
@@ -26,7 +26,7 @@ public class LoadLectureService {
 		}
 		SelectLectureDAO dao = new SelectLectureDAO();
 		
-		List<LectureDTO> list = dao.SelectLectureOnCartDuration(cat, searchWord, viewPage, viewLen, majorIds);
+		List<LectureDTO> list = dao.SelectLectureOnCartDuration(cat, searchWord, viewPage, viewLen, idSet, majorIds);
 		
 		if(list == null) {
 			list = new ArrayList<LectureDTO>();
@@ -34,10 +34,10 @@ public class LoadLectureService {
 		return list;
 	}
 	
-	public int getLecturesCount(String cat, String searchWord, int ...majorIds) {
+	public int getLecturesCount(String cat, String searchWord, Set<Integer> idSet, int ...majorIds) {
 		SelectLectureDAO dao = new SelectLectureDAO();
 		
-		return dao.getLectureListOnCartCount(cat, searchWord, majorIds);
+		return dao.getLectureListOnCartCount(cat, searchWord, idSet, majorIds);
 	}
 	
 	public List<LectureDTO> getLectureOfStudent(Set<Integer> lectureIdSet){

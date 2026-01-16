@@ -23,7 +23,7 @@
         </div>
       </div>
     </c:forEach>
-
+		<input type="hidden" id="hiddenListInput" data-cartList="${cartList}">
     <c:if test="${empty lectureList}">
       <div class="list-group-item text-center text-muted py-4">
         장바구니가 비어있습니다.
