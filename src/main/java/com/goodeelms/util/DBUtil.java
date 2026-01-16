@@ -8,6 +8,7 @@ public class DBUtil {
 	private static final String USER = "root";
 	private static final String PASSWORD = "test4321";
 
+
 	// 커넥션 생성 메소드
 	public static Connection getConnection() {
 		try {

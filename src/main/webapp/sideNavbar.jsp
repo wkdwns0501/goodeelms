@@ -21,6 +21,7 @@
     <a class="nav-link" href="<c:url value='/assignments'/>"><span class="nav-label">장학관리</span></a>
 	<%-- </c:if>--%>
     <hr class="my-2 mx-3" /> 
+
     <a class="nav-link" href="<c:url value='/settings'/>"><span class="nav-label">설정</span></a>
   	<%-- <c:if test="${not empty sessionScope.professor_id}"> --%>
 		  <a class="nav-link" href="<c:url value='/lecture/add'/>">
