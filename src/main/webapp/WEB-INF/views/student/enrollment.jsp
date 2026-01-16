@@ -33,7 +33,7 @@
 				
 				  <!-- 좌측: 카테고리 버튼 -->
 				  <div class="btn-group btn-group-sm" role="group" aria-label="category">
-				    <input type="hidden" id="sessionUserId" value="20230050">
+				    <input type="hidden" id="sessionUserId" value="${sessionScope.student_id}">
 				    <button class="btn btn-outline-dark is-cat active" data-cat="all">전체 강의</button>
 				    <button class="btn btn-outline-dark is-cat" data-cat="major">전공</button>
 				    <button class="btn btn-outline-dark is-cat" data-cat="minor">부전공</button>

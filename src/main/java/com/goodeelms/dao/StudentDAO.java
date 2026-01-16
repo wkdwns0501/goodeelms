@@ -126,12 +126,12 @@ public class StudentDAO {
 		return null;
 	}
 	
-	public String getStudentId(String studentNo) {
-		String sql = "SELECT student_id FROM student WHERE student_no = ?";
+	public String getStudentId(String studentId) {
+		String sql = "SELECT student_id FROM student WHERE student_id = ?";
 		
 		try(Connection conn = DBUtil.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql)){
-			pstmt.setString(1, studentNo);
+			pstmt.setString(1, studentId);
 			try(ResultSet rs = pstmt.executeQuery()){
 				if(!rs.next()) return null;
 				return rs.getString("student_id");

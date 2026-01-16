@@ -142,7 +142,7 @@ public class StudentRegisterDAO {
 	public ArrayList<StudentDTO> getAllStudentList() {
 		String sql = "SELECT *, GROUP_CONCAT(DISTINCT m.major_name ORDER BY m.major_name SEPARATOR ', ') as major_name, "
 				   + " FROM student s JOIN"
-				   + "ORDER BY student_id DESC " +
+				   + "ORDER BY student_id DESC ";
 	
 		
 		ArrayList<StudentDTO> list = new ArrayList<StudentDTO>();

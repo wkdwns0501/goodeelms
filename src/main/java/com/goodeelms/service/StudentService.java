@@ -11,7 +11,7 @@ public class StudentService {
 		return dao.getMajors(studentId);
 	}
 	
-	public String getStudentId(String studentNo) {
-		return dao.getStudentId(studentNo);
+	public String getStudentId(String studentId) {
+		return dao.getStudentId(studentId);
 	}
 }

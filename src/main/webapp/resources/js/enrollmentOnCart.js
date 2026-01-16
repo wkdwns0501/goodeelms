@@ -30,7 +30,12 @@ async function loadLectures(cat, word, page = 1){
 	      method: 'GET',
 	      headers: { 'X-Requested-With': 'fetch' }
 	    });
-		
+	
+	if (res.redirected) {
+	  window.location.href = res.url; // 최종 도착지로 이동
+	  return;
+	}
+			
 	if (!res.ok) {
     console.error('강의 리스트 로드 실패', res.status);
     return;
@@ -44,24 +49,25 @@ async function loadLectures(cat, word, page = 1){
 }
 
 async function loadCart(){
-	const url = new URL(window.location.origin + "/addLectureCart");
-	
+	const url = new URL(window.location.origin + "/student/cart");
 	
 	const res = await fetch(url.toString(), {
 	      method: 'GET',
 	      headers: { 'X-Requested-With': 'fetch' }
 	    });
-		
+			
 	if (!res.ok) {
-    console.error('강의 리스트 로드 실패', res.status);
+    console.error('장바구니 로드 실패', res.status);
     return;
 	}
+	
+	const html = await res.text();
+	cartArea.innerHTML = html;
+	
 }
 
 async function addCartLecture(lecId, stuId){
-	const url = new URL(window.location.origin + "/addLectureCart");
-	url.searchParams.set('lectureId', lecId);
-	url.searchParams.set('studentId', stuId);
+	const url = new URL(window.location.origin + "/student/cart/addCart");
 	
 	const res = await fetch(url.toString(), {
 		method: 'POST',
@@ -76,10 +82,33 @@ async function addCartLecture(lecId, stuId){
 	});
 	
 	if (!res.ok) {
-    console.error('장바구니 로드', res.status);
+    console.error('장바구니 추가 실패', res.status);
     return;
   }
-	
+	loadCart();
+}
+
+async function deleteCartLecture(lectureId, studentId){
+	const url = new URL(window.location.origin + "/student/cart/deleteCart");
+		
+		const res = await fetch(url.toString(), {
+			method: 'POST',
+			headers: {
+			    'Content-Type': 'application/x-www-form-urlencoded',
+			    'X-Requested-With': 'fetch'
+			  },
+		  body: new URLSearchParams({
+		    lecture_id: lectureId,
+		    student_id: studentId
+		  })
+		});
+		
+		if (!res.ok) {
+	    console.error('장바구니 삭제 실패', res.status);
+	    return;
+	  }
+		console.log(res.status);
+		loadCart();
 }
 
 document.querySelectorAll(".is-cat").forEach(btn => {
@@ -106,14 +135,27 @@ listArea.addEventListener('click', async(e) =>{
 	}
 	else if (c){
 		const addLec = c.dataset.lec;
-		// const addstu = u.dataset.stu;
-		const addstu = 50;
-		
+		const addstu = c.dataset.stu;
 		
 		await addCartLecture(addLec, addstu);
 	}
 	
 });
+
+cartArea.addEventListener('click', async(e) =>{
+	const delBtn = e.target.closest("button.delete-cart");
+	
+	if(!delBtn) return;
+	e.preventDefault();
+	
+	const url = new URL(location.origin);
+	
+	const lectureId = delBtn.dataset.target;
+	const studentId = delBtn.dataset.user;
+	
+	await deleteCartLecture(lectureId, studentId);
+});
+
 
 searchForm.addEventListener('submit', async (e) => {
 	e.preventDefault();
@@ -123,3 +165,4 @@ searchForm.addEventListener('submit', async (e) => {
 })
 
 loadLectures(currentCat, currentWord);
+loadCart();

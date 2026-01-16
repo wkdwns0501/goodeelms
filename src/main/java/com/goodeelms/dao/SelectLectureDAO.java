@@ -7,7 +7,10 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.util.DBUtil;
@@ -79,6 +82,64 @@ public class SelectLectureDAO {
 			e.printStackTrace();
 		}
 		return -1;
+	}
+	
+	public List<LectureDTO> getLecturesOfStudent(Set<Integer> lectureIdSet){
+		String sql = "SELECT * FROM lecture WHERE lecture_id IN (" +
+				lectureIdSet.stream().map(id -> "?").collect(Collectors.joining(",")) + ") " +
+				"AND lecture_year = ? AND lecture_semester = ?";
+		try(Connection conn = DBUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)){
+			
+			int index = 1;
+			for(Integer id : lectureIdSet) {
+				pstmt.setInt(index++, id);
+			}
+			LocalDateTime year = LocalDateTime.now();
+			DateTimeFormatter fomatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			String dateString = year.format(fomatter);
+			String[] splits = dateString.split("-");
+			
+			int semester = 1;
+			try {
+				if(Integer.parseInt(splits[1]) > 8) semester = 2;
+			}
+			catch(NumberFormatException e) {
+				e.printStackTrace();
+			}
+			
+			pstmt.setString(index++, splits[0]);
+			pstmt.setInt(index++, semester);
+			
+			try(ResultSet rs = pstmt.executeQuery()){
+				List<LectureDTO> list = new ArrayList<LectureDTO>();
+				while(rs.next()) {
+					LectureDTO dto = new LectureDTO();
+					dto.setLectureId(Integer.parseInt(rs.getString("lecture_id")));
+					dto.setLectureCode(Integer.parseInt(rs.getString("lecture_code")));
+					dto.setLectureName(rs.getString("lecture_name"));
+					dto.setLectureDescription(rs.getString("lecture_description"));
+					dto.setLectureRoom(rs.getString("lecture_room"));
+					dto.setLectureCredit(Integer.parseInt(rs.getString("lecture_credit")));
+					dto.setLectureType(rs.getString("lecture_year"));
+					dto.setLectureType(rs.getString("lecture_year"));
+					dto.setLectureType(rs.getString("lecture_type"));
+					dto.setLectureCurrentPeople(Integer.parseInt(rs.getString("lecture_current_people")));
+					dto.setLectureCapacity(Integer.parseInt(rs.getString("lecture_capacity")));
+					dto.setMajorId(rs.getInt("major_id"));
+					dto.setProfessorId(rs.getInt("professor_id"));
+					
+					list.add(dto);
+				}
+				
+				return list;
+			}
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 	public String getQueryString(String sql, String searchWord, String cat, int ...majorIds) {

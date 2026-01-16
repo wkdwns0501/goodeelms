@@ -34,21 +34,25 @@ public class LoadLectureController extends HttpServlet {
 		System.out.println("reqId: "+ reqId);
 		
 		HttpSession session = request.getSession(false);
-		
-		String sessionId = (String)session.getAttribute("login_student_id");
-		if(sessionId == null) sessionId = "20230050";
+		int sessionId = (Integer)session.getAttribute("student_id");
 		System.out.println("sessionId: "+ sessionId);
-		/*
-		if(session == null ||
-			reqId == null || reqId.isBlank() ||
-			sessionId == null || sessionId.isBlank()) {
-			System.out.println("all null");
+		
+		if(reqId == null || reqId.isBlank()) {
+			System.out.println("잘못된 접근");
 			response.sendRedirect("/main.jsp");
 			return;
 		}
-		*/
+		int requestId = 0;
+		try {
+			requestId = Integer.parseInt(reqId);
+		}
+		catch(NumberFormatException e) {
+			System.out.println("잘못된 접근");
+			response.sendRedirect("/main.jsp");
+			return;
+		}
 		
-		if(!sessionId.equals(reqId)) {
+		if(requestId != sessionId) {
 			response.sendRedirect("/main.jsp");
 			System.out.println("잘못된 접근");
 			return;
