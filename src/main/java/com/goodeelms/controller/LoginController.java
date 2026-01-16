@@ -62,7 +62,7 @@ public class LoginController extends HttpServlet {
 					request.getRequestDispatcher("/WEB-INF/views/student/studentSignUp.jsp").forward(request, response);
 					return;
 				}
-
+				
 				response.sendRedirect(request.getContextPath() + "/main.jsp");
 				return;
 			} else {
@@ -94,7 +94,7 @@ public class LoginController extends HttpServlet {
 				session.setAttribute("professor_name", login_professor.getProfessorName());
 				session.setAttribute("professor_email", login_professor.getProfessorEmail());
 				session.setAttribute("professor_status", login_professor.getProfessorStatus());
-
+				
 				response.sendRedirect(request.getContextPath() + "/main.jsp");
 				return;
 			} else {
