@@ -33,6 +33,11 @@
 										role="alert">기존 비밀번호와 동일합니다.</div>
 								</c:if>
 
+								<c:if test="${errorMessage == 'already_used'}">
+									<div class="alert alert-danger py-2 small text-center"
+										role="alert">이미 전화번호 혹은 이메일을 사용되고 있습니다.</div>
+								</c:if>
+
 								<div class="mb-3">
 									<label class="form-label small fw-bold">아이디(학번)</label> <input
 										class="form-control bg-light" name="student_no" type="text"

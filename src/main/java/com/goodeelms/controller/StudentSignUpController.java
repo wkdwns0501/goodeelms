@@ -17,15 +17,15 @@ import com.goodeelms.service.StudentSignUpService;
 public class StudentSignUpController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
-	        throws ServletException, IOException {
-	    HttpSession session = request.getSession(false);
-	    if (session == null || session.getAttribute("student_id") == null) {
-	        response.sendRedirect(request.getContextPath() + "/login");
-	        return;
-	    }
-	    
-	    request.getRequestDispatcher("/WEB-INF/views/student/studentSignUp.jsp").forward(request, response);
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		HttpSession session = request.getSession(false);
+		if (session == null || session.getAttribute("student_id") == null) {
+			response.sendRedirect(request.getContextPath() + "/login");
+			return;
+		}
+
+		request.getRequestDispatcher("/WEB-INF/views/student/studentSignUp.jsp").forward(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -51,7 +51,7 @@ public class StudentSignUpController extends HttpServlet {
 		StudentSignUpService service = new StudentSignUpService();
 		HttpSession session = request.getSession();
 
-		Integer student_id = (Integer)session.getAttribute("student_id");
+		Integer student_id = (Integer) session.getAttribute("student_id");
 		if (student_id == null) {
 			response.sendRedirect(request.getContextPath() + "/login");
 			return;
@@ -59,26 +59,30 @@ public class StudentSignUpController extends HttpServlet {
 
 		try {
 			int result = service.signUpStudent(dto, originPw, student_id);
-			
-			if (result == -1) {	// 기존과 동일한 비밀번호 입력
-                request.setAttribute("errorMessage", "samePassword");
-                request.getRequestDispatcher("/WEB-INF/views/student/studentSignUp.jsp").forward(request, response);
-                return;
-            } else if (result > 0) {	
-                response.sendRedirect(request.getContextPath() + "/main.jsp");
-                return;
-            } else {	// student 정보 갱신 실패 	
-                request.setAttribute("errorMessage", "updateStudent_fail");
-                request.getRequestDispatcher("/WEB-INF/views/student/studentSignUp.jsp").forward(request, response);
-                return;
-            }
-		} catch(SQLException e) {
-			String errorMessage = "데이터 갱신에 예외가 발생했습니다.";	
+
+			if (result == -2) { // 누가 이미 사용하는 전화번호, 이메일을 입력
+				request.setAttribute("errorMessage", "already_used");
+				request.getRequestDispatcher("/WEB-INF/views/student/studentSignUp.jsp").forward(request, response);
+				return;
+			} else if (result == -1) { // 기존과 동일한 비밀번호 입력
+				request.setAttribute("errorMessage", "samePassword");
+				request.getRequestDispatcher("/WEB-INF/views/student/studentSignUp.jsp").forward(request, response);
+				return;
+			} else if (result > 0) {
+				response.sendRedirect(request.getContextPath() + "/main.jsp");
+				return;
+			} else { // student 정보 갱신 실패
+				request.setAttribute("errorMessage", "updateStudent_fail");
+				request.getRequestDispatcher("/WEB-INF/views/student/studentSignUp.jsp").forward(request, response);
+				return;
+			}
+		} catch (SQLException e) {
+			String errorMessage = "데이터 갱신에 예외가 발생했습니다.";
 			request.setAttribute("errorMessage", errorMessage);
-	        request.getRequestDispatcher("/error.jsp").forward(request, response);
-	        return;
-		} 
-		
+			request.getRequestDispatcher("/error.jsp").forward(request, response);
+			return;
+		}
+
 	}
 
 }

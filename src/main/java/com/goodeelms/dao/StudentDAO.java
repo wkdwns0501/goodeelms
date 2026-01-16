@@ -76,6 +76,31 @@ public class StudentDAO {
 	    return result;
 	}
 
+	public boolean isPhoneAndEmailExist(String phone, String email) {
+		String sql = "SELECT COUNT(*) as cnt FROM student "
+				+ "WHERE student_phone = ? OR student_email = ?";
+		
+		boolean result = false;
+
+		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, phone);
+			pstmt.setString(2, email);
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					int count = rs.getInt("cnt");
+					if (count > 0) {
+						result = true;	// 이미 사용하느 전화번호, 주민번호, 이메일이 있을 경우 
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	
 	public List<StudentMajorDTO> getMajors(String studentId) {
 		String sql = "SELECT * FROM student_major WHERE student_id = ?";
 		
