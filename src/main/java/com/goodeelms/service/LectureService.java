@@ -47,7 +47,22 @@ public class LectureService {
 	        Integer maxLectureCode = dao.findMaxLectureCodeByMajorId(majorId);
 	        lecture.setLectureCode(generateLectureCode(majorCode, maxLectureCode));
 	    }
+	    
+	    int opened = dao.countSections(
+	    	    lecture.getProfessorId(),
+	    	    lecture.getLectureCode(),
+	    	    lecture.getLectureYear(),
+	    	    lecture.getLectureSemester()
+	    	);
 
+    	if (opened == 0) {
+    	    lecture.setLectureSection("01");
+    	} else if (opened == 1) {
+    	    lecture.setLectureSection("02");
+    	} else {
+    	    throw new IllegalArgumentException("분반은 최대 2개(01, 02)까지만 개설할 수 있습니다.");
+    	}
+	    
 	    try {
 	        return dao.insertLecture(lecture);
 	    } catch (RuntimeException e) {
@@ -74,15 +89,21 @@ public class LectureService {
         if (l.getLectureYear() == null || !l.getLectureYear().matches("\\d{4}")) {
             throw new IllegalArgumentException("연도는 YYYY 형식이어야 합니다.");
         }
-        if (l.getLectureSection() == null || !l.getLectureSection().matches("\\d{2}")) {
-            throw new IllegalArgumentException("분반은 2자리 숫자여야 합니다.");
-        }
         if (l.getLectureCapacity() < 1 || l.getLectureCapacity() > 50) {
             throw new IllegalArgumentException("정원은 1~50명 사이여야 합니다.");
         }
         if (l.getLectureDescription() != null && l.getLectureDescription().length() > 1000) {
             throw new IllegalArgumentException("강의 설명은 최대 1000자까지 가능합니다.");
-        }    	
+        }
+        if (l.getLectureType() == null || l.getLectureType().trim().isEmpty()) {
+            throw new IllegalArgumentException("강의 유형은 필수입니다.");
+        }
+        if (l.getLectureRoom() != null && l.getLectureRoom().trim().length() > 50) {
+            throw new IllegalArgumentException("강의실은 최대 50자까지 가능합니다.");
+        }
+        if (l.getBuildingId() <= 0) {
+            throw new IllegalArgumentException("건물을 선택하세요.");
+        }
 	}
     
 	/**

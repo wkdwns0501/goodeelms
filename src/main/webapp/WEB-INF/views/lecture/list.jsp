@@ -55,7 +55,7 @@
             <form method="get" action="<c:url value='/lecture/list'/>" class="row g-2 align-items-center">
               <div class="col-md-8">
                 <input type="text" name="keyword" class="form-control"
-                       placeholder="강의명 또는 교수명 검색"
+                       placeholder="강의명 또는 교수명 또는 건물명 검색"
                        value="<c:out value='${keyword}'/>">
               </div>
               <div class="col-md-4 d-flex gap-2">
@@ -63,7 +63,7 @@
                 <a class="btn btn-outline-secondary w-100" href="<c:url value='/lecture/list'/>">초기화</a>
               </div>
             </form>
-            <div class="form-text mt-2">* 검색은 강의명/교수명 기준이며, 페이지당 5개씩 표시됩니다.</div>
+            <div class="form-text mt-2">* 검색은 강의명/교수명/건물명 기준이며, 페이지당 5개씩 표시됩니다.</div>
           </div>
         </div>
 
@@ -80,9 +80,9 @@
 				            <th style="width:90px;">유형</th>
 				            <th style="width:90px;">학점</th>
 				            <th style="width:120px;">학기</th>
-				            <th style="width:80px;">분반</th>
-				            <th style="width:120px;">강의실</th>
-				            <th style="width:110px;">정원</th>
+				            <th style="width:70px;">분반</th>
+				            <th style="width:140px;">강의실</th>
+				            <th style="width:100px;">정원</th>
 				          </tr>
 				        </thead>
 				
@@ -112,9 +112,12 @@
 				                  <td>${lec.professorName}</td>
 				                  <td>${lec.lectureType}</td>
 				                  <td>${lec.lectureCredit}</td>
-				                  <td>${lec.lectureYear} / ${lec.lectureSemester}학기</td>
+				                  <td>${lec.lectureYear} - ${lec.lectureSemester}</td>
 				                  <td>${lec.lectureSection}</td>
-				                  <td><c:out value="${lec.lectureRoom}" default="-" /></td>
+				                  <td class="text-center">
+													  <c:out value="${lec.buildingName}" /> 
+													  <c:out value="${lec.lectureRoom}" />호
+													</td>
 				                  <td>${lec.lectureCurrentPeople} / ${lec.lectureCapacity}</td>
 				                </tr>
 				              </c:forEach>
