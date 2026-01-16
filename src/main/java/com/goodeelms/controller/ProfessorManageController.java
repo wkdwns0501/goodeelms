@@ -11,73 +11,56 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.goodeelms.dto.StudentDTO;
-import com.goodeelms.service.StudentStatusService;
+import com.goodeelms.dto.ProfessorDTO;
+import com.goodeelms.service.ProfessorManageService;
 
-@WebServlet("/studentStatus/*")
-public class StatusController extends HttpServlet {
+@WebServlet("/professorManage/*")
+public class ProfessorManageController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
 		String requestURI = request.getRequestURI();
 		String contextPath = request.getContextPath(); 
 		String command = requestURI.substring(contextPath.length());
-		if(command.equals("/studentStatus/page")) {
-			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/admin/status.jsp");
+		
+		if(command.equals("/professorManage/page")) {
+			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/admin/professorManage.jsp");
 			rd.forward(request, response);
 		}
-		if(command.equals("/studentStatus/search")) {
-			String studentName = request.getParameter("studentName");
+		
+		if(command.equals("/professorManage/search")) {
+			String professorName = request.getParameter("professorName");
 			String majorName = request.getParameter("majorName");
-			String studentNo = request.getParameter("studentNo");
+			String professorEmail = request.getParameter("professorEmail");
 			
 			// 서비스 호출
-			StudentStatusService ss = new StudentStatusService();
-			ArrayList<StudentDTO> list = ss.getStudentList(studentName,majorName,studentNo);
+			ProfessorManageService pms = new ProfessorManageService();
+		 	ArrayList<ProfessorDTO> list = pms.getProfessorList(professorName, majorName, professorEmail);
 			
-			request.setAttribute("studentList", list);
-			
-			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/admin/status.jsp");
+			request.setAttribute("professorList", list);
+			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/admin/professorManage.jsp");
 			rd.forward(request, response);
 		}
-		
 	}
-	
-	
-	
-	
-	
-	
+
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession(false);
-		
+			
 		String requestURI = request.getRequestURI();
 		String contextPath = request.getContextPath(); 
 		String command = requestURI.substring(contextPath.length());
-			
-		if(command.equals("/studentStatus/updateStatus")) {
-//			if (session == null || session.getAttribute("adminId") == null) {
-//	            // 로그인 페이지로 리다이렉트 하거나 에러 처리
-//	            response.sendRedirect(contextPath + "/login");
-//	            return;
-			String adminId = (String) session.getAttribute("adminId");
-			adminId = "1";
-			
-			String studentNo = request.getParameter("studentNo");
-			String newStudentStatus = request.getParameter("newStudentStatus");
-			String statusReason = request.getParameter("statusReason");
-			String studentId = request.getParameter("studentId");
-			String studentName = request.getParameter("studentName");
-			String majorName = request.getParameter("majorName");
-			
-			
+		
+		if(command.equals("/professorManage/updateStatus")) {
+
+			String professorId = request.getParameter("professorId");
+			String newProfessorStatus = request.getParameter("newProfessorStatus");
+
 			String searchName = request.getParameter("searchName");
 			String searchMajor = request.getParameter("searchMajor");
 			String searchNo = request.getParameter("searchNo");
 			
-			StudentStatusService ss = new StudentStatusService();
-			int result = ss.processStatusUpdate(studentId, newStudentStatus, statusReason, adminId);
+			ProfessorManageService pms = new ProfessorManageService();
+			int result = pms.updateProfessorStatus(professorId, newProfessorStatus);
 			
 			String encName = (searchName != null) ? java.net.URLEncoder.encode(searchName, "UTF-8") : "";
 		    String encMajor = (searchMajor != null) ? java.net.URLEncoder.encode(searchMajor, "UTF-8") : "";
@@ -85,14 +68,14 @@ public class StatusController extends HttpServlet {
 
 		    // 6. 리다이렉트 실행
 		    // 결과(res)와 검색 조건들을 다시 붙여서 /student/search로 보냅니다.
-		    String redirectUrl = contextPath + "/studentStatus/search?res=" + result 
-		                          + "&studentName=" + encName 
+		    String redirectUrl = contextPath + "/professorManage/search?res=" + result 
+		                          + "&professorName=" + encName 
 		                          + "&majorName=" + encMajor 
-		                          + "&studentNo=" + sNo;
+		                          + "&professorEmail=" + sNo;
 		        
 		    response.sendRedirect(redirectUrl);
-			}
-		}
-	
+	}
 
+}
+	
 }

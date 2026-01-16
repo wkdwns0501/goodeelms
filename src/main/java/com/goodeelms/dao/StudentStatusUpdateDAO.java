@@ -92,7 +92,7 @@ public class StudentStatusUpdateDAO {
 		} 
 	}
 	
-	public int writeStatusHistory(String studentId, String studentNo, String newStudentStatus, String statusReason, String adminId) {
+	public int writeStatusHistory(String studentId, String newStudentStatus, String statusReason, String adminId) {
 		String sql = "INSERT INTO student_status_history (status_type, status_reason, student_id, admin_id) "
 					+ "VALUES (?, ?, ?, ?)";
 		
