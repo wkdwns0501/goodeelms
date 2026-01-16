@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 import com.goodeelms.dto.LectureDTO;
@@ -21,10 +20,10 @@ import com.goodeelms.service.StudentService;
  * Servlet implementation class LoadLectureServlet
  */
 @WebServlet("/loadLecture")
-public class LoadLectureServlet extends HttpServlet {
+public class LoadLectureController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    public LoadLectureServlet() {
+    public LoadLectureController() {
         super();
     }
 
@@ -37,7 +36,7 @@ public class LoadLectureServlet extends HttpServlet {
 		HttpSession session = request.getSession(false);
 		
 		String sessionId = (String)session.getAttribute("login_student_id");
-		if(sessionId == null) sessionId = "20230051";
+		if(sessionId == null) sessionId = "20230050";
 		System.out.println("sessionId: "+ sessionId);
 		/*
 		if(session == null ||
@@ -74,15 +73,43 @@ public class LoadLectureServlet extends HttpServlet {
 			return;
 		}
 		
+		// 한번에 표시 할 길이
+		int viewLen = 10;
+		// 어느 페이지 호출했는지
+		int viewPage = 1;
+		String pageString = request.getParameter("viewPage");
+		try {
+			if(pageString != null && !pageString.isBlank()) {
+				viewPage = Integer.parseInt(pageString);
+			}
+		}
+		catch(NumberFormatException e) {
+			viewPage = 1;
+		}
+		if (viewPage < 1) viewPage = 1;
+		
 		int[] majorIds = new int[majorList.size()];
 		for(int i = 0; i < majorIds.length; i++) {
 			majorIds[i] = majorList.get(i).getMajorId();
 		}
 		
-		List<LectureDTO> list = loadS.getLectureList(cat, majorIds);
+		String searchWord = request.getParameter("search_word");
 		
+		int total_record = loadS.getLecturesCount(cat, searchWord, majorIds);
+		int pageNums = (int)Math.ceil((double) total_record / viewLen);
+		if (pageNums == 0) pageNums = 1;
+		if (viewPage > pageNums) viewPage = pageNums;
+//		if(pageNums > 1 && viewPage == 1) viewLen = total_record % viewLen;
+		System.out.println("viewPage: " + viewPage);
+		
+		List<LectureDTO> list = loadS.getLectureList(cat, searchWord, viewPage, viewLen, majorIds);
+		
+		request.setAttribute("id", reqId);
+		request.setAttribute("cat", cat);
+		request.setAttribute("viewPage", viewPage);
+		request.setAttribute("pageNums", pageNums);
 		request.setAttribute("lectureList", list);
-		request.setAttribute("totalCount", list.size());
+		request.setAttribute("totalCount", total_record);
 		System.out.println("lectureListSize: " + list.size());
 		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/student/loadLectureList.jsp");
 		rd.forward(request, response);
