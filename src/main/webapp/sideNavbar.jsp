@@ -6,6 +6,7 @@
 
   <nav class="nav flex-column">
     <a class="nav-link" href="<c:url value='/dashboard'/>"><span class="nav-label">대시보드</span></a>
+
     <a class="nav-link" href="<c:url value='/student?page=enrollment'/>"><span class="nav-label">수강신청</span></a>
     <a class="nav-link" href="<c:url value='/my-lectures'/>"><span class="nav-label">내 강의</span></a>
     <a class="nav-link" href="<c:url value='/assignments'/>"><span class="nav-label">과제</span></a>
