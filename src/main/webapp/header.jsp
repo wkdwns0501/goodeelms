@@ -6,7 +6,10 @@
     ☰
   </button>
 
-  <div class="fw-semibold">LMS</div>
+  <div class="fw-semibold ms-2">
+	  <a class="brand-link" href="<c:url value='/main.jsp'/>">GoodeeLMS</a>
+	</div>
+
 
   <div class="ms-auto d-flex align-items-center gap-2">
     <a class="btn btn-sm btn-outline-light" href="<c:url value='/mypage'/>">마이페이지</a>
@@ -54,3 +57,25 @@
 })();
 </script>
 
+<style>
+	/* 헤더 브랜드 링크: 파란색/밑줄 제거 + 크기 업 */
+	.app-header .brand-link{
+	  color: #fff;
+	  text-decoration: none; 
+	  font-size: 1.15rem; 
+	  letter-spacing: 0.2px;
+	}
+	
+	/* 방문/호버/클릭 상태에서도 색 유지 */
+	.app-header .brand-link:visited,
+	.app-header .brand-link:hover,
+	.app-header .brand-link:active{
+	  color: #fff;
+	  text-decoration: none;
+	}
+	
+	/* 호버 시만 살짝 티 나게 */
+	.app-header .brand-link:hover{
+	  opacity: 0.92;
+	}
+</style>

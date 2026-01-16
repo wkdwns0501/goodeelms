@@ -19,8 +19,13 @@ public class LectureDAO {
 	
 	// 강의 등록
 	public int insertLecture(LectureDTO lecture) {
-		String sql = "INSERT INTO lecture (lecture_code, lecture_name, lecture_description, lecture_room, lecture_credit, lecture_year, lecture_semester, lecture_section, lecture_type, lecture_capacity, professor_id, major_id) "
-				+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO lecture ("
+					+ "lecture_code, lecture_name, lecture_description, "
+					+ "lecture_room, lecture_credit, lecture_year, "
+					+ "lecture_semester, lecture_section, lecture_type, "
+					+ "lecture_capacity, professor_id, major_id, building_id"
+					+ ") "
+			        + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		
 		try (Connection conn = DBUtil.getConnection();
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -36,11 +41,39 @@ public class LectureDAO {
 			pstmt.setInt(10, lecture.getLectureCapacity());
 			pstmt.setInt(11, lecture.getProfessorId());
 			pstmt.setInt(12, lecture.getMajorId());
+			pstmt.setInt(13, lecture.getBuildingId());
 			return pstmt.executeUpdate();
 		} catch (Exception e) {
 			throw new RuntimeException("insertLecture 실패", e);
 		}
 	}
+	
+	// 분반 카운트
+	public int countSections(int professorId, int lectureCode, String lectureYear, int lectureSemester) {
+	    String sql = "SELECT COUNT(*) AS cnt "
+	               + "FROM lecture "
+	               + "WHERE professor_id = ? "
+	               + "  AND lecture_code = ? "
+	               + "  AND lecture_year = ? "
+	               + "  AND lecture_semester = ?";
+
+	    try (Connection conn = DBUtil.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setInt(1, professorId);
+	        pstmt.setInt(2, lectureCode);
+	        pstmt.setString(3, lectureYear);
+	        pstmt.setInt(4, lectureSemester);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getInt("cnt");
+	            }
+	        }
+	    } catch (Exception e) {
+	        System.out.println("countSections 예외: " + e);
+	    }
+	    return 0;
+	}
+
 
 	// professor_id로 major_id 찾기
 	public int findMajorIdByProfessorId(int professorId) {
@@ -105,16 +138,18 @@ public class LectureDAO {
 	    int offset = (page - 1) * limit;
 
 	    String sql =
-	        "SELECT l.lecture_id, l.lecture_code, l.lecture_name, l.lecture_room, " +
-	        "       l.lecture_credit, l.lecture_year, l.lecture_semester, l.lecture_section, " +
-	        "       l.lecture_type, l.lecture_current_people, l.lecture_capacity, " +
-	        "       l.professor_id, l.major_id, p.professor_name " +
-	        "FROM lecture l " +
-	        "JOIN professor p ON l.professor_id = p.professor_id " +
-	        "WHERE l.major_id = ? ";
+	    	    "SELECT l.lecture_id, l.lecture_code, l.lecture_name, l.lecture_room, " +
+	    	    "       l.lecture_credit, l.lecture_year, l.lecture_semester, l.lecture_section, " +
+	    	    "       l.lecture_type, l.lecture_current_people, l.lecture_capacity, " +
+	    	    "       l.professor_id, l.major_id, p.professor_name, " +
+	    	    "       b.building_name " +
+	    	    "FROM lecture l " +
+	    	    "JOIN professor p ON l.professor_id = p.professor_id " +
+	    	    "JOIN building b ON l.building_id = b.building_id " +
+	    	    "WHERE l.major_id = ? ";
 
 	    if (keyword != null && !keyword.isBlank()) {
-	        sql += "AND (l.lecture_name LIKE ? OR p.professor_name LIKE ?) ";
+	        sql += "AND (l.lecture_name LIKE ? OR p.professor_name LIKE ? OR b.building_name LIKE ?) ";
 	    }
 
 	    sql += "ORDER BY l.lecture_year DESC, l.lecture_semester DESC, l.lecture_code ASC, l.lecture_section ASC " +
@@ -127,6 +162,7 @@ public class LectureDAO {
 	        pstmt.setInt(i++, majorId);
 	        if (keyword != null && !keyword.isBlank()) {
 	            String k = "%" + keyword.trim() + "%";
+	            pstmt.setString(i++, k);
 	            pstmt.setString(i++, k);
 	            pstmt.setString(i++, k);
 	        }
@@ -149,6 +185,7 @@ public class LectureDAO {
 	                lecture.setProfessorId(rs.getInt("professor_id"));
 	                lecture.setMajorId(rs.getInt("major_id"));
 	                lecture.setProfessorName(rs.getString("professor_name"));
+	                lecture.setBuildingName(rs.getString("building_name"));
 	                list.add(lecture);
 	            }
 	        }
