@@ -13,10 +13,10 @@
 	      <tr>
 	        <th style="width:90px;">구분</th>
 	        <th>과목명</th>
-	        <th style="width:120px;">교수</th>
+	        <th style="width:140px;">교수</th>
 	        <th style="width:90px;" class="text-center">학점</th>
 	        <th style="width:140px;" class="text-center">정원(신청)</th>
-	        <th style="width:120px;" class="text-center">담기</th>
+	        <th style="width:140px;" class="text-center">담기</th>
 	      </tr>
 	    </thead>
 	    <tbody>
@@ -42,7 +42,7 @@
             	<!-- 장바구니 담기: POST 권장 -->
 	            <button type="submit" class="btn btn-sm btn-outline-success add-cart" 
 	            	data-lec="${lec.lectureId}" data-stu ="${sessionScope.student_id}">
-	              장바구니
+	              장바구니 추가
 	            </button>
 	          </td>
 	        </tr>

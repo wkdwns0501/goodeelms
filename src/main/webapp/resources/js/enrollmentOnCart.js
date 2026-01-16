@@ -2,7 +2,8 @@
  * 
  * 
  */
-const area = document.querySelector("#lectureListArea");
+const listArea = document.querySelector("#lectureListArea");
+const cartArea = document.querySelector("#lectureCartArea");
 const userId = document.querySelector("#sessionUserId")?.value;
 const searchForm = document.querySelector("#lectureSearchForm");
 
@@ -36,10 +37,25 @@ async function loadLectures(cat, word, page = 1){
 	}
 	
 	const html = await res.text();
-  area.innerHTML = html;
+  listArea.innerHTML = html;
 	
 	currentCat = cat;
 	currentWord = word;
+}
+
+async function loadCart(){
+	const url = new URL(window.location.origin + "/addLectureCart");
+	
+	
+	const res = await fetch(url.toString(), {
+	      method: 'GET',
+	      headers: { 'X-Requested-With': 'fetch' }
+	    });
+		
+	if (!res.ok) {
+    console.error('강의 리스트 로드 실패', res.status);
+    return;
+	}
 }
 
 async function addCartLecture(lecId, stuId){
@@ -74,7 +90,7 @@ document.querySelectorAll(".is-cat").forEach(btn => {
 	});
 });
 
-area.addEventListener('click', async(e) =>{
+listArea.addEventListener('click', async(e) =>{
 	const a = e.target.closest("a.lectureCart-list");
 	const c = e.target.closest("button.add-cart");
 	

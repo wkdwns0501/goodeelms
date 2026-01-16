@@ -58,61 +58,28 @@
 			    </div>
 			
 			    <!-- 우측: 장바구니 -->
-			    <div class="col-12 col-lg-4">
-			      <div class="card shadow-sm">
-			        <div class="card-header d-flex align-items-center justify-content-between">
-			          <span class="fw-semibold">장바구니</span>
-			          <span class="text-muted small">총 <strong>${cartCount}</strong>과목</span>
-			        </div>
-			
-			        <div class="list-group list-group-flush">
-			          <!-- 예시: cartItems -->
-			          <c:forEach var="item" items="${cartItems}">
-			            <div class="list-group-item">
-			              <div class="d-flex justify-content-between gap-2">
-			                <div>
-			                  <div class="fw-semibold">${item.title}</div>
-			                  <div class="text-muted small">
-			                    ${item.professor} · ${item.credit}학점
-			                  </div>
-			                </div>
-			
-			                <form method="post" action="<c:url value='/enroll/cart/remove'/>" class="m-0">
-			                  <input type="hidden" name="lectureId" value="${item.id}">
-			                  <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
-			                </form>
-			              </div>
-			            </div>
-			          </c:forEach>
-			
-			          <c:if test="${empty cartItems}">
-			            <div class="list-group-item text-center text-muted py-4">
-			              장바구니가 비어있습니다.
-			            </div>
-			          </c:if>
-			        </div>
-			
-			        <div class="card-body border-top">
-			          <div class="d-flex justify-content-between mb-2">
-			            <span class="text-muted">합계 학점</span>
-			            <span class="fw-semibold">${cartTotalCredit} 학점</span>
-			          </div>
-			
-			          <div class="d-grid gap-2">
-			            <form method="post" action="<c:url value='/enroll/submit'/>" class="m-0">
-			              <button type="submit" class="btn btn-primary">최종 신청</button>
-			            </form>
-			            <form method="post" action="<c:url value='/enroll/cart/clear'/>" class="m-0">
-			              <button type="submit" class="btn btn-outline-secondary">장바구니 비우기</button>
-			            </form>
-			          </div>
-			
-			          <div class="text-muted small mt-2">
-			            최종 신청 시 정원/중복시간 등을 서버에서 검증하는 것을 권장합니다.
-			          </div>
-			        </div>
-			      </div>
+			    <div class="col-12 col-lg-4" id="lectureCartArea">
+			      <div class="card-body border-top">
+					    <div class="d-flex justify-content-between mb-2">
+					      <span class="text-muted">합계 학점</span>
+					      <span class="fw-semibold">${cartTotalCredit} 학점</span>
+					    </div>
+					
+					    <div class="d-grid gap-2">
+					      <form method="post" action="<c:url value='/enroll/submit'/>" class="m-0">
+					        <button type="submit" class="btn btn-primary">최종 신청</button>
+					      </form>
+					      <form method="post" action="<c:url value='/enroll/cart/clear'/>" class="m-0">
+					        <button type="submit" class="btn btn-outline-secondary">장바구니 비우기</button>
+					      </form>
+					    </div>
+					
+					    <div class="text-muted small mt-2">
+					      최종 신청 시 정원/중복시간 등을 서버에서 검증하는 것을 권장합니다.
+					    </div>
+					  </div>
 			    </div>
+			    
 			  </div>
 			</div>
 		 </div>
@@ -121,6 +88,6 @@
 	<%@ include file="/footer.jsp" %>
 	
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-	<script type="text/javascript" src="/resources/js/loadLectures.js" defer="defer"></script>
+	<script type="text/javascript" src="/resources/js/enrollmentOnCart.js" defer="defer"></script>
 </body>
 </html>
