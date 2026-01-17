@@ -16,14 +16,15 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+import com.goodeelms.dto.AdminDTO;
 import com.goodeelms.dto.StudentDTO;
 
 /**
  * Servlet Filter implementation class StudentValidFilter
  */
-@WebFilter("/student")
-public class StudentValidFilter extends HttpFilter implements Filter {
-    public StudentValidFilter() {
+@WebFilter("/admin")
+public class AdminValidFilter extends HttpFilter implements Filter {
+    public AdminValidFilter() {
         super();
     }
     
@@ -38,7 +39,7 @@ public class StudentValidFilter extends HttpFilter implements Filter {
     		rsp.sendRedirect("/main.jsp?error=noDTO");
     		return;
     	}
-//    	StudentDTO valid = (StudentDTO)session.getAttribute("studentDTO");
+//    	AdminDTO valid = (AdminDTO)session.getAttribute("adminDTO");
 //    	if(valid == null) {
 //    		HttpServletResponse rsp = (HttpServletResponse)response;
 //    		rsp.sendRedirect("/main.jsp?error=noDTO");
