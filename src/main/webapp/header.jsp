@@ -14,13 +14,13 @@
   <div class="ms-auto d-flex align-items-center gap-2">
     <c:choose>	
       <c:when test="${not empty sessionScope.user_role}">
-        <a class="btn btn-sm btn-outline-light" href="<c:url value='/mypage'/>">마이페이지</a>
-        <a class="btn btn-sm btn-light" href="<c:url value='/logout'/>">로그아웃</a>
+        <a class="btn btn-sm btn-outline-light" href="<c:url value='/student/mypage'/>">마이페이지</a>
+        <a class="btn btn-sm btn-light" href="<c:url value='/common/logout'/>">로그아웃</a>
       </c:when>
       
       <c:otherwise>
-        <a class="btn btn-sm btn-outline-light" href="<c:url value='/login'/>">로그인</a>
-        <a class="btn btn-sm btn-light" href="<c:url value='/signup'/>">회원가입</a>
+        <a class="btn btn-sm btn-outline-light" href="<c:url value='/common/login'/>">로그인</a>
+        <a class="btn btn-sm btn-light" href="<c:url value='/professor/signup'/>">회원가입</a>
       </c:otherwise>
     </c:choose>
   </div> 

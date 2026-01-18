@@ -1,0 +1,89 @@
+package com.goodeelms.controller;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+import java.io.IOException;
+
+import com.goodeelms.dto.StudentDTO;
+import com.goodeelms.service.StudentService;
+import com.goodeelms.util.EncryptUtil;
+import com.goodeelms.util.ExistUtil;
+
+@WebServlet("/student/*")
+public class StudentController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	private final StudentService studentService = new StudentService();
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		checkPath(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		checkPath(request, response);
+	}
+
+	private void checkPath(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String path = request.getPathInfo();
+
+		HttpSession session = request.getSession(false);
+		if (session == null || session.getAttribute("studentDTO") == null) {
+			response.sendRedirect(request.getContextPath() + "/common/login");
+			return;
+		}
+
+		switch (path) {
+		case "/signup":
+			signup(request, response);
+			break;
+		default:
+			response.sendRedirect(request.getContextPath() + "/main.jsp");
+		}
+	}
+
+	private void signup(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String originPw = request.getParameter("origin_student_password");
+		String newPw = request.getParameter("new_student_password");
+		String email = request.getParameter("student_email");
+		String phone = request.getParameter("student_phone");
+		String bank = request.getParameter("student_bank");
+		String address = request.getParameter("student_address");
+
+		HttpSession session = request.getSession();
+		StudentDTO updateStudent = (StudentDTO) session.getAttribute("studentDTO");
+
+		if(newPw.equals(originPw)){	// 기존 비밀번호와 동일하면 다시 입력하도록
+			request.setAttribute("errorMessage", "기존 비밀번호와 동일합니다.");
+			request.getRequestDispatcher("/WEB-INF/views/student/studentSignUp.jsp").forward(request, response);
+			return;
+		} 
+
+		updateStudent.setStudentPassword(newPw); 
+		updateStudent.setStudentEmail(email);
+		updateStudent.setStudentPhone(phone);
+		updateStudent.setStudentBank(bank);
+		updateStudent.setStudentAddress(address);
+		
+		boolean isUpdated = studentService.updateStudent(updateStudent);
+
+		if (isUpdated) {
+	        session.setAttribute("studentDTO", updateStudent);
+	        response.sendRedirect(request.getContextPath() + "/main.jsp");
+	        return;
+	    } else {
+	        request.setAttribute("errorMessage", "이미 사용 중인 이메일/연락처 입니다.");
+	        request.getRequestDispatcher("/WEB-INF/views/student/studentSignUp.jsp").forward(request, response);
+	        return;
+	    }
+	}
+	
+	
+	
+}

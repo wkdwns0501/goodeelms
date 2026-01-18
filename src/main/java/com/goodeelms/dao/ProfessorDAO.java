@@ -13,6 +13,32 @@ public class ProfessorDAO {
 	private ProfessorDAO() {
 	}
 
+	public ProfessorDTO getProfessorByEmail(String professor_email) {
+		String sql = "SELECT * FROM professor WHERE professor_email = ? AND professor_password = ? ";
+		ProfessorDTO dto = null;
+
+		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, professor_email);
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					dto = new ProfessorDTO();
+
+					dto.setProfessorId(rs.getInt("professor_id"));
+					dto.setProfessorName(rs.getString("professor_name"));
+					dto.setProfessorEmail(rs.getString("professor_email"));
+					dto.setProfessorPassword(rs.getString("professor_password"));
+					dto.setProfessorStatus(rs.getString("professor_status"));
+					dto.setProfessorStatus(rs.getString("major_id"));
+				} 
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dto;
+	}
+	
+// =================== 0117 이전 작성 =========================
 	public static ProfessorDAO getInstance() {
 		return instance;
 	}
