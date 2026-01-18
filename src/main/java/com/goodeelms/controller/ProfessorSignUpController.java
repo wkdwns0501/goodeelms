@@ -9,8 +9,10 @@ import java.io.IOException;
 
 import com.goodeelms.dto.ProfessorDTO;
 import com.goodeelms.service.ProfessorSignUpService;
+import com.goodeelms.util.EncryptUtil;
+import com.goodeelms.util.ExistUtil;
 
-@WebServlet("/signup")
+@WebServlet("/professor/signup")
 public class ProfessorSignUpController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -27,26 +29,25 @@ public class ProfessorSignUpController extends HttpServlet {
 		String professor_email = request.getParameter("professor_email");
 		String professor_password = request.getParameter("professor_password");
 		String professor_name = request.getParameter("professor_name");
-		String professor_status = request.getParameter("professor_status");
+		String major_id = request.getParameter("major_id");
 
-		if (professor_name == null || professor_name.isEmpty() || professor_email == null || professor_email.isBlank()
-				|| professor_password == null || professor_password.isBlank()) {
-
+		if (ExistUtil.isNull(professor_email) || ExistUtil.isNull(professor_password)
+				|| ExistUtil.isNull(professor_name) || ExistUtil.isNull(major_id)) {
 			request.setAttribute("errorMessage", "필수 입력값이 누락되었습니다.");
-			request.getRequestDispatcher("/error.jsp").forward(request, response);
+			request.getRequestDispatcher("/WEB-INF/views/professor/professorSignUp.jsp").forward(request, response);
 			return;
 		}
 
 		ProfessorDTO dto = new ProfessorDTO();
-		dto.setProfessorName(professor_name);
 		dto.setProfessorEmail(professor_email);
-		dto.setProfessorPassword(professor_password);
-		dto.setProfessorStatus(professor_status);
+		dto.setProfessorPassword(EncryptUtil.encryptPassword(professor_password));
+		dto.setProfessorName(professor_name);
+		dto.setMajorId(Integer.parseInt(major_id));
 
 		ProfessorSignUpService professorService = new ProfessorSignUpService();
-		int result = professorService.addProfessor(dto);
+		int result = professorService.signup(dto);
 
-		if (result == -2) {
+		if (result == -1) {
 			request.setAttribute("errorMessage", "이미 사용하는 메일입니다.");
 			request.getRequestDispatcher("/WEB-INF/views/professor/professorSignUp.jsp").forward(request, response);
 			return;

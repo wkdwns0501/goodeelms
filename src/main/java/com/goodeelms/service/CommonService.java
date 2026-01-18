@@ -18,7 +18,7 @@ public class CommonService {
 
 		if (id.matches("\\d{9}")) { // 1-1. 아이디가 학번
 			StudentDTO dto = studentDAO.getStudentByNo(id);
-
+			
 			if (dto == null) return null;
 			if (!EncryptUtil.isPasswordMatch(password, dto.getStudentPassword())) return null; // 2. 비밀번호 비교 
 			

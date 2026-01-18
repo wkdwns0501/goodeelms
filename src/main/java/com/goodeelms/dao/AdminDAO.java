@@ -18,7 +18,7 @@ public class AdminDAO {
 	}
 	
 	public AdminDTO getAdminBylogId(String log_id) {
-		String sql = "SELECT * FROM admin WHERE admin_log_id = ?";
+		String sql = "SELECT * FROM admin WHERE admin_login_id = ?";
 		AdminDTO dto = null;
 
 		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -29,7 +29,7 @@ public class AdminDAO {
 					dto = new AdminDTO();
 
 					dto.setAdminId(rs.getInt("admin_id"));
-					dto.setAdminLoginId(rs.getString("admin_log_id"));
+					dto.setAdminLoginId(rs.getString("admin_login_id"));
 					dto.setAdminName(rs.getString("admin_name"));
 					dto.setAdminPassword(rs.getString("admin_password"));
 				} 

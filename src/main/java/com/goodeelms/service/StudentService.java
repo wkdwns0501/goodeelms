@@ -18,7 +18,7 @@ public class StudentService {
 	}
 	
 	// 0118 임욱 추가 - 입력받은 정보로 학생 상태 업데이트
-	public Boolean updateStudent(StudentDTO studentDTO) {
+	public boolean updateStudent(StudentDTO studentDTO) {
 		if(dao.existsStudentUniqueColumn(studentDTO)) {
 			return false; 	// DB에 동일한 UNIQUE 컬럼이 존해할 경우 early return
 		}

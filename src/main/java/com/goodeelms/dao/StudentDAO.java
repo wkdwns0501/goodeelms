@@ -20,7 +20,7 @@ public class StudentDAO {
 		return instance;
 	}
 
-	public Boolean createStudent(StudentDTO dto) {
+	public boolean createStudent(StudentDTO dto) {
 		boolean result = false;
 
 		String sql = "INSERT INTO student (student_name, student_password, student_identity_number, "
@@ -83,7 +83,7 @@ public class StudentDAO {
 		return dto;
 	}
 
-	public Boolean updateStudent(StudentDTO dto) {
+	public boolean updateStudent(StudentDTO dto) {
 	    String sql = "UPDATE student SET student_name = ?, student_phone = ?, "
 	               + "student_address = ?, student_status = ?, " 
 	               + "student_email = ?, student_bank = ?, student_password = ? "

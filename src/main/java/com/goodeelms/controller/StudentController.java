@@ -14,7 +14,10 @@ import com.goodeelms.service.StudentService;
 import com.goodeelms.util.EncryptUtil;
 import com.goodeelms.util.ExistUtil;
 
-@WebServlet("/student/*")
+@WebServlet(urlPatterns = {
+		"/student/signup", 
+		"/student/mypage"}
+)
 public class StudentController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final StudentService studentService = new StudentService();
@@ -31,20 +34,26 @@ public class StudentController extends HttpServlet {
 
 	private void checkPath(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String path = request.getPathInfo();
+		String path = request.getServletPath();
 
 		HttpSession session = request.getSession(false);
 		if (session == null || session.getAttribute("studentDTO") == null) {
-			response.sendRedirect(request.getContextPath() + "/common/login");
-			return;
+			if (!path.equals("/student/login") && !path.equals("/student/signup")) {
+	            response.sendRedirect(request.getContextPath() + "/common/login");
+	            return;
+	        }
 		}
 
 		switch (path) {
-		case "/signup":
+		case "/student/signup":
 			signup(request, response);
 			break;
+		case "/student/mypage":
+			signup(request, response);
+			break;	
 		default:
-			response.sendRedirect(request.getContextPath() + "/main.jsp");
+			// response.sendRedirect(request.getContextPath() + "/main.jsp");
+			System.out.println("정의되지 않은 경로 요청됨: " + path);
 		}
 	}
 
