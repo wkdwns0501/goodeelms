@@ -11,14 +11,17 @@ import java.io.IOException;
 import java.util.Set;
 
 import com.goodeelms.dto.StudentDTO;
+import com.goodeelms.dto.TuitionPaymentDTO;
 import com.goodeelms.service.StudentService;
+import com.goodeelms.service.TuitionService;
 import com.goodeelms.util.EncryptUtil;
 import com.goodeelms.util.ExistUtil;
 
 @WebServlet(urlPatterns = {
 		"/student/signup", 
-		"/student/mypage"}
-)
+		"/student/mypage",
+		"/student/tuition"
+})
 public class StudentController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final StudentService studentService = new StudentService();
@@ -52,6 +55,9 @@ public class StudentController extends HttpServlet {
 		case "/student/mypage":
 			showStudentProfile(request, response);
 			break;	
+		case "/student/tuition":
+			showTuition(request, response);
+			break;		
 		default:
 			// response.sendRedirect(request.getContextPath() + "/main.jsp");
 			System.out.println("정의되지 않은 경로 요청됨: " + path);
@@ -103,6 +109,23 @@ public class StudentController extends HttpServlet {
 		
 		request.getRequestDispatcher("/WEB-INF/views/student/mypage.jsp").forward(request, response);
 		return;
+	}
+	
+	protected void showTuition(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	    HttpSession session = request.getSession();
+	    StudentDTO student = (StudentDTO) session.getAttribute("studentDTO");
+	    
+	    if (student == null) {
+	        response.sendRedirect(request.getContextPath() + "/common/login");
+	        return;
+	    }
+	    
+	    TuitionService tuitionService = new TuitionService();
+	    TuitionPaymentDTO tuition = tuitionService.readTuition(student.getStudentId());
+	    
+	    request.setAttribute("tuition", tuition);
+	    request.getRequestDispatcher("/WEB-INF/views/student/tuition.jsp").forward(request, response);
+	    return;
 	}
 	
 }
