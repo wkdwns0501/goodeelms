@@ -85,7 +85,7 @@ public class StudentDAO {
 
 	public boolean updateStudent(StudentDTO dto) {
 	    String sql = "UPDATE student SET student_name = ?, student_phone = ?, "
-	               + "student_address = ?, student_status = ?, " 
+	               + "student_address = ?, student_status = ?, student_gender = ?, "
 	               + "student_email = ?, student_bank = ?, student_password = ? "
 	               + "WHERE student_id = ?";
 	    boolean result = false;
@@ -97,13 +97,14 @@ public class StudentDAO {
 	        pstmt.setString(2, dto.getStudentPhone());
 	        pstmt.setString(3, dto.getStudentAddress());
 	        pstmt.setString(4, dto.getStudentStatus());
-	        pstmt.setString(5, dto.getStudentEmail());
-	        pstmt.setString(6, dto.getStudentBank());
-	        pstmt.setString(7, dto.getStudentPassword()); 
-	        pstmt.setInt(8, dto.getStudentId());
+	        pstmt.setString(5, dto.getStudentGender());
+	        pstmt.setString(6, dto.getStudentEmail());
+	        pstmt.setString(7, dto.getStudentBank());
+	        pstmt.setString(8, dto.getStudentPassword()); 
+	        pstmt.setInt(9, dto.getStudentId());
 
-	        int querryResult = pstmt.executeUpdate();
-	        if(querryResult > 0) result = true;
+	        int queryResult = pstmt.executeUpdate();
+	        if(queryResult > 0) result = true;
 	    } catch (Exception e) {
 	        System.out.println("updateStudent() 예외: " + e.getMessage());
 	        e.printStackTrace();

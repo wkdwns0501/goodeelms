@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.Set;
 
 import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.service.StudentService;
@@ -49,7 +50,7 @@ public class StudentController extends HttpServlet {
 			signup(request, response);
 			break;
 		case "/student/mypage":
-			signup(request, response);
+			showStudentProfile(request, response);
 			break;	
 		default:
 			// response.sendRedirect(request.getContextPath() + "/main.jsp");
@@ -93,6 +94,15 @@ public class StudentController extends HttpServlet {
 	    }
 	}
 	
-	
+	private void showStudentProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		StudentDTO dto = (StudentDTO)session.getAttribute("studentDTO");
+		dto = new StudentService().getStudentByNo(dto);
+		
+		session.setAttribute("studentDTO", dto);
+		
+		request.getRequestDispatcher("/WEB-INF/views/student/mypage.jsp").forward(request, response);
+		return;
+	}
 	
 }
