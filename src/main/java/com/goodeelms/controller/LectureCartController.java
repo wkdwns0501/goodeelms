@@ -37,7 +37,7 @@ public class LectureCartController extends HttpServlet {
 		
 		System.out.println("cartDoGet 호출됨");
 		
-		// 한 학생이 갖고있는 강의ID 다 긁어오기
+		// 한 학생이 장바구니에 갖고있는 강의ID 다 긁어오기
 		LectureCartService selectCartService = new LectureCartService();
 		List<PreEnrollmentDTO> cartList = selectCartService.getCartDataOfStudent(studentId);
 		
@@ -53,7 +53,7 @@ public class LectureCartController extends HttpServlet {
 		if(lectureIdSet.size() > 0) {
 			// 강의ID로 강의 긁어올 때, 강의 아이디랑 일치하면서 지금 시간대인 것(년도, 학기)
 			LoadLectureService selectLectureService = new LoadLectureService();
-			lectureList = selectLectureService.getLectureOfStudent(lectureIdSet);
+			lectureList = selectLectureService.getLectureOfStudentCart(lectureIdSet);
 		}
 		
 		request.setAttribute("totalCount", lectureList.size());

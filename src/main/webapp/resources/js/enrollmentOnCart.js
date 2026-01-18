@@ -18,7 +18,7 @@ function setActiveBtn(cat){
 
 async function loadLectures(cat, word, page = 1){
 	
-	const url = new URL(window.location.origin + '/loadLecture');
+	const url = new URL(window.location.origin + '/student/loadLecture');
 	
 	url.searchParams.set('cat', cat);
 	url.searchParams.set('id', userId);

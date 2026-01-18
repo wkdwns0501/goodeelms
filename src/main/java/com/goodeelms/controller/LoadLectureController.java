@@ -21,7 +21,7 @@ import com.goodeelms.service.StudentService;
 /**
  * Servlet implementation class LoadLectureServlet
  */
-@WebServlet("/loadLecture")
+@WebServlet("/student/loadLecture")
 public class LoadLectureController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -70,8 +70,9 @@ public class LoadLectureController extends HttpServlet {
 			return;
 		}
 		
+		// 학생의 학과 정보 불러오기
 		List<StudentMajorDTO> majorList = stuS.getMajors(student_id);
-		
+		// 학과 정보가 없으면 안됨
 		if(majorList == null || majorList.size() == 0) {
 			System.out.println("알 수 없는 오류");
 			response.sendRedirect("/main.jsp");

@@ -21,7 +21,7 @@ import com.goodeelms.dto.StudentDTO;
 /**
  * Servlet Filter implementation class StudentValidFilter
  */
-@WebFilter("/student")
+@WebFilter("/student/*")
 public class StudentValidFilter extends HttpFilter implements Filter {
     public StudentValidFilter() {
         super();
@@ -32,7 +32,13 @@ public class StudentValidFilter extends HttpFilter implements Filter {
     
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
     	HttpSession session = getSession(request);
-    	String valid = ((Integer)session.getAttribute("student_id")).toString();
+    	String valid = null;
+    	try {
+    		valid = ((Integer)session.getAttribute("student_id")).toString();
+    	}
+    	catch(NullPointerException e) {
+    		valid = null;
+    	}
     	if(valid == null || valid.isBlank()) {
     		HttpServletResponse rsp = (HttpServletResponse)response;
     		rsp.sendRedirect("/main.jsp?error=noDTO");

@@ -24,16 +24,16 @@ public class SelectLectureDAO {
 		
 	}
 	
-	public List<LectureDTO> SelectLectureOnCartDuration(String cat, String searchWord, int viewPage, int viewLen, Set<Integer> idSet, int ...majorIds){
+	public List<LectureDTO> SelectLectures(String cat, String searchWord, int viewPage, int viewLen, Set<Integer> lectureIdSet, Set<Integer> professorIdSet, int ...majorIds){
 		String sql = "SELECT  lecture_id, lecture_code, lecture_name, lecture_description, lecture_room, lecture_credit, lecture_type, "
-				+ "lecture_capacity, major.major_name, pro.professor_name, lecture_current_people ";
+				+ "lecture_capacity, major_id, professor_id, lecture_current_people ";
 		
-		// 공통 쿼리 조건 삽입
-		sql += getQueryString(sql, searchWord, cat, idSet, majorIds);
+		// 쿼리 조건 삽입
+		sql += getQueryString(searchWord, cat, lectureIdSet, professorIdSet);
 
 		sql += "ORDER BY lecture_id DESC LIMIT ? OFFSET ?";
 		
-		try(PreparedStatement pstmt = getPrepareStatement(sql, searchWord, cat, idSet, majorIds)){
+		try(PreparedStatement pstmt = getPrepareStatement(sql, searchWord, cat, lectureIdSet, professorIdSet, majorIds)){
 			// Limit, Offset
 			pstmt.setInt(queryIndex++, viewLen);
 			pstmt.setInt(queryIndex++, (viewPage - 1) * viewLen);
@@ -51,8 +51,8 @@ public class SelectLectureDAO {
 					dto.setLectureType(rs.getString("lecture_type"));
 					dto.setLectureCurrentPeople(Integer.parseInt(rs.getString("lecture_current_people")));
 					dto.setLectureCapacity(Integer.parseInt(rs.getString("lecture_capacity")));
-					dto.setMajorName(rs.getString("major_name"));
-					dto.setProfessorName(rs.getString("professor_name"));
+					dto.setMajorId(rs.getInt("major_id"));
+					dto.setProfessorId(rs.getInt("professor_id"));
 					list.add(dto);
 				}
 				return list;
@@ -64,13 +64,13 @@ public class SelectLectureDAO {
 		return null;
 	}
 	
-	public int getLectureListOnCartCount(String cat, String searchWord, Set<Integer> idSet, int ...majorIds) {
+	public int getLectureListOnCartCount(String cat, String searchWord, Set<Integer> lectureIdSet, Set<Integer> professorIdSet, int ...majorIds) {
 		String sql = "SELECT COUNT(*) as cnt ";
 
 		// 공통 쿼리 조건 삽입
-		sql += getQueryString(sql, searchWord, cat, idSet, majorIds);
+		sql += getQueryString(searchWord, cat, lectureIdSet, professorIdSet);
 		
-		try(PreparedStatement pstmt = getPrepareStatement(sql, searchWord, cat, idSet, majorIds)){
+		try(PreparedStatement pstmt = getPrepareStatement(sql, searchWord, cat, lectureIdSet, professorIdSet, majorIds)){
 
 			try(ResultSet rs = pstmt.executeQuery()){
 				if(rs.next()) {
@@ -121,8 +121,6 @@ public class SelectLectureDAO {
 					dto.setLectureDescription(rs.getString("lecture_description"));
 					dto.setLectureRoom(rs.getString("lecture_room"));
 					dto.setLectureCredit(Integer.parseInt(rs.getString("lecture_credit")));
-					dto.setLectureType(rs.getString("lecture_year"));
-					dto.setLectureType(rs.getString("lecture_year"));
 					dto.setLectureType(rs.getString("lecture_type"));
 					dto.setLectureCurrentPeople(Integer.parseInt(rs.getString("lecture_current_people")));
 					dto.setLectureCapacity(Integer.parseInt(rs.getString("lecture_capacity")));
@@ -142,27 +140,31 @@ public class SelectLectureDAO {
 		return null;
 	}
 	
-	public String getQueryString(String sql, String searchWord, String cat, Set<Integer> idSet, int ...majorIds) {
+	public String getQueryString(String searchWord, String cat, Set<Integer> lectureIdSet, Set<Integer> professorIdSet) {
 		// 공통 조건
 		StringBuilder sb = new StringBuilder();
-		sb.append("FROM lecture AS lec ");
-		sb.append("JOIN major ON lec.major_id = major.major_id ");
-		sb.append("JOIN PROFESSOR AS pro ON lec.PROFESSOR_ID = pro.PROFESSOR_ID ");
+		sb.append("FROM lecture ");
 		sb.append("WHERE lecture_semester = ? ");
 		sb.append("AND lecture_year = ? ");
 		
 		if(!"all".equals(cat)) sb.append("AND lecture_type = ? ");
-		if(!"liberal".equals(cat) && !"all".equals(cat)) sb.append("AND lec.major_id = ? ");	// 학생 major_id를 어디서 받아야함
-		// else if("all".equals(cat) && majorIds.length > 1) sb.append("AND (lec.major_id = ? OR lec.major_id = ?) ");
-		if(searchWord != null && !searchWord.isBlank()) sb.append("AND (lec.lecture_name LIKE ? OR pro.professor_name LIKE ?)");
-		if(idSet.size() > 0) {
-			sb.append(" AND lecture_id NOT IN (" + idSet.stream().map(item -> "?").collect(Collectors.joining(",")) + ")");
+		if(!"liberal".equals(cat) && !"all".equals(cat)) sb.append("AND major_id = ? ");	// 학생 major_id를 어디서 받아야함
+		if(searchWord != null && !searchWord.isBlank()) {
+			sb.append("AND (lecture_name LIKE ? ");
+			// 교수명으로 검색한 결과가 있으면
+			if(professorIdSet.size() > 0) {
+				sb.append("OR professor_id IN(" + professorIdSet.stream().map(id -> "?").collect(Collectors.joining(",")) + ")");
+			}
+			sb.append(")");
+		}
+		if(lectureIdSet.size() > 0) {
+			sb.append(" AND lecture_id NOT IN (" + lectureIdSet.stream().map(item -> "?").collect(Collectors.joining(",")) + ")");
 		}
 		
 		return sb.toString();
 	}
 	
-	public PreparedStatement getPrepareStatement(String sql, String searchWord, String cat, Set<Integer> idSet, int ...majorIds) throws SQLException{
+	public PreparedStatement getPrepareStatement(String sql, String searchWord, String cat, Set<Integer> lectureIdSet, Set<Integer> professorIdSet, int ...majorIds) throws SQLException{
 		queryIndex = 1;
 		// 날짜
 		LocalDateTime dateTime = LocalDateTime.now();
@@ -188,10 +190,14 @@ public class SelectLectureDAO {
 		else if("minor".equals(cat)) pstmt.setInt(queryIndex++, majorIds[1]);
 		if(searchWord != null && !searchWord.isBlank()) {
 			pstmt.setString(queryIndex++, "%" + searchWord.trim() + "%");
-			pstmt.setString(queryIndex++, "%" + searchWord.trim() + "%");
+			if(professorIdSet.size() > 0) {
+				for(Integer id : professorIdSet) {
+					pstmt.setInt(queryIndex++, id);
+				}
+			}
 		}
-		if(idSet.size() > 0) {
-			for(Integer id : idSet) {
+		if(lectureIdSet.size() > 0) {
+			for(Integer id : lectureIdSet) {
 				pstmt.setInt(queryIndex++, id);
 			}
 		}

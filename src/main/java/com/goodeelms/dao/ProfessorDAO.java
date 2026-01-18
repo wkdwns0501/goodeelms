@@ -49,6 +49,32 @@ public class ProfessorDAO {
 		return dto;
 	}
 	
+	// 이름으로 ID 찾기 -> 검색어
+	// 동명이인 때문에 LIST
+	public List<ProfessorDTO> getProfessorIdsFromName(String name) {
+		String sql = "SELECT * FROM professor WHERE professor_name LIKE ?";
+		
+		try(Connection conn = DBUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)){
+			pstmt.setString(1, "%" + name.trim() + "%");
+			try(ResultSet rs = pstmt.executeQuery()){
+				List<ProfessorDTO> list = new ArrayList<ProfessorDTO>();
+				while(rs.next()) {
+					ProfessorDTO dto = new ProfessorDTO();
+					dto.setProfessorId(rs.getInt("professor_id"));
+					dto.setProfessorName(rs.getString("professor_name"));
+					
+					list.add(dto);
+				}
+				return list;
+			}
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public List<ProfessorDTO> getTargetProfessor(Set<Integer> professorIdSet){
 		String sql = "SELECT * FROM professor WHERE professor_id IN ("
 				+ professorIdSet.stream().map(id -> "?").collect(Collectors.joining(",")) + ")";
