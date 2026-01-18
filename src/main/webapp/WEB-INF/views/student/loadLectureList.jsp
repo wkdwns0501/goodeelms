@@ -41,7 +41,7 @@
 	          <td class="text-center">
             	<!-- 장바구니 담기: POST 권장 -->
 	            <button type="submit" class="btn btn-sm btn-outline-success add-cart" 
-	            	data-lec="${lec.lectureId}" data-stu ="${sessionScope.student_id}">
+	            	data-lec="${lec.lectureId}" data-stu ="${sessionScope.student_id}" data-credit="${lec.lectureCredit}">
 	              장바구니 추가
 	            </button>
 	          </td>

@@ -74,7 +74,7 @@ public class LoadLectureService {
 		}
 		
 		Map<Integer, String> majorMap = getMajorNames(majorIdSet);
-		Map<Integer, String> professorMap = getMajorNames(professorIdSet);
+		Map<Integer, String> professorMap = getprofessorNames(professorIdSet);
 		
 		for(LectureDTO dto : list) {
 			dto.setMajorName(majorMap.getOrDefault(dto.getMajorId(),"미지정"));

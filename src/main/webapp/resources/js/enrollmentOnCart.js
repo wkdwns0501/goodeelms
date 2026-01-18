@@ -7,8 +7,14 @@ const cartArea = document.querySelector("#lectureCartArea");
 const userId = document.querySelector("#sessionUserId")?.value;
 const searchForm = document.querySelector("#lectureSearchForm");
 
+// 강의 목록
 let currentCat = "all";
 let currentWord = "";
+let currentPage = 1;
+
+// 장바구니
+let totalCartCredit = 0;
+let limitCartCredit = 0;
 
 function setActiveBtn(cat){
 	document.querySelectorAll(".is-cat").forEach(btn =>{
@@ -16,7 +22,7 @@ function setActiveBtn(cat){
 	});
 }
 
-async function loadLectures(cat, word, page = 1){
+async function loadLectures(cat, word, page){
 	
 	const url = new URL(window.location.origin + '/student/loadLecture');
 	
@@ -45,6 +51,7 @@ async function loadLectures(cat, word, page = 1){
 	
 	currentCat = cat;
 	currentWord = word;
+	currentPage = page;
 }
 
 async function loadCart(){
@@ -63,11 +70,20 @@ async function loadCart(){
 	
 	const html = await res.text();
 	cartArea.innerHTML = html;
-	
-	loadLectures(currentCat,currentWord);
+
+	// 장바구니 html에서 요소 얻기	
+	const creditArea = document.querySelector("#lectureCartArea").querySelector("#creditInfo");
+	totalCartCredit = creditArea.dataset.total;
+	limitCartCredit = creditArea.dataset.limit;
+	loadLectures(currentCat,currentWord, currentPage);
 }
 
-async function addCartLecture(lecId, stuId){
+async function addCartLecture(lecId, stuId, credit){
+	if(!credit) return;
+	if(Number(totalCartCredit) + Number(credit) > Number(limitCartCredit)){
+		alert("최대 학점을 초과할 수 없습니다.")
+		return;
+	}
 	const url = new URL(window.location.origin + "/student/cart/addCart");
 	
 	const res = await fetch(url.toString(), {
@@ -117,7 +133,7 @@ document.querySelectorAll(".is-cat").forEach(btn => {
 	btn.addEventListener('click', async() => {
 		const cat = btn.dataset.cat;
 		setActiveBtn(cat);
-		await loadLectures(cat, currentWord);
+		await loadLectures(cat, currentWord, 1);
 	});
 });
 
@@ -138,8 +154,9 @@ listArea.addEventListener('click', async(e) =>{
 	else if (c){
 		const addLec = c.dataset.lec;
 		const addstu = c.dataset.stu;
+		const credit = c.dataset.credit;
 		
-		await addCartLecture(addLec, addstu);
+		await addCartLecture(addLec, addstu, credit);
 	}
 	
 });
@@ -163,7 +180,7 @@ searchForm.addEventListener('submit', async (e) => {
 	e.preventDefault();
 	const word = document.querySelector("#lectureKeyword").value;
 	
-	await loadLectures(currentCat, word);
+	await loadLectures(currentCat, word, 1);
 })
 
 loadCart();

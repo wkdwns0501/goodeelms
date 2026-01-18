@@ -87,7 +87,8 @@ public class SelectLectureDAO {
 	public List<LectureDTO> getLecturesOfStudent(Set<Integer> lectureIdSet){
 		String sql = "SELECT * FROM lecture WHERE lecture_id IN (" +
 				lectureIdSet.stream().map(id -> "?").collect(Collectors.joining(",")) + ") " +
-				"AND lecture_year = ? AND lecture_semester = ?";
+				"AND lecture_year = ? AND lecture_semester = ?"
+				+ " ORDER BY lecture_name";
 		try(Connection conn = DBUtil.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql)){
 			

@@ -58,6 +58,8 @@ public class LectureCartController extends HttpServlet {
 		
 		request.setAttribute("totalCount", lectureList.size());
 		request.setAttribute("lectureList", lectureList);
+		// Limit 학점
+		request.setAttribute("limitCartCredit", 21);
 		// 강의 리스트에서 장바구니 담긴 강의 빼야해서 세션에 저장함
 		session.setAttribute("lectureIdSet", lectureIdSet);
 		

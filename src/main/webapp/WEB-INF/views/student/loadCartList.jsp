@@ -8,6 +8,7 @@
   </div>
 
   <div class="list-group list-group-flush">
+  	<c:set var="totalCartCredit" value = "0"/>
     <!-- 예시: cartItems -->
     <c:forEach var="lec" items="${lectureList}">
       <div class="list-group-item">
@@ -16,6 +17,7 @@
             <div class="fw-semibold">${lec.lectureName}</div>
             <div class="text-muted small">
               ${lec.majorName} · ${lec.professorName} · ${lec.lectureCredit}학점
+              <c:set var="totalCartCredit" value="${totalCartCredit + lec.lectureCredit}"/>
             </div>
           </div>
 
@@ -23,7 +25,27 @@
         </div>
       </div>
     </c:forEach>
-		<input type="hidden" id="hiddenListInput" data-cartList="${cartList}">
+    <div class="card-body border-top">
+	    <div class="d-flex justify-content-between mb-2">
+	      <span class="text-muted">합계 학점</span>
+	      <span class="fw-semibold" id="creditInfo" data-total="${totalCartCredit}" data-limit="${limitCartCredit}">
+	      ${totalCartCredit} / ${limitCartCredit} 학점
+	      </span>
+	    </div>
+	
+	    <div class="d-grid gap-2">
+	      <form method="post" action="<c:url value='/enroll/submit'/>" class="m-0">
+	        <button type="submit" class="btn btn-primary">최종 신청</button>
+	      </form>
+	      <form method="post" action="<c:url value='/enroll/cart/clear'/>" class="m-0">
+	        <button type="submit" class="btn btn-outline-secondary">장바구니 비우기</button>
+	      </form>
+	    </div>
+	
+	    <div class="text-muted small mt-2">
+	      최종 신청 시 정원/중복시간 등을 서버에서 검증하는 것을 권장합니다.
+	    </div>
+	  </div>
     <c:if test="${empty lectureList}">
       <div class="list-group-item text-center text-muted py-4">
         장바구니가 비어있습니다.
