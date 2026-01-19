@@ -13,7 +13,7 @@
     <a class="nav-link" href="<c:url value='/grades'/>"><span class="nav-label">성적조회</span></a>
     <a class="nav-link" href="<c:url value='/notice'/>"><span class="nav-label">공지사항</span></a>
     <%-- <c:if test="${not empty sessionScope.adminId}"> --%>
-		<a class="nav-link" href="<c:url value='/dashboard'/>"><span class="nav-label">대시보드</span></a>
+	<a class="nav-link" href="<c:url value='/dashboard'/>"><span class="nav-label">대시보드</span></a>
     <a class="nav-link" href="<c:url value='/studentStatus/page'/>"><span class="nav-label">학사관리</span></a>
     <a class="nav-link" href="<c:url value='/professorManage/page'/>"><span class="nav-label">계정관리</span></a>
     <a class="nav-link" href="<c:url value='/addStudent/list'/>"><span class="nav-label">학생등록</span></a>
