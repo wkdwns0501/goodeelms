@@ -6,7 +6,7 @@ import com.goodeelms.dao.LectureDAO;
 import com.goodeelms.dto.LectureDTO;
 
 public class LectureService {
-	private LectureDAO dao = LectureDAO.getInstance();
+	private LectureDAO lectureDAO = LectureDAO.getInstance();
 	
 	private static final LectureService instance = new LectureService();
 	
@@ -26,7 +26,7 @@ public class LectureService {
 	    validateForInsert(lecture);
 
 	    // 교수 학과 조회
-	    int majorId = dao.findMajorIdByProfessorId(lecture.getProfessorId());
+	    int majorId = lectureDAO.findMajorIdByProfessorId(lecture.getProfessorId());
 	    if (majorId <= 0) {
 	        throw new IllegalArgumentException("교수의 학과 정보를 찾을 수 없습니다.");
 	    }
@@ -36,19 +36,19 @@ public class LectureService {
 	    String name = lecture.getLectureName().trim();
 	    String type = lecture.getLectureType().trim();
 
-	    Integer existingCode = dao.findLectureCode(
+	    Integer existingCode = lectureDAO.findLectureCode(
 	        majorId, name, lecture.getLectureCredit(), type
 	    );
 
 	    if (existingCode != null) { // 존재하면
 	        lecture.setLectureCode(existingCode);
 	    } else { // 없다면 (처음 생성이라면)
-	        String majorCode = dao.findMajorCodeByMajorId(majorId);
-	        Integer maxLectureCode = dao.findMaxLectureCodeByMajorId(majorId);
+	        String majorCode = lectureDAO.findMajorCodeByMajorId(majorId);
+	        Integer maxLectureCode = lectureDAO.findMaxLectureCodeByMajorId(majorId);
 	        lecture.setLectureCode(generateLectureCode(majorCode, maxLectureCode));
 	    }
 	    
-	    int opened = dao.countSections(
+	    int opened = lectureDAO.countSections(
 	    	    lecture.getProfessorId(),
 	    	    lecture.getLectureCode(),
 	    	    lecture.getLectureYear(),
@@ -64,7 +64,7 @@ public class LectureService {
     	}
 	    
 	    try {
-	        return dao.insertLecture(lecture);
+	        return lectureDAO.insertLecture(lecture);
 	    } catch (RuntimeException e) {
 	        throw new IllegalArgumentException("이미 개설된 강의입니다. (중복 또는 제약조건 오류)");
 	    }
@@ -150,12 +150,12 @@ public class LectureService {
         if (page < 1) page = 1;
         if (limit < 1) limit = 5;
 
-        int majorId = dao.findMajorIdByProfessorId(professorId);
+        int majorId = lectureDAO.findMajorIdByProfessorId(professorId);
         if (majorId <= 0) {
             throw new IllegalArgumentException("교수의 학과 정보(major_id)를 찾을 수 없습니다.");
         }
 
-        return dao.findPageByMajor(majorId, page, limit, keyword);
+        return lectureDAO.findPageByMajor(majorId, page, limit, keyword);
     }
     
     // 페이징을 위한 교수가 속한 학과의 강의 수
@@ -163,11 +163,11 @@ public class LectureService {
         if (professorId <= 0) {
             throw new IllegalArgumentException("교수 정보가 올바르지 않습니다.");
         }
-        int majorId = dao.findMajorIdByProfessorId(professorId);
+        int majorId = lectureDAO.findMajorIdByProfessorId(professorId);
         if (majorId <= 0) {
             throw new IllegalArgumentException("교수의 학과 정보(major_id)를 찾을 수 없습니다.");
         }
-        return dao.countByMajor(majorId, keyword);
+        return lectureDAO.countByMajor(majorId, keyword);
     }
     
 }
