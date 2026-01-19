@@ -30,16 +30,17 @@
 				</div>
 				
 				<!-- 에러 메시지 영역 (컨트롤러에서 request.setAttribute("error", "...") 했을 때) -->
-				<%-- <c:if test="${not empty error}">
-				  <div class="alert alert-danger mb-3 py-2" role="alert">
-				    ${error}
+				<c:if test="${not empty error}">
+				  <div id="errorAlert" class="alert alert-danger mb-3 py-2" role="alert">
+				    <c:out value="${error}"/>
 				  </div>
-				</c:if> --%>
+				</c:if>
+
 				
 				<div class="card shadow-sm border-0">
 				  <div class="card-body">
 				
-				    <form id="lectureForm" method="post" action="<c:url value='/lecture/insert'/>" novalidate>
+				    <form id="lectureForm" method="post" action="<c:url value='/professor/lecture/insert'/>" novalidate>
 				      <div class="row g-3">
 				
 				        <!-- 강의명 -->
