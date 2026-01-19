@@ -33,6 +33,16 @@
 	</main>
   
   <%@ include file="footer.jsp" %>
+  
+  <c:if test="${not empty param.error}">
+	  <c:choose>
+	  	<c:when test="${param.error == 'noDTO'}">
+	  		<script type="text/javascript">
+	  			alert("로그인 후 이용 가능합니다.");
+	  		</script>
+	  	</c:when>
+	  </c:choose>
+  </c:if>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

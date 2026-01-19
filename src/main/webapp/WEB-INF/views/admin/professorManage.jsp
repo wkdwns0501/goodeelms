@@ -44,7 +44,9 @@ function checkForm(form) {
   <main class="content">
     <div class="container-fluid">
       <div class="page-shell">
-        <h5 class="mb-2">계정관리</h5>
+        <div>
+		 <h5 class="mb-1">계정관리</h5>
+	    </div>
 
         <!-- 검색 영역 -->
         <form action="<c:url value='/professorManage/search'/>" method="get" class="row g-2 mb-3">

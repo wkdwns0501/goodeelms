@@ -32,6 +32,13 @@ function validateStudentForm() {
 
   return true;
 }
+
+function autoHyphen(target) {
+	  target.value = target.value
+	    .replace(/[^0-9]/g, '') // 숫자가 아닌 문자 제거
+	    .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3") // 그룹화
+	    .replace(/(\-{1,2})$/g, ""); // 마지막에 남는 하이픈 제거
+	}
 </script>
 </head>
 <body>
@@ -42,7 +49,7 @@ function validateStudentForm() {
 		    <div class="row g-3">
 		
 		      <!-- 좌측: 학생 등록 -->
-		      <div class="col-md-4">
+		      <div class="col-md-3">
 		        <div class="card h-100">
 		          <div class="card-header">
 		            <strong>학생 등록</strong>
@@ -69,8 +76,21 @@ function validateStudentForm() {
 					      </select>
 					    </div>
 					  </div>
-					
-					  <!-- 2열: 주민등록번호 -->
+					  
+					  <!-- 2열: 전공 -->
+					  <div class="row mb-2">
+					    <div class="col-md-12">
+					      <label class="form-label">학과</label>
+							<select name="majorId" class="form-select form-select-sm" required>
+						      <option value="" selected disabled>-- 학과 선택 --</option>
+							      <c:forEach var="m" items="${majorList}">
+							        <option value="${m.majorId}">${m.majorName}</option>
+							      </c:forEach>
+						    </select>
+					    </div>
+					  </div>
+					  
+					  <!-- 3열: 주민등록번호 -->
 					  <div class="row mb-2">
 					    <div class="col-md-6">
 					      <label class="form-label">주민등록번호 앞자리</label>
@@ -86,7 +106,7 @@ function validateStudentForm() {
 					    </div>
 					  </div>
 					
-					  <!-- 4열: 학번 -->
+					  <!-- 4열: 학번, phone -->
 					  <div class="row mb-3">				
 					    <div class="col-md-6">
 					      <label class="form-label">학번</label>
@@ -95,13 +115,14 @@ function validateStudentForm() {
 					             required>
 					    </div>
 					    <div class="col-md-6">
-						  <label class="form-label">Phone(-제외)</label>
+						  <label class="form-label">핸드폰 번호</label>
 						  <input type="text" name="studentPhone"
 						         class="form-control form-control-sm"
-						         placeholder="01012345678"
-						         maxlength="11" 
-						         pattern="01[0][0-9]{7,8}" 
-						         title="숫자만 입력 가능하며, 010으로 시작하는 10~11자리여야 합니다."
+						         placeholder="010-1234-5678"
+						         maxlength="13" 
+						         pattern="010-[0-9]{3,4}-[0-9]{4}" 
+						         title="010-0000-0000 형식으로 입력해주세요."
+						         oninput="autoHyphen(this)"
 						         required>
 						</div>
 					  </div>
@@ -118,7 +139,7 @@ function validateStudentForm() {
 		      </div>
 		
 		      <!-- 우측: 학생 조회 -->
-		      <div class="col-md-8">
+		      <div class="col-md-9">
 		        <div class="card">
 		          <div class="card-header">
 		            <strong>학생 목록</strong>

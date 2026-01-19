@@ -49,7 +49,6 @@
 		</c:choose>
 	</div>
 
-
 </header>
 
 <script>

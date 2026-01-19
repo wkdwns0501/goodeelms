@@ -2,7 +2,6 @@
  * 
  * 
  */
-console.log("insertLecture.js loaded");
 
 (function () {
   const form = document.querySelector("#lectureForm");
@@ -18,7 +17,7 @@ console.log("insertLecture.js loaded");
   const descEl = document.getElementById("lecture_description");
   const buildingEl = document.getElementById("building_id");
 
-  // 에러 메세지 요소들
+  // 에러 요소들
   const nameErr = document.getElementById("lectureNameError");
   const typeErr = document.getElementById("typeError");
   const creditErr = document.getElementById("creditError");
@@ -70,7 +69,6 @@ console.log("insertLecture.js loaded");
 	  });
 	}
 
-
   // submit 때 전체 검증
   form.addEventListener("submit", function (e) {
     let ok = true;
@@ -119,7 +117,7 @@ console.log("insertLecture.js loaded");
       ok = false;
     }
 
-    // 설명 1000자 이하(선택)
+    // 설명 1000자 이하
     if (descEl && descEl.value.length > 1000) {
       descErr.classList.remove("d-none");
       descEl.classList.add("is-invalid");
@@ -137,3 +135,13 @@ console.log("insertLecture.js loaded");
     if (!ok) e.preventDefault();
   });
 })();
+
+
+// 서버에서 넘어온 error alert은 5초 후 자동 숨김
+const errorAlert = document.getElementById("errorAlert");
+if (errorAlert) {
+  setTimeout(() => {
+    errorAlert.classList.add("d-none");
+  }, 5000);
+}
+

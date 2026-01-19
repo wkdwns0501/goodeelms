@@ -3,6 +3,7 @@ package com.goodeelms.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.goodeelms.dto.ProfessorDTO;
@@ -19,7 +20,34 @@ public class ProfessorManageDAO {
 		return instance;
 	}
 	
+	// 교수 전체 목록 조회
+	public ArrayList<ProfessorDTO> getAllProfessorList() {
+		String sql = "SELECT professor_id, professor_name, m.major_name, professor_email, professor_status " +
+					 "FROM professor p JOIN major m ON p.major_id = m.major_id " +
+					 "ORDER BY m.major_name, professor_name";
+		
+		ArrayList<ProfessorDTO> list = new ArrayList<ProfessorDTO>();
+		
+		try(Connection conn = DBUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			
+			try(ResultSet rs = pstmt.executeQuery()) {
+				while(rs.next()) {
+					ProfessorDTO professorDTO = new ProfessorDTO();
+					professorDTO.setProfessorId(rs.getInt("professor_id"));
+					professorDTO.setProfessorName(rs.getString("professor_name"));
+					professorDTO.setMajorName(rs.getString("m.major_name"));
+					professorDTO.setProfessorEmail(rs.getString("professor_email"));
+					professorDTO.setProfessorStatus(rs.getString("professor_status"));
+					list.add(professorDTO);
+				}
+			}			
+		} catch (Exception e) {
+			System.out.println("getAllProfessorList() 예외 발생: " + e);
+		} return list;
+	}
 	
+	// 검색 조건에 따른 교수 목록 조회(학생 학적 변경에서의 로직과 동일)
 	public ArrayList<ProfessorDTO> getProfessorList(String professorName, String majorName, String professorEmail) {
 		String sql = "SELECT professor_id, professor_name, professor_email, professor_status, m.major_name " +
 					 "FROM professor p JOIN major m ON p.major_id = m.major_id " +
@@ -75,7 +103,8 @@ public class ProfessorManageDAO {
 			System.out.println("getProfessorList() 예외 발생: " + e);
 		} return list;
 	}
-
+	
+	// professor 테이블의 status 변경
 	public int updateProfessorStatus(String professorId, String newProfessorStatus) {
 		String sql = "UPDATE professor SET professor_status = ? WHERE professor_id = ? ";
 		
@@ -89,12 +118,9 @@ public class ProfessorManageDAO {
 			return 0;
 		} 
 	}
-		
-		
 
-		
-		
-	}
+
+}
 	
 	
 	

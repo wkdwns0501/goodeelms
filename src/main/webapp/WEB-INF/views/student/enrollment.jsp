@@ -28,28 +28,38 @@
 			    </div>
 			  </div>
 			
-			  <!-- 카테고리 + 검색 (같은 줄) -->
-				<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3 col-12 col-lg-8 px-2">
-				
-				  <!-- 좌측: 카테고리 버튼 -->
-				  <div class="btn-group btn-group-sm" role="group" aria-label="category">
-				    <input type="hidden" id="sessionUserId" value="20230050">
-				    <button class="btn btn-outline-dark is-cat active" data-cat="all">전체 강의</button>
-				    <button class="btn btn-outline-dark is-cat" data-cat="major">전공</button>
-				    <button class="btn btn-outline-dark is-cat" data-cat="minor">부전공</button>
-				    <button class="btn btn-outline-dark is-cat" data-cat="liberal">교양</button>
+			  <!-- 카테고리 + 검색 + 남은 시간(같은 줄) -->
+				<div class="row g-3 align-items-center mb-3">
+				  <!-- 좌측: 카테고리 + 검색 -->
+				  <div class="col-12 col-lg-8">
+				    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+				      <input type="hidden" id="sessionUserId" value="${sessionScope.student_id}">
+				      <!-- 카테고리 버튼 -->
+				      <div class="btn-group btn-group-sm" role="group" aria-label="강의 카테고리">
+				        <!-- 접근성: 현재 선택 상태 표시 -->
+				        <button type="button" class="btn btn-outline-dark is-cat active" data-cat="all" aria-pressed="true">전체 강의</button>
+				        <button type="button" class="btn btn-outline-dark is-cat" data-cat="major" aria-pressed="false">전공</button>
+				        <button type="button" class="btn btn-outline-dark is-cat" data-cat="minor" aria-pressed="false">부전공</button>
+				        <button type="button" class="btn btn-outline-dark is-cat" data-cat="liberal" aria-pressed="false">교양</button>
+				      </div>
+				      <!-- 검색 바 -->
+				      <form class="ms-lg-auto" id="lectureSearchForm" role="search">
+				        <div class="input-group input-group-sm" style="max-width: 360px;">
+				          <input type="search" class="form-control" id="lectureKeyword" name="search_word" placeholder="과목명/교수명 검색"
+				            aria-label="과목명 또는 교수명 검색" autocomplete="off">
+				          <button class="btn btn-primary" type="submit" id="btnLectureSearch">검색</button>
+				        </div>
+				      </form>
+				    </div>
 				  </div>
 				
-				  <!-- 우측: 검색 바 -->
-				  <!-- 이거 js에서 이벤트 감지 -->
-				  <form class="ms-auto" id="lectureSearchForm">
-				    <div class="input-group input-group-sm" style="width: 320px;">
-				      <input type="search" class="form-control" id="lectureKeyword" placeholder="과목명/교수명 검색"
-				             aria-label="lecture search" name="search_word">
-				      <button class="btn btn-primary" type="submit" id="btnLectureSearch">검색</button>
+				  <!-- 우측: 남은 시간 -->
+				  <div class="col-12 col-lg-4">
+				    <div class="d-flex align-items-center justify-content-between gap-2">
+				      <span class="text-muted small">남은 시간</span>
+				      <span class="badge text-bg-danger px-3 py-2 me-lg-2" id="enrollTimer" aria-live="polite">--:--</span>
 				    </div>
-				  </form>
-				
+				  </div>
 				</div>
 			
 			  <div class="row g-3">
@@ -59,25 +69,6 @@
 			
 			    <!-- 우측: 장바구니 -->
 			    <div class="col-12 col-lg-4" id="lectureCartArea">
-			      <div class="card-body border-top">
-					    <div class="d-flex justify-content-between mb-2">
-					      <span class="text-muted">합계 학점</span>
-					      <span class="fw-semibold">${cartTotalCredit} 학점</span>
-					    </div>
-					
-					    <div class="d-grid gap-2">
-					      <form method="post" action="<c:url value='/enroll/submit'/>" class="m-0">
-					        <button type="submit" class="btn btn-primary">최종 신청</button>
-					      </form>
-					      <form method="post" action="<c:url value='/enroll/cart/clear'/>" class="m-0">
-					        <button type="submit" class="btn btn-outline-secondary">장바구니 비우기</button>
-					      </form>
-					    </div>
-					
-					    <div class="text-muted small mt-2">
-					      최종 신청 시 정원/중복시간 등을 서버에서 검증하는 것을 권장합니다.
-					    </div>
-					  </div>
 			    </div>
 			    
 			  </div>

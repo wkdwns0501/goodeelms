@@ -10,10 +10,10 @@ import java.util.List;
 import com.goodeelms.dto.PreEnrollmentDTO;
 import com.goodeelms.util.DBUtil;
 
-public class AddCartDAO {
-	private static final AddCartDAO instance = new AddCartDAO();
+public class LectureCartDAO {
+	private static final LectureCartDAO instance = new LectureCartDAO();
 
-	public static AddCartDAO getInstance() {
+	public static LectureCartDAO getInstance() {
 		return instance;
 	}
 	
@@ -29,6 +29,23 @@ public class AddCartDAO {
 			return result;
 		}
 		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	public int deleteLectureOnCart(String lectureId, String studentId) {
+		String sql = "DELETE FROM pre_enrollment WHERE lecture_id = ? AND student_id = ?";
+		
+		try(PreparedStatement pstmt = getPrepare(sql)){
+			int index = 1;
+			pstmt.setString(index++, lectureId);
+			pstmt.setString(index++, studentId);
+			
+			int result = pstmt.executeUpdate();
+			return result;
+		}
+		catch(SQLException e) {
 			e.printStackTrace();
 		}
 		return 0;
@@ -53,11 +70,11 @@ public class AddCartDAO {
 		}
 		return 0;
 	}
-	public List<PreEnrollmentDTO> getPreEnrollment(String studentId){
+	public List<PreEnrollmentDTO> getPreEnrollment(int studentId){
 		String sql = "SELECT lecture_id FROM pre_enrollment WHERE student_id = ?";
 		
 		try(PreparedStatement pstmt = getPrepare(sql)){
-			pstmt.setString(1, studentId);
+			pstmt.setInt(1, studentId);
 			
 			try(ResultSet rs = pstmt.executeQuery()){
 				List<PreEnrollmentDTO> list = new ArrayList<PreEnrollmentDTO>();

@@ -11,7 +11,7 @@ import java.io.IOException;
 /**
  * Servlet implementation class StudentURLForwardServlet
  */
-@WebServlet("/student")
+@WebServlet("/student/page/*")
 public class StudentURLForwardController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -20,14 +20,15 @@ public class StudentURLForwardController extends HttpServlet {
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String pageName = request.getParameter("page");
+		String requestURI = request.getRequestURI();
+		String contextPath = request.getContextPath() + "/student/page";
+		String command = requestURI.substring(contextPath.length());
 		
-		if(pageName == null || pageName.isBlank()) return;
-		
+		System.out.println(command);
 		RequestDispatcher rd = null;
-		switch(pageName) {
-			case "enrollment":
-				rd = request.getRequestDispatcher("WEB-INF/views/student/enrollment.jsp");
+		switch(command) {
+			case "/enrollment":
+				rd = request.getRequestDispatcher("/WEB-INF/views/student/enrollment.jsp");
 				rd.forward(request, response);
 				break;
 		}

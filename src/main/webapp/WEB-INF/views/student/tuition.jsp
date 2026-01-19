@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -45,7 +46,9 @@
 						<div class="card border-0 shadow-sm bg-light">
 							<div class="card-body text-center p-4">
 								<div class="text-muted small mb-1">납부한 금액</div>
-								<h3 class="fw-bold text-dark">${tuition.paymentAmount}원</h3>
+								<h3 class="fw-bold text-dark">
+									<fmt:formatNumber type="number">${tuition.paymentAmount}원</fmt:formatNumber> 
+									</h3>
 							</div>
 						</div>
 					</div>
