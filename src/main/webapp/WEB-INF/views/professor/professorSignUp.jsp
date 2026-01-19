@@ -35,13 +35,15 @@
 								<div class="mb-3">
 									<label class="form-label small fw-bold">성함</label> <input
 										class="form-control" name="professor_name" type="text"
-										placeholder="성함을 입력하세요" required>
+										placeholder="성함을 입력하세요" value="${professorDTO.professorName}"
+										required>
 								</div>
 
 								<div class="mb-3">
 									<label class="form-label small fw-bold">이메일 주소</label> <input
 										type="email" class="form-control" name="professor_email"
-										placeholder="example@email.com" required>
+										placeholder="example@email.com"
+										value="${professorDTO.professorEmail}" required>
 									<div class="form-text text-danger">※ 입력하신 이메일은 로그인 아이디로
 										사용되니 정확히 입력해 주세요.</div>
 								</div>
@@ -54,38 +56,16 @@
 
 								<div class="mb-3">
 									<label class="form-label small fw-bold">전공</label> <select
-										class="form-select" name="major_id" required>
-										<option value="" selected disabled>전공을 선택하세요</option>
-										<option value="1">컴퓨터공학과</option>
-										<option value="2">소프트웨어학과</option>
-										<option value="3">정보통신공학과</option>
-										<option value="4">인공지능학과</option>
-										<option value="5">전기공학과</option>
-										<option value="6">전자공학과</option>
-										<option value="7">기계공학과</option>
-										<option value="8">신소재공학과</option>
-										<option value="9">화학공학과</option>
-										<option value="10">건축학과</option>
-										<option value="11">경영학과</option>
-										<option value="12">경제학과</option>
-										<option value="13">회계학과</option>
-										<option value="14">국제통상학과</option>
-										<option value="15">행정학과</option>
-										<option value="16">법학과</option>
-										<option value="17">정치외교학과</option>
-										<option value="18">심리학과</option>
-										<option value="19">사회복지학과</option>
-										<option value="20">국어국문학과</option>
-										<option value="21">영어영문학과</option>
-										<option value="22">사학과</option>
-										<option value="23">철학과</option>
-										<option value="24">미디어커뮤니케이션학과</option>
-										<option value="25">시각디자인학과</option>
-										<option value="26">산업디자인학과</option>
-										<option value="27">음악학과</option>
-										<option value="28">체육학과</option>
-										<option value="29">간호학과</option>
-										<option value="30">의생명공학과</option>
+										class="form-select" onfocus="this.size=10;"
+										onblur="this.size=1;" onchange="this.size=1; this.blur();"
+										name="major_id" required>
+
+										<option value="" ${empty professorDTO.majorId ? 'selected' : ''} disabled>전공을 선택하세요</option>
+										<c:forEach var="major" items="${majorList}">
+											<option value="${major.majorId}"
+												${professorDTO.majorId == major.majorId ? 'selected' : ''}>
+												${major.majorName}</option>
+										</c:forEach>
 									</select>
 								</div>
 

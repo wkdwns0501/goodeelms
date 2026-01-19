@@ -14,6 +14,8 @@
     <a class="nav-link" href="<c:url value='/student/assignments'/>"><span class="nav-label">과제</span></a>
     <a class="nav-link" href="<c:url value='/student/exams'/>"><span class="nav-label">시험</span></a>
     <a class="nav-link" href="<c:url value='/student/grades'/>"><span class="nav-label">성적조회</span></a>
+    <a class="nav-link" href="<c:url value='/student/status_history'/>"><span class="nav-label">재적상태 이력</span></a>
+    <a class="nav-link" href="<c:url value='/student/major'/>"><span class="nav-label">전공/학과변경/학적변동</span></a>
     </c:when>	
     	<c:when test="${sessionScope.user_role == 'ADMIN'}">
 	    	<a class="nav-link" href="<c:url value='/admin/studentStatus/page'/>"><span class="nav-label">학사관리</span></a>
@@ -29,7 +31,7 @@
 		</c:when>
 		
 		<c:otherwise>
-			    <a class="nav-link" href="<c:url value='/common/dashboard'/>"><span class="nav-label">대시보드</span></a>
+		<a class="nav-link" href="<c:url value='/common/dashboard'/>"><span class="nav-label">대시보드</span></a>
     <a class="nav-link" href="<c:url value='/common/notice'/>"><span class="nav-label">공지사항</span></a> 
 		</c:otherwise>
 	</c:choose>

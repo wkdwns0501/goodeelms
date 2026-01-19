@@ -16,15 +16,15 @@
 
 				<span class="text-white small me-2"> <c:choose>
 						<c:when test="${user_role eq 'STUDENT'}">
-							<strong>${studentDTO.studentName}</strong>
+							<strong>${user_name}</strong>
 						</c:when>
 
 						<c:when test="${user_role eq 'PROFESSOR'}">
-							<strong>${professorDTO.professorName}</strong>
+							<strong>${user_name}</strong>
 						</c:when>
 
 						<c:when test="${user_role eq 'ADMIN'}">
-							<strong>${adminDTO.adminName}</strong>
+							<strong>${user_name}</strong>
 						</c:when>
 					</c:choose> 님 <span
 					class="badge ${user_role eq 'ADMIN' ? 'bg-danger' : 'bg-secondary'} ms-1">${user_role}</span>

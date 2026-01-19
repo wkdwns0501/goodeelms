@@ -1,11 +1,20 @@
 package com.goodeelms.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.goodeelms.dao.StatusHistoryDAO;
 import com.goodeelms.dao.StudentStatusUpdateDAO;
 import com.goodeelms.dto.StudentDTO;
+import com.goodeelms.dto.StudentStatusHistoryDTO;
 
 public class StudentStatusService {
+	StatusHistoryDAO historyDAO = StatusHistoryDAO.getInstance();
+	
+	// 0119 임욱 재적 상태 이력 조회 
+	public List<StudentStatusHistoryDTO> getStatusHistory(int studentId){
+		return historyDAO.getStatusHistoryById(studentId);
+	}
 	
 	// 검색 조건 없는 모든 학생 목록
 	public ArrayList<StudentDTO> getAllStudentList() {

@@ -18,34 +18,59 @@ public class MajorDAO {
 	public static MajorDAO getInstance() {
 		return instance;
 	}
-	
-	public List<MajorDTO> getTargetMajor(Set<Integer> majorIdSet){
+
+	public List<MajorDTO> getTargetMajor(Set<Integer> majorIdSet) {
 		String sql = "SELECT * FROM major WHERE major_id IN ("
 				+ majorIdSet.stream().map(id -> "?").collect(Collectors.joining(",")) + ")";
-		
-		try(Connection conn = DBUtil.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(sql)){
+
+		try (Connection conn = DBUtil.getConnection(); 
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			int index = 1;
-			for(Integer id : majorIdSet) {
+			for (Integer id : majorIdSet) {
 				pstmt.setInt(index++, id);
 			}
-			
-			try(ResultSet rs = pstmt.executeQuery()){
+
+			try (ResultSet rs = pstmt.executeQuery()) {
 				List<MajorDTO> list = new ArrayList<MajorDTO>();
-				while(rs.next()) {
+				while (rs.next()) {
 					MajorDTO dto = new MajorDTO();
 					dto.setMajorId(Integer.parseInt(rs.getString("major_id")));
 					dto.setMajorCode(rs.getString("major_code"));
 					dto.setMajorName(rs.getString("major_name"));
-					
+
 					list.add(dto);
 				}
 				return list;
 			}
-		}
-		catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
+
+	// 0119 임욱 추가. 전체 전공 조회
+	public List<MajorDTO> findAll() {
+		String sql = "SELECT * FROM major";
+
+		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				List<MajorDTO> list = new ArrayList<MajorDTO>();
+				while (rs.next()) {
+					MajorDTO dto = new MajorDTO();
+					dto.setMajorId(Integer.parseInt(rs.getString("major_id")));
+					dto.setMajorCode(rs.getString("major_code"));
+					dto.setMajorName(rs.getString("major_name"));
+
+					list.add(dto);
+				}
+				return list;
+			}
+		} catch (Exception e) {
+			System.out.println("findAll() 예외 발생: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }

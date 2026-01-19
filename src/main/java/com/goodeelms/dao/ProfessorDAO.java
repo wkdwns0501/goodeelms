@@ -36,7 +36,7 @@ public class ProfessorDAO {
 	        pstmt.setInt(4, dto.getMajorId()); 
 
 	        result = pstmt.executeUpdate();
-	    } catch (Exception e) {  // 부모 테이블에 해당 ID가 없는 경우 예외가 발생합니다.
+	    } catch (Exception e) {  
 	    	System.out.println("addProfessor() 예외발생: " + e.getMessage());
 	        e.printStackTrace();
 	    }

@@ -3,6 +3,7 @@ package com.goodeelms.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.LocalDateTime;
 
 import com.goodeelms.dto.TuitionPaymentDTO;
 import com.goodeelms.util.DBUtil;
@@ -29,6 +30,7 @@ public class TuitionDAO {
 					dto.setPaymentId(rs.getInt("payment_id"));
 					dto.setPaymentAmount(rs.getInt("payment_amount"));
 					dto.setPaymentStatus(rs.getString("payment_status"));
+					dto.setPaymentDate(rs.getObject("payment_date", LocalDateTime.class));
 					dto.setStudent_id(rs.getInt("student_id"));
 					return dto;
 				}

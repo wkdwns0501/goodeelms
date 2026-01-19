@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import com.goodeelms.dao.StudentDAO;
+import com.goodeelms.dao.StudentStatusUpdateDAO;
 import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.dto.StudentMajorDTO;
+import com.goodeelms.dto.StudentStatusHistoryDTO;
 import com.goodeelms.util.EncryptUtil;
 import com.goodeelms.util.GenderUtil;
 import com.goodeelms.util.DBUtil;
@@ -17,6 +19,7 @@ public class StudentService {
 	private static final Pattern PW_PATTERN =
 	        Pattern.compile("^(?=.*[a-z])(?=.*\\d)[a-z\\d]{6,}$");
 
+	
 	public List<StudentMajorDTO> getMajors(String studentId) {
 		return studentDAO.getMajors(studentId);
 	}
@@ -51,6 +54,7 @@ public class StudentService {
 		
 		return dto;
 	}
+	
 	// 학생 일반 정보 수정
 	public void updateStudentProfile(int studentId, String phone, String email,
 	        						 String address, String studentBank) throws Exception {
@@ -95,4 +99,5 @@ public class StudentService {
 	        return true;
 	    }
 	}
+	
 }

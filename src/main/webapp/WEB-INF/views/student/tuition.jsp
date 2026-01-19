@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>등록급 납부 이력</title>
+<title>등록금 납부 이력</title>
 
 <!-- Bootstrap 5 -->
 <link
@@ -47,8 +47,7 @@
 							<div class="card-body text-center p-4">
 								<div class="text-muted small mb-1">납부한 금액</div>
 								<h3 class="fw-bold text-dark">
-									 <fmt:formatNumber value="${tuition.paymentAmount}" type="number">원
-									 </fmt:formatNumber>
+									 <fmt:formatNumber value="${tuition.paymentAmount}" type="number"/>원
 									</h3>
 							</div>
 						</div>
@@ -59,7 +58,7 @@
 							<div class="card-body text-center p-4">
 								<div class="text-muted small mb-1">납부 완료까지 남은 금액</div>
 								<h3 class="fw-bold text-danger">
-									<fmt:formatNumber value="${4500000- tuition.paymentAmount}" type="number" />원
+									<fmt:formatNumber value="${4500000- tuition.paymentAmount}" type="number"/>원
 								</h3>
 							</div>
 						</div>
@@ -85,11 +84,10 @@
 							<tbody>
 								<tr>
 									<td class="ps-4 text-muted">최종 납부 일시</td>
-									<td class="fw-bold">
+									<td class="fw">
 										<c:choose>
 											<c:when test="${not empty tuition.paymentDate}">
-											<fmt:formatDate value="${tuition.paymentDate}"/>
-												
+											${tuition.formattedPaymentDate}
 											</c:when>
 											<c:otherwise>-</c:otherwise>
 										</c:choose></td>
