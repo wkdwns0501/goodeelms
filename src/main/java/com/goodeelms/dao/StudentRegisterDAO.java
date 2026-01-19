@@ -181,7 +181,6 @@ public class StudentRegisterDAO {
 			System.out.println("getStudentList() 예외 발생: " + e);
 		} return list;
 	}
-
 	
 	// student_id의 max값을 조회해서 방금 등록한 학생의 id를 return
 	public int getNewStudentId() {

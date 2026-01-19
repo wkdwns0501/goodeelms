@@ -18,7 +18,6 @@ public class StudentService {
 	public List<StudentMajorDTO> getMajors(String studentId) {
 		return studentDAO.getMajors(studentId);
 	}
-	
 	public String getStudentId(String studentNo) {
 		return studentDAO.getStudentId(studentNo);
 	}

@@ -7,8 +7,14 @@ const cartArea = document.querySelector("#lectureCartArea");
 const userId = document.querySelector("#sessionUserId")?.value;
 const searchForm = document.querySelector("#lectureSearchForm");
 
+// 강의 목록
 let currentCat = "all";
 let currentWord = "";
+let currentPage = 1;
+
+// 장바구니
+let totalCartCredit = 0;
+let limitCartCredit = 0;
 
 function setActiveBtn(cat){
 	document.querySelectorAll(".is-cat").forEach(btn =>{
@@ -16,10 +22,9 @@ function setActiveBtn(cat){
 	});
 }
 
-async function loadLectures(cat, word, page = 1){
-	// 나중에 검색어도 같이 넘겨야함
+async function loadLectures(cat, word, page){
 	
-	const url = new URL(window.location.origin + '/loadLecture');
+	const url = new URL(window.location.origin + '/student/loadLecture');
 	
 	url.searchParams.set('cat', cat);
 	url.searchParams.set('id', userId);
@@ -30,7 +35,12 @@ async function loadLectures(cat, word, page = 1){
 	      method: 'GET',
 	      headers: { 'X-Requested-With': 'fetch' }
 	    });
-		
+	
+	if (res.redirected) {
+	  window.location.href = res.url; // 최종 도착지로 이동
+	  return;
+	}
+			
 	if (!res.ok) {
     console.error('강의 리스트 로드 실패', res.status);
     return;
@@ -41,27 +51,40 @@ async function loadLectures(cat, word, page = 1){
 	
 	currentCat = cat;
 	currentWord = word;
+	currentPage = page;
 }
 
 async function loadCart(){
-	const url = new URL(window.location.origin + "/addLectureCart");
-	
+	console.log("loadCart 호출됨");
+	const url = new URL(window.location.origin + "/student/cart");
 	
 	const res = await fetch(url.toString(), {
 	      method: 'GET',
 	      headers: { 'X-Requested-With': 'fetch' }
 	    });
-		
+			
 	if (!res.ok) {
-    console.error('강의 리스트 로드 실패', res.status);
+    console.error('장바구니 로드 실패', res.status);
     return;
 	}
+	
+	const html = await res.text();
+	cartArea.innerHTML = html;
+
+	// 장바구니 html에서 요소 얻기	
+	const creditArea = document.querySelector("#lectureCartArea").querySelector("#creditInfo");
+	totalCartCredit = creditArea.dataset.total;
+	limitCartCredit = creditArea.dataset.limit;
+	loadLectures(currentCat,currentWord, currentPage);
 }
 
-async function addCartLecture(lecId, stuId){
-	const url = new URL(window.location.origin + "/addLectureCart");
-	url.searchParams.set('lectureId', lecId);
-	url.searchParams.set('studentId', stuId);
+async function addCartLecture(lecId, stuId, credit){
+	if(!credit) return;
+	if(Number(totalCartCredit) + Number(credit) > Number(limitCartCredit)){
+		alert("최대 학점을 초과할 수 없습니다.")
+		return;
+	}
+	const url = new URL(window.location.origin + "/student/cart/addCart");
 	
 	const res = await fetch(url.toString(), {
 		method: 'POST',
@@ -76,17 +99,41 @@ async function addCartLecture(lecId, stuId){
 	});
 	
 	if (!res.ok) {
-    console.error('장바구니 로드', res.status);
+    console.error('장바구니 추가 실패', res.status);
     return;
   }
 	
+	loadCart();
+}
+
+async function deleteCartLecture(lectureId, studentId){
+	const url = new URL(window.location.origin + "/student/cart/deleteCart");
+		
+		const res = await fetch(url.toString(), {
+			method: 'POST',
+			headers: {
+			    'Content-Type': 'application/x-www-form-urlencoded',
+			    'X-Requested-With': 'fetch'
+			  },
+		  body: new URLSearchParams({
+		    lecture_id: lectureId,
+		    student_id: studentId
+		  })
+		});
+		
+		if (!res.ok) {
+	    console.error('장바구니 삭제 실패', res.status);
+	    return;
+	  }
+		
+		loadCart();
 }
 
 document.querySelectorAll(".is-cat").forEach(btn => {
 	btn.addEventListener('click', async() => {
 		const cat = btn.dataset.cat;
 		setActiveBtn(cat);
-		await loadLectures(cat, currentWord);
+		await loadLectures(cat, currentWord, 1);
 	});
 });
 
@@ -106,20 +153,34 @@ listArea.addEventListener('click', async(e) =>{
 	}
 	else if (c){
 		const addLec = c.dataset.lec;
-		// const addstu = u.dataset.stu;
-		const addstu = 50;
+		const addstu = c.dataset.stu;
+		const credit = c.dataset.credit;
 		
-		
-		await addCartLecture(addLec, addstu);
+		await addCartLecture(addLec, addstu, credit);
 	}
 	
 });
+
+cartArea.addEventListener('click', async(e) =>{
+	const delBtn = e.target.closest("button.delete-cart");
+	
+	if(!delBtn) return;
+	e.preventDefault();
+	
+	const url = new URL(location.origin);
+	
+	const lectureId = delBtn.dataset.target;
+	const studentId = delBtn.dataset.user;
+	
+	await deleteCartLecture(lectureId, studentId);
+});
+
 
 searchForm.addEventListener('submit', async (e) => {
 	e.preventDefault();
 	const word = document.querySelector("#lectureKeyword").value;
 	
-	await loadLectures(currentCat, word);
+	await loadLectures(currentCat, word, 1);
 })
 
-loadLectures(currentCat, currentWord);
+loadCart();

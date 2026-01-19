@@ -4,30 +4,42 @@
 <div class="card shadow-sm">
   <div class="card-header d-flex align-items-center justify-content-between">
     <span class="fw-semibold">장바구니</span>
-    <span class="text-muted small">총 <strong>${cartCount}</strong>과목</span>
+    <span class="text-muted small">총 <strong>${totalCount}</strong>강의</span>
   </div>
 
   <div class="list-group list-group-flush">
+  	<c:set var="totalCartCredit" value = "0"/>
     <!-- 예시: cartItems -->
-    <c:forEach var="item" items="${cartItems}">
+    <c:forEach var="lec" items="${lectureList}">
       <div class="list-group-item">
         <div class="d-flex justify-content-between gap-2">
           <div>
-            <div class="fw-semibold">${item.title}</div>
+            <div class="fw-semibold">${lec.lectureName}</div>
             <div class="text-muted small">
-              ${item.professor} · ${item.credit}학점
+              ${lec.majorName} · ${lec.professorName} · ${lec.lectureCredit}학점
+              <c:set var="totalCartCredit" value="${totalCartCredit + lec.lectureCredit}"/>
             </div>
           </div>
 
-          <form method="post" action="<c:url value='/enroll/cart/remove'/>" class="m-0">
-            <input type="hidden" name="lectureId" value="${item.id}">
-            <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
-          </form>
+          <button type="button" class="btn btn-sm btn-outline-danger delete-cart" data-target="${lec.lectureId}" data-user="${sessionScope.student_id}">삭제</button>
         </div>
       </div>
     </c:forEach>
-
-    <c:if test="${empty cartItems}">
+    <div class="card-body border-top">
+	    <div class="d-flex justify-content-between mb-2">
+	      <span class="text-muted">합계 학점</span>
+	      <span class="fw-semibold" id="creditInfo" data-total="${totalCartCredit}" data-limit="${limitCartCredit}">
+	      ${totalCartCredit} / ${limitCartCredit} 학점
+	      </span>
+	    </div>
+	
+	    <div class="d-grid gap-2">
+	      <form method="post" action="<c:url value='/enroll/cart/clear'/>" class="m-0">
+	        <button type="submit" class="btn btn-outline-secondary">장바구니 비우기</button>
+	      </form>
+	    </div>
+	  </div>
+    <c:if test="${empty lectureList}">
       <div class="list-group-item text-center text-muted py-4">
         장바구니가 비어있습니다.
       </div>
