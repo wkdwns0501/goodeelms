@@ -8,12 +8,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.Set;
 
 import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.service.StudentService;
-import com.goodeelms.util.EncryptUtil;
-import com.goodeelms.util.ExistUtil;
 
 @WebServlet(urlPatterns = {
 		"/student/signup", 
