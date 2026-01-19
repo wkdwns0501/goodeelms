@@ -16,7 +16,6 @@ import com.goodeelms.service.TuitionService;
 
 @WebServlet(urlPatterns = {
 		"/student/signup", 
-		"/student/mypage",
 		"/student/tuition"
 })
 public class StudentController extends HttpServlet {
