@@ -34,16 +34,9 @@
 	    </div>
 	
 	    <div class="d-grid gap-2">
-	      <form method="post" action="<c:url value='/enroll/submit'/>" class="m-0">
-	        <button type="submit" class="btn btn-primary">최종 신청</button>
-	      </form>
 	      <form method="post" action="<c:url value='/enroll/cart/clear'/>" class="m-0">
 	        <button type="submit" class="btn btn-outline-secondary">장바구니 비우기</button>
 	      </form>
-	    </div>
-	
-	    <div class="text-muted small mt-2">
-	      최종 신청 시 정원/중복시간 등을 서버에서 검증하는 것을 권장합니다.
 	    </div>
 	  </div>
     <c:if test="${empty lectureList}">
