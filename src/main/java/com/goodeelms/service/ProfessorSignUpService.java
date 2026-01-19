@@ -7,7 +7,7 @@ public class ProfessorSignUpService {
 	ProfessorDAO dao = ProfessorDAO.getInstance();
 
 	public int signup(ProfessorDTO dto) {
-		if (dao.existProfessorByEmail(dto.getProfessorEmail())) {
+		if (dao.isEmailExist(dto.getProfessorEmail())) {
 			return -1; 
 		}
 
