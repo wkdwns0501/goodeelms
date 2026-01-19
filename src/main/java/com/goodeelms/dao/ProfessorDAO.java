@@ -21,32 +21,52 @@ public class ProfessorDAO {
 	public static ProfessorDAO getInstance() {
 		return instance;
 	}
+	
+	public int addProfessor(ProfessorDTO dto) {
+	    String sql = "INSERT INTO professor(professor_name, professor_email, professor_password, major_id) "
+	    		+ "VALUES(?, ?, ?, ?)";
 
-	public ProfessorDTO checkProfessor(String professor_email, String professor_password) {
-		String sql = "SELECT * FROM professor WHERE professor_email = ? AND professor_password = ? ";
+	    int result = 0;
+	    try (Connection conn = DBUtil.getConnection(); 
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        
+	        pstmt.setString(1, dto.getProfessorName());
+	        pstmt.setString(2, dto.getProfessorEmail());
+	        pstmt.setString(3, dto.getProfessorPassword());
+	        pstmt.setInt(4, dto.getMajorId()); 
 
-		ProfessorDTO dto = null;
+	        result = pstmt.executeUpdate();
+	    } catch (Exception e) {  // 부모 테이블에 해당 ID가 없는 경우 예외가 발생합니다.
+	    	System.out.println("addProfessor() 예외발생: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	    return result;
+	}
 
-		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setString(1, professor_email);
-			pstmt.setString(2, professor_password);
+	public ProfessorDTO getProfessorByEmail(String professor_email) {
+	    String sql = "SELECT * FROM professor WHERE professor_email = ?";
+	    ProfessorDTO dto = null;
 
-			try (ResultSet rs = pstmt.executeQuery()) {
-				if (rs.next()) {
-					dto = new ProfessorDTO();
+	    try (Connection conn = DBUtil.getConnection(); 
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setString(1, professor_email);
 
-					dto.setProfessorId(rs.getInt("professor_id"));
-					dto.setProfessorName(rs.getString("professor_name"));
-					dto.setProfessorEmail(rs.getString("professor_email"));
-					dto.setProfessorPassword(rs.getString("professor_password"));
-					dto.setProfessorStatus(rs.getString("professor_status"));
-					
-				} 
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return dto;
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                dto = new ProfessorDTO();
+	                dto.setProfessorId(rs.getInt("professor_id"));
+	                dto.setProfessorName(rs.getString("professor_name"));
+	                dto.setProfessorEmail(rs.getString("professor_email"));
+	                dto.setProfessorPassword(rs.getString("professor_password"));
+	                dto.setProfessorStatus(rs.getString("professor_status"));
+	                dto.setMajorId(rs.getInt("major_id")); 
+	            } 
+	        }
+	    } catch (Exception e) {
+	    	System.out.println("getProfessorByEmail() 예외발생: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	    return dto;
 	}
 	
 	// 이름으로 ID 찾기 -> 검색어
@@ -109,24 +129,6 @@ public class ProfessorDAO {
 		return null;
 	}
 
-	public int addProfessor(ProfessorDTO dto) {
-		String sql = "INSERT INTO professor(professor_name, professor_email, professor_password, professor_status) VALUES( ?, ?, ?, ?)";
-
-		int result = 0;
-
-		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setString(1, dto.getProfessorName());
-			pstmt.setString(2, dto.getProfessorEmail());
-			pstmt.setString(3, dto.getProfessorPassword());
-			pstmt.setString(4, dto.getProfessorStatus());
-
-			result = pstmt.executeUpdate();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
-
 	public boolean isEmailExist(String email) {
 		String sql = "SELECT COUNT(*) as cnt FROM professor WHERE professor_email = ?";
 		boolean result = false;
@@ -144,9 +146,11 @@ public class ProfessorDAO {
 				}
 			}
 		} catch (Exception e) {
+			System.out.println("existProfessorByEmail() 예외: " + e.getMessage());
 			e.printStackTrace();
 		}
 		return result;
 	}
-
+		
+	
 }

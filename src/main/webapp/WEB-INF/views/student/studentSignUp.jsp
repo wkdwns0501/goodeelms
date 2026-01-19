@@ -28,20 +28,21 @@
 							<form action="${pageContext.request.contextPath}/student/signup"
 								method="post">
 
-								<c:if test="${errorMessage == 'samePassword'}">
-									<div class="alert alert-danger py-2 small text-center"
-										role="alert">기존 비밀번호와 동일합니다.</div>
-								</c:if>
-
-								<c:if test="${errorMessage == 'already_used'}">
-									<div class="alert alert-danger py-2 small text-center"
-										role="alert">이미 전화번호 혹은 이메일을 사용되고 있습니다.</div>
+								<c:if test="${not empty errorMessage}">
+									<div class="alert alert-danger alert-dismissible fade show"
+										role="alert">
+										<i class="bi bi-exclamation-triangle"></i>
+										${errorMessage}
+										<button type="button" class="btn-close"
+											data-bs-dismiss="alert" aria-label="Close"></button>
+									</div>
+									<c:remove var="errorMessage" scope="session" />
 								</c:if>
 
 								<div class="mb-3">
 									<label class="form-label small fw-bold">아이디(학번)</label> <input
 										class="form-control bg-light" name="student_no" type="text"
-										value="${sessionScope.student_no}" readonly>
+										value="${studentDTO.studentNo}" readonly>
 								</div>
 
 								<div class="row">
@@ -61,32 +62,36 @@
 								<div class="mb-3">
 									<label class="form-label small fw-bold">이메일</label> <input
 										type="email" class="form-control" name="student_email"
-										placeholder="example@email.com" required>
+										placeholder="example@email.com"
+										value="${studentDTO.studentEmail}" required>
 								</div>
 
 								<div class="row">
 									<div class="col-md-6 mb-3">
 										<label class="form-label small fw-bold">전화번호</label> <input
 											type="text" class="form-control" name="student_phone"
-											placeholder="010-0000-0000" required>
+											placeholder="010-0000-0000"
+											value="${studentDTO.studentPhone}" required>
 									</div>
 									<div class="col-md-6 mb-3">
 										<label class="form-label small fw-bold">은행명 계좌번호</label> <input
 											type="text" class="form-control" name="student_bank"
-											placeholder="XX은행 000-..." required>
+											placeholder="XX은행 000-..." value="${studentDTO.studentBank}"
+											required>
 									</div>
 								</div>
 
 								<div class="mb-3">
 									<label class="form-label small fw-bold">주소</label> <input
 										type="text" class="form-control" name="student_address"
-										placeholder="주소를 입력하세요">
+										placeholder="주소를 입력하세요" value="${studentDTO.studentAddress}">
 								</div>
 
 								<div class="d-grid gap-2 mt-4">
 									<button type="submit" class="btn btn-success">정보 수정</button>
 								</div>
 							</form>
+							
 						</div>
 					</div>
 				</div>
