@@ -59,8 +59,7 @@
 							<div class="card-body text-center p-4">
 								<div class="text-muted small mb-1">납부 완료까지 남은 금액</div>
 								<h3 class="fw-bold text-danger">
-									<fmt:formatNumber value="${4500000- tuition.paymentAmount}" type="number">
-										원</fmt:formatNumber> 
+									<fmt:formatNumber value="${4500000- tuition.paymentAmount}" type="number" />원
 								</h3>
 							</div>
 						</div>

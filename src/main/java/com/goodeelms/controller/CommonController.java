@@ -82,6 +82,7 @@ public class CommonController extends HttpServlet {
 		
 		if (obj instanceof StudentDTO studentDTO) {
 			session.setAttribute("user_role", "STUDENT");
+			session.setAttribute("student_id", studentDTO.getStudentId());
 			session.setAttribute("studentDTO", studentDTO);
 			
 			// 초기 로그인 여부 확인
@@ -96,9 +97,11 @@ public class CommonController extends HttpServlet {
 		    }
 		} else if (obj instanceof ProfessorDTO professorDTO) {
 			session.setAttribute("user_role", "PROFESSOR");
+			session.setAttribute("professor_id", professorDTO.getProfessorId());
 			session.setAttribute("professorDTO", professorDTO);
 		} else if (obj instanceof AdminDTO adminDTO) {
 			session.setAttribute("user_role", "ADMIN");
+			session.setAttribute("admin_id", adminDTO.getAdminId());
 			session.setAttribute("adminDTO", adminDTO);
 		}
 		response.sendRedirect(request.getContextPath() + "/main.jsp");
