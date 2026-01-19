@@ -23,11 +23,18 @@ public class ProfessorManageController extends HttpServlet {
 		String contextPath = request.getContextPath(); 
 		String command = requestURI.substring(contextPath.length());
 		
+		// 내비바 통한 교수 관리 페이지 진입
 		if(command.equals("/professorManage/page")) {
+			ProfessorManageService pms = new ProfessorManageService();
+			ArrayList<ProfessorDTO> list = pms.getAllProfessorList();
+			
+			request.setAttribute("professorList", list);
+			
 			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/admin/professorManage.jsp");
 			rd.forward(request, response);
 		}
 		
+		// 검색 입력값에 따른 교수 목록
 		if(command.equals("/professorManage/search")) {
 			String professorName = request.getParameter("professorName");
 			String majorName = request.getParameter("majorName");
@@ -50,11 +57,13 @@ public class ProfessorManageController extends HttpServlet {
 		String contextPath = request.getContextPath(); 
 		String command = requestURI.substring(contextPath.length());
 		
+		// 교수 상태 업데이트 
 		if(command.equals("/professorManage/updateStatus")) {
 
 			String professorId = request.getParameter("professorId");
 			String newProfessorStatus = request.getParameter("newProfessorStatus");
-
+			
+			// 현재 검색 값 저장
 			String searchName = request.getParameter("searchName");
 			String searchMajor = request.getParameter("searchMajor");
 			String searchNo = request.getParameter("searchNo");
@@ -67,7 +76,7 @@ public class ProfessorManageController extends HttpServlet {
 		    String sNo = (searchNo != null) ? searchNo : "";
 
 		    // 6. 리다이렉트 실행
-		    // 결과(res)와 검색 조건들을 다시 붙여서 /student/search로 보냅니다.
+		    // 결과(res)와 검색 조건들을 다시 붙여서 /professor/search로 보냄
 		    String redirectUrl = contextPath + "/professorManage/search?res=" + result 
 		                          + "&professorName=" + encName 
 		                          + "&majorName=" + encMajor 

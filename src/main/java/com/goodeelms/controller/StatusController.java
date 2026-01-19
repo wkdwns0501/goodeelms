@@ -23,16 +23,25 @@ public class StatusController extends HttpServlet {
 		String requestURI = request.getRequestURI();
 		String contextPath = request.getContextPath(); 
 		String command = requestURI.substring(contextPath.length());
+		
+		// 내비바 통한 학사관리 페이지 입장
 		if(command.equals("/studentStatus/page")) {
+			// 최초 보여줄 전체 학생 list 가져와서 출력
+			StudentStatusService ss = new StudentStatusService();
+			ArrayList<StudentDTO> list = ss.getAllStudentList();
+			
+			request.setAttribute("studentList", list);
+			
 			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/admin/status.jsp");
 			rd.forward(request, response);
 		}
+		// 검색 조건 통한 학생 목록 조회
 		if(command.equals("/studentStatus/search")) {
 			String studentName = request.getParameter("studentName");
 			String majorName = request.getParameter("majorName");
 			String studentNo = request.getParameter("studentNo");
 			
-			// 서비스 호출
+			// 검색 조건을 통한 list 가져오기
 			StudentStatusService ss = new StudentStatusService();
 			ArrayList<StudentDTO> list = ss.getStudentList(studentName,majorName,studentNo);
 			
@@ -55,15 +64,19 @@ public class StatusController extends HttpServlet {
 		String requestURI = request.getRequestURI();
 		String contextPath = request.getContextPath(); 
 		String command = requestURI.substring(contextPath.length());
-			
+		
+		// 학생 학적 상태 변경 하기
 		if(command.equals("/studentStatus/updateStatus")) {
 //			if (session == null || session.getAttribute("adminId") == null) {
 //	            // 로그인 페이지로 리다이렉트 하거나 에러 처리
 //	            response.sendRedirect(contextPath + "/login");
 //	            return;
+			
+			// test용 adminId 임시 부여
 			String adminId = (String) session.getAttribute("adminId");
 			adminId = "1";
 			
+			// 
 			String studentNo = request.getParameter("studentNo");
 			String newStudentStatus = request.getParameter("newStudentStatus");
 			String statusReason = request.getParameter("statusReason");
@@ -71,14 +84,16 @@ public class StatusController extends HttpServlet {
 			String studentName = request.getParameter("studentName");
 			String majorName = request.getParameter("majorName");
 			
-			
+			// 검색 입력값 유지 위한 파라미터값 저장
 			String searchName = request.getParameter("searchName");
 			String searchMajor = request.getParameter("searchMajor");
 			String searchNo = request.getParameter("searchNo");
 			
+			// update 서비스 호출 (변경, 등록 한번에)
 			StudentStatusService ss = new StudentStatusService();
 			int result = ss.processStatusUpdate(studentId, newStudentStatus, statusReason, adminId);
 			
+			// 현재 검색 조건 및 목록 유지 위한 파라미터 저장
 			String encName = (searchName != null) ? java.net.URLEncoder.encode(searchName, "UTF-8") : "";
 		    String encMajor = (searchMajor != null) ? java.net.URLEncoder.encode(searchMajor, "UTF-8") : "";
 		    String sNo = (searchNo != null) ? searchNo : "";
