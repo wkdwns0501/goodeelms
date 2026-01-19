@@ -6,15 +6,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.dto.StudentMajorDTO;
 import com.goodeelms.util.DBUtil;
-import com.goodeelms.dto.StudentDTO;
 
 public class StudentDAO {
 	private static final StudentDAO instance = new StudentDAO();
 	
-	private StudentDAO() {
-	}
+	private StudentDAO() {}
 	
 	public static StudentDAO getInstance() {
 		return instance;
@@ -50,7 +50,7 @@ public class StudentDAO {
 		return dto;
 	}
 
-	public int updateStudent(StudentDTO dto, int student_id) throws SQLException {
+	public int updateStudent(StudentDTO dto, int student_id){
 	    String sql = "UPDATE student SET student_password = ?, student_phone = ?, "
 	               + "student_address = ?, "
 	               + "student_email = ?, student_bank = ? "
@@ -142,4 +142,73 @@ public class StudentDAO {
 		}
 		return null;
 	}
+	
+	// 학생 정보 수정을 위한 조회
+	public StudentDTO selectById(Connection conn, int studentId) throws SQLException {
+        String sql =
+            "SELECT student_id, student_no, student_name, student_phone, " +
+            "       student_gender, student_address, student_status, student_email, student_bank " +
+            "FROM student WHERE student_id = ?";
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)){
+			pstmt.setInt(1, studentId);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if(!rs.next()) return null;
+				StudentDTO student = new StudentDTO();
+				student.setStudentId(rs.getInt("student_id"));
+				student.setStudentNo(rs.getString("student_no"));
+				student.setStudentName(rs.getString("student_name"));
+				student.setStudentPhone(rs.getString("student_phone"));
+				student.setStudentGender(rs.getString("student_gender"));
+				student.setStudentAddress(rs.getString("student_address"));
+				student.setStudentStatus(rs.getString("student_status"));
+				student.setStudentEmail(rs.getString("student_email"));
+				student.setStudentBank(rs.getString("student_bank"));
+				return student;
+			}
+		}
+    }
+	
+	// 학생 일반 정보 수정
+	public void updateProfile(Connection conn, int studentId, String phone, 
+							  String email, String address, String studentBank) throws SQLException {
+		String sql = "UPDATE student " +
+			         "SET student_phone = ?, student_email = ?, " +
+			         "    student_address = ?, student_bank = ? " +
+			         "WHERE student_id = ?";
+		
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setString(1, phone);
+	        pstmt.setString(2, email);
+	        pstmt.setString(3, address);
+	        pstmt.setString(4, studentBank);
+	        pstmt.setInt(5, studentId);
+	        pstmt.executeUpdate();
+	    }
+	}
+	
+	// 학생 비밀번호 수정을 위한 조회
+	public String selectPasswordById(Connection conn, int studentId) throws SQLException {
+	    String sql = "SELECT student_password FROM student WHERE student_id = ?";
+
+	    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setInt(1, studentId);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (!rs.next()) return null;
+	            return rs.getString("student_password");
+	        }
+	    }
+	}
+	
+	// 학생 비밀번호 수정
+	public int updatePassword(Connection conn, int studentId, String newPw) throws SQLException {
+	    String sql = "UPDATE student SET student_password = ? WHERE student_id = ?";
+
+	    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setString(1, newPw);
+	        pstmt.setInt(2, studentId);
+	        return pstmt.executeUpdate(); // 1이면 성공
+	    }
+	}
+
 }

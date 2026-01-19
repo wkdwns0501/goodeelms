@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import com.goodeelms.dto.LectureDTO;
+import com.goodeelms.dto.MajorDTO;
 import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.service.StudentRegisterService;
 
@@ -22,12 +24,22 @@ public class AddStudentController extends HttpServlet {
 		String contextPath = request.getContextPath(); 
 		String command = requestURI.substring(contextPath.length());
 		
+		// 첫 페이지 진입시 
 		if(command.equals("/addStudent/list")) {
-			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/admin/addStudent.jsp");
-			rd.forward(request, response);
 			StudentRegisterService srs = new StudentRegisterService();
+			
+			// 전체 학생 조회
 			ArrayList<StudentDTO> list = srs.getAllStudentList();
+			request.setAttribute("studentList", list);
+			
+			// 학생 등록에 학과 목록 호출
+			ArrayList<MajorDTO> majorList = srs.getMajorList();
+			request.setAttribute("majorList", majorList);
+			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/admin/addStudent.jsp");
+			rd.forward(request, response);			
 		}
+		
+		// 검색 조건에 따른 학생 목록 조회
 		if(command.equals("/addStudent/search")) {
 			String studentName = request.getParameter("studentName");
 			String majorName = request.getParameter("majorName");
@@ -48,16 +60,20 @@ public class AddStudentController extends HttpServlet {
 		String contextPath = request.getContextPath(); 
 		String command = requestURI.substring(contextPath.length());
 		
+		// 신입생 기초 정보 등록
 		if(command.equals("/addStudent/register")) {
 			StudentDTO studentDTO = new StudentDTO();
 			studentDTO.setStudentName(request.getParameter("studentName")); 
 			studentDTO.setStudentGender(request.getParameter("studentGender")); 
 			studentDTO.setStudentIdentityNumber
+			// 주민번호 연결
 			(request.getParameter("identityFront")+"-"+request.getParameter("identityBack")); 
 			studentDTO.setStudentNo(request.getParameter("studentNo")); 
 			studentDTO.setStudentPhone(request.getParameter("studentPhone"));
-			
+			int majorId = Integer.parseInt(request.getParameter("majorId"));
 			StudentRegisterService srs = new StudentRegisterService();
+			
+			// 사용중인 학번인지 확인
 			int checkResult = srs.studentExistCheck(request.getParameter("studentNo"));
 			
 			if(checkResult > 0) {
@@ -70,8 +86,15 @@ public class AddStudentController extends HttpServlet {
 		        out.flush();
 		        out.close();
 			} else {
+				// student 테이블에 학생 등록
 				int registerResult = srs.studentRegister(studentDTO);
-				if(registerResult > 0) {
+				
+				// 현재 등록할 학생의 student_id 가져오기
+				int newStudentId = srs.getNewStudentId();
+				
+				// student_major 테이블 작성
+				int writeResult = srs.writeStudentMajor(newStudentId, majorId);
+				if(registerResult > 0 && writeResult > 0) {
 				response.sendRedirect(request.getContextPath() + "/addStudent/list");	
 				}
 				else {
@@ -80,6 +103,8 @@ public class AddStudentController extends HttpServlet {
 			}
 			
 		}
+		
+		
 	}	
 }
 
