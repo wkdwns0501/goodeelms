@@ -1,29 +1,10 @@
 package com.goodeelms.dao;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
 import java.sql.Connection;
-import java.sql.Date;
-import java.sql.NClob;
 import java.sql.PreparedStatement;
-import java.sql.Ref;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.RowId;
 import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Map;
 
 import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.util.DBUtil;
@@ -142,13 +123,11 @@ public class StudentRegisterDAO {
 	public ArrayList<StudentDTO> getAllStudentList() {
 		String sql = "SELECT *, GROUP_CONCAT(DISTINCT m.major_name ORDER BY m.major_name SEPARATOR ', ') as major_name, "
 				   + " FROM student s JOIN"
-				   + "ORDER BY student_id DESC " +
-	
+				   + " ORDER BY student_id DESC ";
 		
 		ArrayList<StudentDTO> list = new ArrayList<StudentDTO>();
 		try(Connection conn = DBUtil.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			
 			try(ResultSet rs = pstmt.executeQuery()) {
 				while(rs.next()) {
 					StudentDTO studentDTO = new StudentDTO();
@@ -164,10 +143,8 @@ public class StudentRegisterDAO {
 					list.add(studentDTO);
 				}
 			}
-			
-			
 		} catch (SQLException e) {
 			System.out.println("getAllStudentList() 예외 발생: " + e);
-		}	return list;
+		} return list;
 	}
 }

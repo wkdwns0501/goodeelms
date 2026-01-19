@@ -16,9 +16,6 @@ import com.goodeelms.dto.PreEnrollmentDTO;
 import com.goodeelms.service.AddLectureOnCartService;
 import com.goodeelms.service.LoadLectureService;
 
-/**
- * Servlet implementation class AddLectureCartServlet
- */
 @WebServlet("/addLectureCart")
 public class AddLectureCartController extends HttpServlet {
 	private static final long serialVersionUID = 1L;

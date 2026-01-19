@@ -45,14 +45,14 @@
           </div>
 
           <c:if test="${not empty sessionScope.professor_id}">
-            <a class="btn btn-success btn-sm" href="<c:url value='/lecture/add'/>">+ 강의 등록</a>
+            <a class="btn btn-success btn-sm" href="<c:url value='/professor/lecture/add'/>">+ 강의 등록</a>
           </c:if>
         </div>
 
         <!-- 검색창 -->
         <div class="card shadow-sm border-0 mb-3">
           <div class="card-body">
-            <form method="get" action="<c:url value='/lecture/list'/>" class="row g-2 align-items-center">
+            <form method="get" action="<c:url value='/professor/lecture/list'/>" class="row g-2 align-items-center">
               <div class="col-md-8">
                 <input type="text" name="keyword" class="form-control"
                        placeholder="강의명 또는 교수명 또는 건물명 검색"
@@ -60,7 +60,7 @@
               </div>
               <div class="col-md-4 d-flex gap-2">
                 <button type="submit" class="btn btn-primary w-100">검색</button>
-                <a class="btn btn-outline-secondary w-100" href="<c:url value='/lecture/list'/>">초기화</a>
+                <a class="btn btn-outline-secondary w-100" href="<c:url value='/professor/lecture/list'/>">초기화</a>
               </div>
             </form>
             <div class="form-text mt-2">* 검색은 강의명/교수명/건물명 기준이며, 페이지당 5개씩 표시됩니다.</div>
@@ -136,7 +136,7 @@
               <!-- 이전 -->
               <li class="page-item ${page <= 1 ? 'disabled' : ''}">
                 <a class="page-link"
-                   href="<c:url value='/lecture/list'><c:param name='page' value='${page-1}'/><c:if test='${not empty keyword}'><c:param name='keyword' value='${keyword}'/></c:if></c:url>">
+                   href="<c:url value='/professor/lecture/list'><c:param name='page' value='${page-1}'/><c:if test='${not empty keyword}'><c:param name='keyword' value='${keyword}'/></c:if></c:url>">
                   이전
                 </a>
               </li>
@@ -144,7 +144,7 @@
               <c:forEach var="p" begin="1" end="${totalPage}">
                 <li class="page-item ${p == page ? 'active' : ''}">
                   <a class="page-link"
-                     href="<c:url value='/lecture/list'><c:param name='page' value='${p}'/><c:if test='${not empty keyword}'><c:param name='keyword' value='${keyword}'/></c:if></c:url>">
+                     href="<c:url value='/professor/lecture/list'><c:param name='page' value='${p}'/><c:if test='${not empty keyword}'><c:param name='keyword' value='${keyword}'/></c:if></c:url>">
                     ${p}
                   </a>
                 </li>
@@ -152,7 +152,7 @@
               <!-- 다음 -->
               <li class="page-item ${page >= totalPage ? 'disabled' : ''}">
                 <a class="page-link"
-                   href="<c:url value='/lecture/list'><c:param name='page' value='${page+1}'/><c:if test='${not empty keyword}'><c:param name='keyword' value='${keyword}'/></c:if></c:url>">
+                   href="<c:url value='/professor/lecture/list'><c:param name='page' value='${page+1}'/><c:if test='${not empty keyword}'><c:param name='keyword' value='${keyword}'/></c:if></c:url>">
                   다음
                 </a>
               </li>
@@ -166,5 +166,10 @@
   <%@ include file="/footer.jsp" %>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+	  const success = document.getElementById("successAlert");
+	  if (success) setTimeout(() => success.classList.add("d-none"), 3000);
+	</script>
 </body>
 </html>
