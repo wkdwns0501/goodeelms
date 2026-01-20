@@ -22,25 +22,30 @@ public class StatusHistoryDAO {
 		return instance;
 	}
 
-	public List<StudentStatusHistoryDTO> getStatusHistoryById(int studentId) {
-		String sql = "select * from student_status_history " + "WHERE student_id = ?";
+	public List<StudentStatusHistoryDTO> getStatusHistoryByStudentId(int studentId) {
+		String sql = "select * from student_status_history WHERE student_id = ?";
 
 		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, studentId);
-			try (ResultSet rs = pstmt.executeQuery()) {
+			
+			try (ResultSet rs = pstmt.executeQuery()) {  
 				List<StudentStatusHistoryDTO> list = new ArrayList<StudentStatusHistoryDTO>();
-
+				
 				while (rs.next()) {
 					StudentStatusHistoryDTO dto = new StudentStatusHistoryDTO();
-					dto.setStatusType(rs.getString("status_type"));
 					dto.setStatusReason(rs.getString("status_reason"));
+					dto.setStatusType(rs.getString("status_type"));
 					dto.setStatusAt(rs.getObject("status_at", LocalDateTime.class));
-
 					list.add(dto);
 				}
+
 				return list;
+			} catch (Exception e) {
+				System.out.println("getStatusHistoryByStudentId() 쿼리 실행 예외: " + e.getMessage());
+				e.printStackTrace();
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
+			System.out.println("getStatusHistoryByStudentId() DB 연결 예외: " + e.getMessage());
 			e.printStackTrace();
 		}
 		return null;

@@ -48,7 +48,7 @@ public class MajorDAO {
 		return null;
 	}
 
-	// 0119 임욱 추가. 전체 전공 조회
+	// 0119 임욱 / 전체 전공 조회
 	public List<MajorDTO> findAll() {
 		String sql = "SELECT * FROM major";
 
@@ -72,5 +72,33 @@ public class MajorDAO {
 		}
 		return null;
 	}
+	
+	// 0120 임욱(추가) / student_id 해당하는 전공, 전공이름 
+	public List<String> getCodeAndNameByStudentId(int studentId){
+		String sql = "SELECT m.major_code, m.major_name FROM major M "
+				+ "JOIN student_major SM ON M.major_id = sm.major_id "
+				+ "WHERE student_id = ? ";
 
+		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setInt(1, studentId);
+			
+			try (ResultSet rs = pstmt.executeQuery()) {
+				List<String> list = new ArrayList<String>();
+				while (rs.next()) {
+					list.add(rs.getString("major_code"));
+					list.add(rs.getString("major_name"));
+				}
+				return list;
+			} catch(Exception e) {
+				System.out.println("getCodeAndNameByStudentId() 쿼리 예외 발생: " + e.getMessage());
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			System.out.println("getCodeAndNameByStudentId() 예외 발생: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
 }

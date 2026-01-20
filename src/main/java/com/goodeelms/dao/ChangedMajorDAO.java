@@ -21,37 +21,37 @@ public class ChangedMajorDAO {
 	public static ChangedMajorDAO getInstance() {
 		return instance;
 	}
-	
-	public ChangeMajorHistoryDTO getChangeMajorHistoryById(int studentId) {
-		String sql = "select * from change_major_history WHERE student_id = ?";
+
+	// 0120 임욱 / studentId로 이전 학과 이름, 현재 학과 이름 조회
+	public ChangeMajorHistoryDTO getChangeMajorHistoryNameByStudentId(int studentId) { 
+		String sql = "SELECT CHM.change_major_id, CHM.student_id, CHM.changed_at, "
+				+ "M1.major_name AS 'beforeMajor', M2.major_name AS 'currentMajor' "
+				+ "FROM change_major_history CHM "
+				+ "JOIN major M1 ON CHM.from_major_id = M1.major_id "
+				+ "JOIN major M2 ON CHM.to_major_id = M2.major_id " 
+				+ "WHERE CHM.student_id = ? ";
 
 		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, studentId);
-		
-			change_major_id INT AUTO_INCREMENT PRIMARY KEY,
-			changed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-			student_id INT NOT NULL,
-			
-			
-			ChangeMajorHistoryDTO dto = null;
-			try (ResultSet rs = pstmt.executeQuery()) {
-				if(rs.next()) {
-					dto = new ChangeMajorHistoryDTO();
-					dto.  (rs.getString("change_major_id"));
-					dto.(rs.getString("status_reason"));
-					dto.(rs.getObject("status_at", LocalDateTime.class));
 
+			try(ResultSet rs = pstmt.executeQuery()){
+				if(rs.next()) {
+					ChangeMajorHistoryDTO dto = new ChangeMajorHistoryDTO();
+					dto.setFromMajorName(rs.getString("beforeMajor"));
+					dto.setToMajorName(rs.getString("currentMajor"));
+					dto.setChangedAt(rs.getObject("changed_at", LocalDateTime.class));
+					return dto;
 				}
-				return dto;
+				return null;
+			} catch (Exception e) {
+				System.out.println("getChangeMajorHistoryAndNameByStudentId() 쿼리 예외발생: " + e.getMessage());
+				e.printStackTrace();
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
+			System.out.println("getChangeMajorHistoryAndNameByStudentId() 예외발생: " + e.getMessage());
 			e.printStackTrace();
 		}
 		return null;
-		
-		
-		
 	}
-	
-	
+
 }

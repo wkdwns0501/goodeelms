@@ -17,7 +17,6 @@ public class TuitionPaymentDTO {
 	private String paymentStatus;
 	private int student_id;
 	
-	
 	public String getFormattedPaymentDate() {
 	    if (this.paymentDate == null) return "";
 	    return this.paymentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));

@@ -1,11 +1,17 @@
+
 package com.goodeelms.service;
 
 import java.sql.Connection;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.goodeelms.dao.ChangedMajorDAO;
+import com.goodeelms.dao.MajorDAO;
+import com.goodeelms.dao.ScholarshipDAO;
 import com.goodeelms.dao.StudentDAO;
 import com.goodeelms.dao.StudentStatusUpdateDAO;
+import com.goodeelms.dto.ChangeMajorHistoryDTO;
+import com.goodeelms.dto.ScholarshipDTO;
 import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.dto.StudentMajorDTO;
 import com.goodeelms.dto.StudentStatusHistoryDTO;
@@ -18,13 +24,23 @@ public class StudentService {
 	// 비밀번호 영문 소문자 + 숫자, 6자 이상
 	private static final Pattern PW_PATTERN =
 	        Pattern.compile("^(?=.*[a-z])(?=.*\\d)[a-z\\d]{6,}$");
-
 	
 	public List<StudentMajorDTO> getMajors(String studentId) {
 		return studentDAO.getMajors(studentId);
 	}
+	
 	public String getStudentId(String studentNo) {
 		return studentDAO.getStudentId(studentNo);
+	}
+	
+	// 0120 임욱 / 학생 전공 조회
+	public ChangeMajorHistoryDTO getChangedMajorHistory(int studentId) {
+		return ChangedMajorDAO.getInstance().getChangeMajorHistoryNameByStudentId(studentId);
+	}
+	
+	// 0120 임욱(추가) / 학생 장학 정보 조회
+	public List<ScholarshipDTO> getScholarshipByStudentId(int studentId){
+		return ScholarshipDAO.getInstance().getSemesterAndAmountByStudentId(studentId);
 	}
 	
 	// 학생 정보 수정을 위한 조회

@@ -10,14 +10,17 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
+import com.goodeelms.dto.ChangeMajorHistoryDTO;
+import com.goodeelms.dto.ScholarshipDTO;
 import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.dto.StudentStatusHistoryDTO;
 import com.goodeelms.dto.TuitionPaymentDTO;
+import com.goodeelms.service.MajorService;
 import com.goodeelms.service.StudentService;
 import com.goodeelms.service.StudentStatusService;
 import com.goodeelms.service.TuitionService;
 
-@WebServlet(urlPatterns = { "/student/signup", "/student/tuition", "/student/status_history" })
+@WebServlet("/student/*")
 public class StudentController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final StudentService studentService = new StudentService();
@@ -34,7 +37,9 @@ public class StudentController extends HttpServlet {
 
 	private void checkPath(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String path = request.getServletPath();
+		String path = request.getPathInfo();
+		if (path == null)
+			path = "";
 
 		HttpSession session = request.getSession(false);
 		if (session == null || session.getAttribute("user_role") == null
@@ -46,17 +51,18 @@ public class StudentController extends HttpServlet {
 		}
 
 		switch (path) {
-		case "/student/signup":
+		case "/signup":
 			signup(request, response);
 			break;
-		case "/student/tuition":
+		case "/tuition":
 			showTuition(request, response);
 			break;
-		case "/student/history":
-			showStatusHistory(request, response);
+		case "/history/majorAndStatus":
+			showStatusAndMajorHistory(request, response);
 			break;
-		case "/student/major":
-			showStudentMajor(request, response);
+		case "/history/rewardAndPunishment":
+			// 추가 필요
+			break;
 		default:
 			System.out.println("정의되지 않은 경로 요청됨: " + path);
 			response.sendRedirect(request.getContextPath() + "/main.jsp");
@@ -99,34 +105,47 @@ public class StudentController extends HttpServlet {
 		}
 	}
 
+	// 0120 임욱(수정) / 장학 정보 조회 추가
 	protected void showTuition(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		int student_id = (Integer) session.getAttribute("student_id");
-
-		TuitionPaymentDTO tuition = new TuitionService().readTuition(student_id);
-		request.setAttribute("tuition", tuition);
-
+		
+		TuitionPaymentDTO dto = new TuitionService().readTuition(student_id);
+		List<ScholarshipDTO> scholarship = new StudentService().getScholarshipByStudentId(student_id);
+		
+		
+		if(dto == null || scholarship == null) {
+			request.setAttribute("msg", "등록금 및 장학 정보를 조회할 수 없습니다.");
+			request.getRequestDispatcher("/WEB-INF/views/student/tuition.jsp").forward(request, response);
+			return;
+		}
+		
+		request.setAttribute("tuition", dto);
+		request.setAttribute("scholarship", scholarship);
+		
 		request.getRequestDispatcher("/WEB-INF/views/student/tuition.jsp").forward(request, response);
 		return;
 	}
 
-	protected void showStatusHistory(HttpServletRequest request, HttpServletResponse response)
+	// 0120 임욱 (수정) / 전공, 학적 변동 이력, 전공 변동 이력 출력
+	protected void showStatusAndMajorHistory(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		int student_id = (Integer) session.getAttribute("student_id");
 		
-		List<StudentStatusHistoryDTO> list = new StudentStatusService().getStatusHistory(student_id);
+		List<String> majorList = new MajorService().getMajorCodeAndMajorName(student_id); // major_code, major_name
+		ChangeMajorHistoryDTO dto = studentService.getChangedMajorHistory(student_id); // fromMajorName, toMajorName
+		List<StudentStatusHistoryDTO> statusList = new StudentStatusService().getStatusHistory(student_id); // status_type, status_reason, status_at 		
 
-		request.setAttribute("statusList", list);
-		request.getRequestDispatcher("/WEB-INF/views/student/statusHistory.jsp").forward(request, response);
+		if (statusList != null) request.setAttribute("statusList", statusList);
+		if (dto != null) request.setAttribute("majorHistory", dto);
+		if (majorList == null) request.setAttribute("msg", "전공을 조회할 수 없습니다.");
+		
+		
+		request.setAttribute("majorList", majorList);
+		request.getRequestDispatcher("/WEB-INF/views/student/majorAndStatus.jsp").forward(request, response);
 		return;
-	}
-
-	protected void showStudentMajor(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		int student_id = (Integer) session.getAttribute("student_id");
 	}
 
 }

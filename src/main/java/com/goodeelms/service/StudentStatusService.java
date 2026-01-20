@@ -11,9 +11,9 @@ import com.goodeelms.dto.StudentStatusHistoryDTO;
 public class StudentStatusService {
 	StatusHistoryDAO historyDAO = StatusHistoryDAO.getInstance();
 	
-	// 0119 임욱 재적 상태 이력 조회 
+	// 0119 임욱 / 재적 상태 이력 조회 
 	public List<StudentStatusHistoryDTO> getStatusHistory(int studentId){
-		return historyDAO.getStatusHistoryById(studentId);
+		return historyDAO.getStatusHistoryByStudentId(studentId);
 	}
 	
 	// 검색 조건 없는 모든 학생 목록
