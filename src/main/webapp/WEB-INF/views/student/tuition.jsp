@@ -25,135 +25,139 @@
 		<div class="container-fluid">
 			<div class="page-shell">
 
-				<c:if test="${not empty param.error}">
-					<c:choose>
-						<c:when test="${param.error == 'noDTO'}">
-							<script type="text/javascript">
-								alert("로그인 후 이용 가능합니다.");
-							</script>
-						</c:when>
-					</c:choose>
+				<c:if test="${not empty param.error && param.error == 'noDTO'}">
+					<script type="text/javascript">
+						alert("로그인 후 이용 가능합니다.");
+					</script>
 				</c:if>
 
-				<div class="d-flex justify-content-between align-items-center mb-4">
-					<p class="text-muted mb-3">
-						<c:if test="${not empty msg}">
-							<div class="alert alert-success alert-dismissible fade show"
-								role="alert">${msg}</div>
-						</c:if>
-					</p>
-
-					<div>
-						<h5 class="mb-1 fw-bold">등록금 납부 현황</h5>
-						<p class="text-muted small mb-0">등록금 납부 현황과 장학 정보입니다.</p>
+				<c:if test="${not empty msg}">
+					<div class="alert alert-success alert-dismissible fade show mb-4"
+						role="alert">
+						${msg}
+						<button type="button" class="btn-close" data-bs-dismiss="alert"
+							aria-label="Close"></button>
 					</div>
-					<span>현재 납부 상태: ${tuition.paymentStatus} </span>
+				</c:if>
+
+				<div class="mb-5 text-center">
+					<h4 class="fw-bold mb-2">
+						<i class="bi bi-credit-card-2-front me-2 text-primary"></i>등록금 납부
+						및 장학 현황
+					</h4>
+					<p class="text-muted mb-3">당해 학기 납부 내역과 장학 수혜 정보를 한눈에 확인하세요.</p>
+					<span
+						class="badge ${tuition.paymentStatus == '납부완료' ? 'bg-success' : 'bg-warning text-dark'} p-2 px-4 fs-6 shadow-sm">
+						현재 상태: ${tuition.paymentStatus} </span>
 				</div>
 
-				<div class="row g-3 mb-4">
-					<div class="col-md-4">
-						<div class="card border-0 shadow-sm bg-light">
-							<div class="card-body text-center p-4">
-								<div class="text-muted small mb-1">총 등록금</div>
-								<h3 class="fw-bold text-dark">4,500,000원</h3>
-							</div>
+				<section class="mb-5">
+					<div class="card border-0 shadow-sm mb-3">
+						<div
+							class="card-body p-4 d-flex justify-content-between align-items-center">
+							<span class="text-muted fw-bold"><i
+								class="bi bi-dash-square me-2"></i>총 등록금</span>
+							<h3 class="fw-bold text-dark mb-0">4,500,000원</h3>
 						</div>
 					</div>
 
-					<div class="col-md-4">
-						<div class="card border-0 shadow-sm bg-light">
-							<div class="card-body text-center p-4">
-								<div class="text-muted small mb-1">납부한 금액</div>
-								<h3 class="fw-bold text-dark">
-									<fmt:formatNumber value="${tuition.paymentAmount}"
-										type="number" />
-									원
-								</h3>
-							</div>
+					<div class="card border-0 shadow-sm bg-light mb-3">
+						<div
+							class="card-body p-4 d-flex justify-content-between align-items-center">
+							<span class="text-muted fw-bold"><i
+								class="bi bi-check-circle-fill me-2 text-primary"></i>납부한 금액</span>
+							<h3 class="fw-bold text-primary mb-0">
+								<fmt:formatNumber value="${tuition.paymentAmount}" type="number" />
+								원
+							</h3>
 						</div>
 					</div>
 
-					<div class="col-md-4">
-						<div class="card border-0 shadow-sm bg-white border">
-							<div class="card-body text-center p-4">
-								<div class="text-muted small mb-1">납부 완료까지 남은 금액</div>
-								<h3 class="fw-bold text-danger">
-									<fmt:formatNumber value="${4500000- tuition.paymentAmount}"
-										type="number" />
-									원
-								</h3>
-							</div>
+					<div
+						class="card border-0 shadow-sm border-start border-danger border-5 mb-3">
+						<div
+							class="card-body p-4 d-flex justify-content-between align-items-center">
+							<span class="text-danger fw-bold"><i
+								class="bi bi-exclamation-triangle-fill me-2"></i>미납 잔액</span>
+							<h3 class="fw-bold text-danger mb-0">
+								<fmt:formatNumber value="${4500000 - tuition.paymentAmount}"
+									type="number" />
+								원
+							</h3>
 						</div>
 					</div>
-				</div>
+				</section>
 
+				<section class="mb-5">
 					<div class="card border-0 shadow-sm">
-					<div class="card-header bg-white py-3">
-						<h6 class="mb-0 fw-bold">
-							<i class="bi bi-list-check me-2"></i>납부 상세 정보
-						</h6>
-					</div>
-
-					<div class="table-responsive">
-						<table class="table table-hover align-middle mb-0">
-							<thead class="table-light">
-								<tr>
-									<th class="ps-4">항목</th>
-									<th>내용</th>
-									<th>비고</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td class="ps-4 text-muted">최종 납부 일시</td>
-									<td class="fw"><c:choose>
-											<c:when test="${not empty tuition.paymentDate}">
-											${tuition.formattedPaymentDate}
-											</c:when>
-											<c:otherwise>-</c:otherwise>
-										</c:choose></td>
-									<td>-</td>
-								</tr>
-								<tr>
-									<td class="ps-4 text-muted">납부 방식</td>
-									<td>가상계좌 이체</td>
-									<td>구디은행 123-456-7890123</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-				
-				<div class="card border-0 shadow-sm">
-					<div class="card-header bg-white py-3">
-						<h6 class="mb-0 fw-bold">
-							<i class="bi bi-list-check me-2"></i>장학 정보
-						</h6>
-					</div>
-
-					<div class="table-responsive">
-						<table class="table table-hover align-middle mb-0">
-							<thead class="table-light">
-								<tr>
-									<th>지급 학기</th>
-									<th>지급 금액</th>
-								</tr>
-							</thead>
-							
-							<tbody>
-								<c:forEach var="scholarshipDTO" items="${scholarship}">
+						<div class="card-header bg-white py-3 border-bottom">
+							<h6 class="mb-0 fw-bold">
+								<i class="bi bi-file-earmark-text me-2 text-secondary"></i>납부 상세
+								정보
+							</h6>
+						</div>
+						<div class="table-responsive">
+							<table class="table align-middle mb-0">
+								<tbody>
 									<tr>
-										<td>${scholarshipDTO.scholarshipSemester}</td>
-										<td>${scholarshipDTO.scholarshipAmount}</td>
+										<th class="ps-4 text-muted bg-light" style="width: 250px;">최종
+											납부 일시</th>
+										<td class="ps-4 fw-bold text-dark"><c:choose>
+												<c:when test="${not empty tuition.paymentDate}">${tuition.formattedPaymentDate}</c:when>
+												<c:otherwise>
+													<span class="text-muted fw-normal">납부 기록 없음</span>
+												</c:otherwise>
+											</c:choose></td>
 									</tr>
-								</c:forEach>
-							</tbody>
-						</table>
+									<tr>
+										<th class="ps-4 text-muted bg-light">납부 방식</th>
+										<td class="ps-4">가상계좌 이체 <small
+											class="text-secondary ms-2">(구디은행 123-456-7890123)</small>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
-				</div>
-				
-				
-				
+				</section>
+
+				<section class="mb-4">
+					<div class="card border-0 shadow-sm">
+						<div class="card-header bg-white py-3 border-bottom">
+							<h6 class="mb-0 fw-bold">
+								<i class="bi bi-gift me-2 text-danger"></i>장학금 수혜 내역
+							</h6>
+						</div>
+						<div class="table-responsive">
+							<table class="table table-hover align-middle mb-0">
+								<thead class="table-light">
+									<tr class="text-center">
+										<th style="width: 30%;">지급 학기</th>
+										<th style="width: 40%;">지급 항목</th>
+										<th class="text-end pe-5">지급 금액</th>
+									</tr>
+								</thead>
+								<tbody>
+									<c:forEach var="scholarshipDTO" items="${scholarship}">
+										<tr class="text-center">
+											<td>${scholarshipDTO.scholarshipSemester}</td>
+											<td class="text-muted small">교내 장학금(성적우수)</td>
+											<td class="text-end pe-5 fw-bold text-success">+ <fmt:formatNumber
+													value="${scholarshipDTO.scholarshipAmount}" type="number" />원
+											</td>
+										</tr>
+									</c:forEach>
+									<c:if test="${empty scholarship}">
+										<tr>
+											<td colspan="3" class="py-5 text-center text-muted small">장학수혜 내역이 존재하지 않습니다.</td>
+										</tr>
+									</c:if>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</section>
+
 			</div>
 		</div>
 	</main>

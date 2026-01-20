@@ -3,18 +3,18 @@ package com.goodeelms.service;
 
 import java.sql.Connection;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.goodeelms.dao.ChangedMajorDAO;
-import com.goodeelms.dao.MajorDAO;
+import com.goodeelms.dao.LectureHistoryDAO;
 import com.goodeelms.dao.ScholarshipDAO;
 import com.goodeelms.dao.StudentDAO;
-import com.goodeelms.dao.StudentStatusUpdateDAO;
 import com.goodeelms.dto.ChangeMajorHistoryDTO;
+import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.dto.ScholarshipDTO;
 import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.dto.StudentMajorDTO;
-import com.goodeelms.dto.StudentStatusHistoryDTO;
 import com.goodeelms.util.EncryptUtil;
 import com.goodeelms.util.GenderUtil;
 import com.goodeelms.util.DBUtil;
@@ -33,13 +33,16 @@ public class StudentService {
 		return studentDAO.getStudentId(studentNo);
 	}
 	
-	// 0120 임욱 / 학생 전공 조회
-	public ChangeMajorHistoryDTO getChangedMajorHistory(int studentId) {
+	
+	public Map<Integer, LectureDTO> getlectureAndLectureScoreByStudentId(int studentId){ // 0120 임욱(추가) / 수강 중인 강의 조회
+		return LectureHistoryDAO.getInstance().getLectureHistoryByStudentId(studentId);
+	}
+
+	public ChangeMajorHistoryDTO getChangedMajorHistory(int studentId) { 	// 0120 임욱(추가) / 학생 전과 이력 조회
 		return ChangedMajorDAO.getInstance().getChangeMajorHistoryNameByStudentId(studentId);
 	}
-	
-	// 0120 임욱(추가) / 학생 장학 정보 조회
-	public List<ScholarshipDTO> getScholarshipByStudentId(int studentId){
+
+	public List<ScholarshipDTO> getScholarshipByStudentId(int studentId){ 	// 0120 임욱(추가) / 학생 장학 정보 조회
 		return ScholarshipDAO.getInstance().getSemesterAndAmountByStudentId(studentId);
 	}
 	
@@ -50,11 +53,9 @@ public class StudentService {
         }
 	}
 	
-	// 0118 임욱 추가 - 학생 정보를 업데이트 (학생 정보 수정, 초기 로그인 경우에 사용)
-	public boolean updateStudent(StudentDTO studentDTO) {
-		if(studentDAO.existsStudentUniqueColumn(studentDTO)) {
-			return false; 	// DB에 동일한 UNIQUE 컬럼이 존해할 경우 early return
-		}
+
+	public boolean updateStudent(StudentDTO studentDTO) { 	// 0118 임욱 추가 - 학생 정보를 업데이트 (학생 정보 수정, 초기 로그인 경우에 사용)
+		if(studentDAO.existsStudentUniqueColumn(studentDTO)) return false; 	
 		
 		studentDTO.setStudentGender(GenderUtil.getGenderByIdentityNumber(studentDTO.getStudentIdentityNumber())); // 주민번호에 따른 자동 성별 설정
 	    studentDTO.setStudentPassword(EncryptUtil.encryptPassword(studentDTO.getStudentPassword())); // 비밀번호 암호화 후 저장
@@ -62,12 +63,10 @@ public class StudentService {
 		return studentDAO.updateStudent(studentDTO);
 	}
 	
-	// 0118 임욱 추가 - 노출하지 않을 비밀번호를 제외한 정보를 획득
-	public StudentDTO getStudentByNo(StudentDTO studentDTO) {
+
+	public StudentDTO getStudentByNo(StudentDTO studentDTO) { 	// 0118 임욱 추가 - 노출하지 않을 비밀번호를 제외한 정보를 획득
 		StudentDTO dto = studentDAO.getStudentByNo(studentDTO.getStudentNo());
-		
 		dto.setStudentPassword("");
-		
 		return dto;
 	}
 	

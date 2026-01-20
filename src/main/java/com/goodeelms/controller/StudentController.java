@@ -8,9 +8,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.goodeelms.dto.ChangeMajorHistoryDTO;
+import com.goodeelms.dto.LectureDTO;
+import com.goodeelms.dto.LectureHistoryDTO;
 import com.goodeelms.dto.ScholarshipDTO;
 import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.dto.StudentStatusHistoryDTO;
@@ -55,7 +59,10 @@ public class StudentController extends HttpServlet {
 			signup(request, response);
 			break;
 		case "/tuition":
-			showTuition(request, response);
+			showTuitionAndScholarship(request, response);
+			break;
+		case "/grades":
+			showGrade(request, response);
 			break;
 		case "/history/majorAndStatus":
 			showStatusAndMajorHistory(request, response);
@@ -105,9 +112,8 @@ public class StudentController extends HttpServlet {
 		}
 	}
 
-	// 0120 임욱(수정) / 장학 정보 조회 추가
-	protected void showTuition(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void showTuitionAndScholarship(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException { 	// 0120 임욱(수정) / 장학 정보 조회 추가
 		HttpSession session = request.getSession();
 		int student_id = (Integer) session.getAttribute("student_id");
 		
@@ -128,9 +134,8 @@ public class StudentController extends HttpServlet {
 		return;
 	}
 
-	// 0120 임욱 (수정) / 전공, 학적 변동 이력, 전공 변동 이력 출력
 	protected void showStatusAndMajorHistory(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+			throws ServletException, IOException { 	// 0120 임욱(수정) / 전공, 학적 변동 이력, 전공 변동 이력 출력
 		HttpSession session = request.getSession();
 		int student_id = (Integer) session.getAttribute("student_id");
 		
@@ -148,4 +153,16 @@ public class StudentController extends HttpServlet {
 		return;
 	}
 
+	
+	protected void showGrade(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {	// 0120 임욱(추가) / 성적 조회 
+		HttpSession session = request.getSession();
+		int student_id = (Integer) session.getAttribute("student_id");
+		
+		Map<Integer, LectureDTO> grade = studentService.getlectureAndLectureScoreByStudentId(student_id);
+		
+		request.setAttribute("grade", grade); // lecture_code, lecture_name, lecuture_year, lecture_semester, lecture_score ( lecture_history)
+		request.getRequestDispatcher("/WEB-INF/views/student/grades.jsp").forward(request, response);
+		return;
+	}
 }

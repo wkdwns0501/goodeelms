@@ -23,81 +23,113 @@
 	<main class="content">
 		<div class="container-fluid">
 			<div class="page-shell">
-				<h5 class="mb-2">학적사항, 전공변경 이력을 조회합니다.</h5>
-				<p class="text-muted mb-3">
-					<c:if test="${not empty msg}">
-						<div class="alert alert-success alert-dismissible fade show"
-							role="alert">${msg}</div>
-					</c:if>
-				</p>
 
 
-				<table class="table table-bordered align-middle mb-4">
-					<tbody>
-						<tr>
-							<th class="table-light" style="width: 20%;">전공코드</th>
-							<td>${majorList[0]}</td>
-						</tr>
-						<tr>
-							<th class="table-light">전공명</th>
-							<td>${majorList[1]}</td>
-						</tr>
-					</tbody>
-				</table>
 
-				<table class="table table-bordered align-middle mb-4">
-					<thead>
-						<tr class="table-secondary">
-							<th>학적상태</th>
-							<th>변경사유</th>
-							<th>변경일시</th>
-						</tr>
-					</thead>
-					<tbody>
-						<c:forEach var="statusDTO" items="${statusList}">
-							<tr>
-								<td>${statusDTO.statusType}</td>
-								<td>${statusDTO.statusReason}</td>
-								<td class="fw">
-									<c:choose>
-										<c:when test="${not empty statusDTO.statusAt}">
-													${statusDTO.formattedStatusAt}</c:when>
-										<c:otherwise>-</c:otherwise>
-									</c:choose>
-								</td>
-							</tr>
-						</c:forEach>
-						<c:if test="${empty statusList}">
-							<tr>
-								<td colspan="3" class="text-center">변경 이력이 없습니다.</td>
-							</tr>
-						</c:if>
-					</tbody>
-				</table>
+
+				<div
+					class="d-flex justify-content-between align-items-center mb-5 pb-3 border-bottom">
+					<div>
+						<h3 class="fw-bold mb-1 text-dark">
+							<i class="bi bi-person-badge me-2 text-primary"></i>학적 및 전공 변동 이력
+						</h3>
+						<p class="text-muted mb-0">현재 전공 정보와 과거 학적 변동 사항을 확인하실 수 있습니다.</p>
+					</div>
+				</div>
+
+
+				<div class="mb-5">
+					<h5 class="fw-bold mb-3">
+						<i class="bi bi-info-circle me-2 text-primary"></i>현재 소속 정보
+					</h5>
+					<div class="table-responsive">
+						<table class="table table-bordered align-middle mb-0">
+							<tbody>
+								<tr>
+									<th class="table-light ps-4" style="width: 200px;">전공코드</th>
+									<td class="ps-4 fw-bold text-dark">${majorList[0]}</td>
+								</tr>
+								<tr>
+									<th class="table-light ps-4">전공명</th>
+									<td class="ps-4 fw-bold">${majorList[1]}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div class="mb-5">
+					<h5 class="fw-bold mb-3">
+						<i class="bi bi-clock-history me-2 text-secondary"></i>학적 상태 변경 내역
+					</h5>
+					<div class="table-responsive">
+						<table
+							class="table table-bordered table-hover align-middle mb-0 text-center">
+							<thead class="table-light">
+								<tr>
+									<th style="width: 25%;">학적상태</th>
+									<th style="width: 35%;">변경사유</th>
+									<th style="width: 30%;">변경일시</th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:forEach var="statusDTO" items="${statusList}">
+									<tr>
+										<td><span>${statusDTO.statusType}</span></td>
+										<td class="text-center">${statusDTO.statusReason}</td>
+										<td class="text-muted"><c:choose>
+												<c:when test="${not empty statusDTO.statusAt}">
+                                                    ${statusDTO.formattedStatusAt}
+                                                </c:when>
+												<c:otherwise>-</c:otherwise>
+											</c:choose></td>
+									</tr>
+								</c:forEach>
+								<c:if test="${empty statusList}">
+									<tr>
+										<td colspan="3" class="py-5 text-center text-muted">변경
+											이력이 없습니다.</td>
+									</tr>
+								</c:if>
+							</tbody>
+						</table>
+					</div>
+				</div>
 
 				<c:if test="${not empty majorHistory}">
-					<table class="table table-bordered align-middle mb-4">
-						<thead>
-							<tr class="table-secondary">
-								<th>전과 이전 학과</th>
-								<th>전과 이후 학과</th>
-								<th>전과일시</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>${majorHistory.fromMajorName}</td>
-								<td>${majorHistory.toMajorName}</td>
-								<td class="fw">
-									<c:choose>
-										<c:when test="${not empty majorHistory.changedAt}">
-													${majorHistory.formattedChangedMajorDate}</c:when>
-										<c:otherwise>-</c:otherwise>
-									</c:choose>
-								</td>
-							</tr>
-						</tbody>
-					</table>
+					<div class="mb-4">
+						<h5 class="fw-bold mb-3">
+							<i class="bi bi-arrow-left-right me-2"></i>전공 변경(전과) 기록
+						</h5>
+						<div class="table-responsive border rounded">
+							<table class="table table-bordered align-middle mb-0 text-center">
+								<thead class="table-light">
+									<tr>
+										<th style="width: 35%;">전과 이전 학과</th>
+										<th style="width: 35%;">전과 이후 학과</th>
+										<th style="width: 30%;">전과일시</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="py-3"><span class="fw-bold text-muted">${majorHistory.fromMajorName}</span>
+											<i class="bi bi-arrow-right ms-2 text-secondary"></i></td>
+
+										<td class="py-3 bg-light-primary"><span
+											class="fw-bold text-primary">${majorHistory.toMajorName}</span>
+										</td>
+
+										<td class="text-muted small"><c:choose>
+												<c:when test="${not empty majorHistory.changedAt}">
+                        ${majorHistory.formattedChangedMajorDate}
+                    </c:when>
+												<c:otherwise>-</c:otherwise>
+											</c:choose></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
 				</c:if>
 
 			</div>
