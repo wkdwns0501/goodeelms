@@ -17,6 +17,7 @@ import java.util.Set;
 
 import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.dto.PreEnrollmentDTO;
+import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.service.LectureCartService;
 import com.goodeelms.service.LoadLectureService;
 
@@ -34,8 +35,6 @@ public class LectureCartController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		int studentId = (Integer)session.getAttribute("student_id");
-		
-		System.out.println("cartDoGet 호출됨");
 		
 		// 한 학생이 장바구니에 갖고있는 강의ID 다 긁어오기
 		LectureCartService selectCartService = new LectureCartService();
@@ -81,8 +80,13 @@ public class LectureCartController extends HttpServlet {
 		String studentId = request.getParameter("student_id");
 		HttpSession session = request.getSession();
 		String sessionId = ((Integer)session.getAttribute("student_id")).toString();
-		
-		if(!invaildString(lectureId) || !invaildString(studentId)) {
+		if(!"/student/cart/clearCart".equals(command)) {
+			if(!invaildString(lectureId) || !invaildString(studentId)) {
+				System.out.println("잘못된 접근");
+				return;
+			}
+		}
+		else if(!invaildString(studentId)) {
 			System.out.println("잘못된 접근");
 			return;
 		}
@@ -94,7 +98,6 @@ public class LectureCartController extends HttpServlet {
 		LectureCartService service = new LectureCartService();
 		if("/student/cart/addCart".equals(command)) {
 			int select = service.simpleSearchBeforeAdd(lectureId, studentId);
-			System.out.println("select:" + select);
 			if(select != 0) {
 				System.out.println("이미 있는 데이터 추가 불가 버그 수정 필요");
 				return;
@@ -108,12 +111,20 @@ public class LectureCartController extends HttpServlet {
 			System.out.println("INSERT 성공");
 		}
 		else if("/student/cart/deleteCart".equals(command)) {
-			System.out.println("DELETE 진입");
 			if(service.deleteLectureOnCart(lectureId, studentId) < 1) {
 				System.out.println("DELETE 실패!");
 				return;
 			}
 			System.out.println("DELETE 성공");
+		}
+		else if("/student/cart/clearCart".equals(command)) {
+			int intId = Integer.parseInt(studentId);
+			List<PreEnrollmentDTO> cartList = service.getCartDataOfStudent(intId);
+			if(cartList == null || cartList.size() == 0) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				return;
+			}
+			if(service.clearCart(studentId, cartList) == 0) response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
 

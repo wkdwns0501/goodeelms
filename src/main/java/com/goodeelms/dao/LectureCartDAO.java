@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.goodeelms.dto.PreEnrollmentDTO;
 import com.goodeelms.util.DBUtil;
@@ -91,6 +93,30 @@ public class LectureCartDAO {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public int clearCart(String studentId, Set<Integer> lectureIds) throws NullPointerException{
+		String sql ="DELETE FROM pre_enrollment WHERE student_id = ? ";
+		if(lectureIds.size() > 0) {
+			sql += "AND lecture_id IN(" + lectureIds.stream().map(id -> "?").collect(Collectors.joining(",")) + ")";
+		}
+		else {
+			throw new NullPointerException("이거 말 안된다.");
+		}
+		try(PreparedStatement pstmt = getPrepare(sql)){
+			int index = 1;
+			pstmt.setString(index++, studentId);
+			for(int id : lectureIds) {
+				pstmt.setInt(index++, id);
+			}
+			
+			int result = pstmt.executeUpdate();
+			return result;
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 	
 	private PreparedStatement getPrepare(String sql) throws SQLException {

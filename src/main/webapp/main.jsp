@@ -41,6 +41,11 @@
 	  			alert("로그인 후 이용 가능합니다.");
 	  		</script>
 	  	</c:when>
+	  	<c:when test="${param.error == 'NoAccessEnrollTime'}">
+	  		<script type="text/javascript">
+	  			alert("이용 가능한 시간이 아닙니다.");
+	  		</script>
+	  	</c:when>
 	  </c:choose>
   </c:if>
 

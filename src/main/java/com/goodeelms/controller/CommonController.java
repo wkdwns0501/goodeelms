@@ -82,7 +82,8 @@ public class CommonController extends HttpServlet {
 		
 		if (obj instanceof StudentDTO studentDTO) {
 			session.setAttribute("user_role", "STUDENT");
-			session.setAttribute("studentDTO", studentDTO);
+			session.setAttribute("student_id", studentDTO.getStudentId());
+//			session.setAttribute("studentDTO", studentDTO);
 			
 			// 초기 로그인 여부 확인
 		    String identityNum = studentDTO.getStudentIdentityNumber();

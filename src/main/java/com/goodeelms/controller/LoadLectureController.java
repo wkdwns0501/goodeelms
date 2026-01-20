@@ -14,6 +14,7 @@ import java.util.Set;
 
 import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.dto.PreEnrollmentDTO;
+import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.dto.StudentMajorDTO;
 import com.goodeelms.service.LoadLectureService;
 import com.goodeelms.service.StudentService;
@@ -31,13 +32,10 @@ public class LoadLectureController extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String cat = request.getParameter("cat");
-		System.out.println("cat: "+ cat);
 		String reqId = request.getParameter("id");
-		System.out.println("reqId: "+ reqId);
 		
 		HttpSession session = request.getSession(false);
 		int sessionId = (Integer)session.getAttribute("student_id");
-		System.out.println("sessionId: "+ sessionId);
 		
 		if(reqId == null || reqId.isBlank()) {
 			System.out.println("잘못된 접근");
@@ -110,7 +108,6 @@ public class LoadLectureController extends HttpServlet {
 		if (pageNums == 0) pageNums = 1;
 		if (viewPage > pageNums) viewPage = pageNums;
 //		if(pageNums > 1 && viewPage == 1) viewLen = total_record % viewLen;
-		System.out.println("viewPage: " + viewPage);
 		
 		List<LectureDTO> list = loadS.getLectureList(cat, searchWord, viewPage, viewLen, inCartIdSet, majorIds);
 		
@@ -120,7 +117,6 @@ public class LoadLectureController extends HttpServlet {
 		request.setAttribute("pageNums", pageNums);
 		request.setAttribute("lectureList", list);
 		request.setAttribute("totalCount", total_record);
-		System.out.println("lectureListSize: " + list.size());
 		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/student/loadLectureList.jsp");
 		rd.forward(request, response);
 		

@@ -33,6 +33,7 @@
 				  <!-- 좌측: 카테고리 + 검색 -->
 				  <div class="col-12 col-lg-8">
 				    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+				    	<!-- studentID 수신 방법 변경해야함 -->
 				      <input type="hidden" id="sessionUserId" value="${sessionScope.student_id}">
 				      <!-- 카테고리 버튼 -->
 				      <div class="btn-group btn-group-sm" role="group" aria-label="강의 카테고리">
@@ -56,8 +57,8 @@
 				  <!-- 우측: 남은 시간 -->
 				  <div class="col-12 col-lg-4">
 				    <div class="d-flex align-items-center justify-content-between gap-2">
-				      <span class="text-muted small">남은 시간</span>
-				      <span class="badge text-bg-danger px-3 py-2 me-lg-2" id="enrollTimer" aria-live="polite">--:--</span>
+				      <span class="text-muted small" id="remainTimeSet" data-end-time ="${endTime}">남은 시간</span>
+				      <span class="badge text-bg-success px-3 py-2 me-lg-2" id="enrollTimer" aria-live="polite">--:--</span>
 				    </div>
 				  </div>
 				</div>
@@ -80,5 +81,6 @@
 	
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 	<script type="text/javascript" src="/resources/js/enrollmentOnCart.js" defer="defer"></script>
+	<script type="text/javascript" src="/resources/js/enrollmentRemainTimer.js" defer="defer"></script>
 </body>
 </html>
