@@ -69,7 +69,8 @@ public class LectureService {
 	        throw new IllegalArgumentException("이미 개설된 강의입니다. (중복 또는 제약조건 오류)");
 	    }
 	}
-
+	
+	// 강의 등록 검증
     private void validateForInsert(LectureDTO l) {
         if (l == null) {
             throw new IllegalArgumentException("강의 정보가 없습니다.");

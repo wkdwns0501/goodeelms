@@ -48,12 +48,12 @@ public class StudentController extends HttpServlet {
 		case "/student/signup":
 			signup(request, response);
 			break;
-		case "/student/mypage":
-			showStudentProfile(request, response);
-			break;	
 		case "/student/tuition":
 			showTuition(request, response);
-			break;		
+			break;
+		case "/student/lectures":
+			showMyLecture(request, response);
+			break;
 		default:
 			// response.sendRedirect(request.getContextPath() + "/main.jsp");
 			System.out.println("정의되지 않은 경로 요청됨: " + path);
@@ -96,17 +96,6 @@ public class StudentController extends HttpServlet {
 	    }
 	}
 	
-	private void showStudentProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		StudentDTO dto = (StudentDTO)session.getAttribute("studentDTO");
-		dto = new StudentService().getStudentByNo(dto);
-		
-		session.setAttribute("studentDTO", dto);
-		
-		request.getRequestDispatcher("/WEB-INF/views/student/mypage.jsp").forward(request, response);
-		return;
-	}
-	
 	protected void showTuition(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	    HttpSession session = request.getSession();
 	    StudentDTO student = (StudentDTO) session.getAttribute("studentDTO");
@@ -122,6 +111,16 @@ public class StudentController extends HttpServlet {
 	    request.setAttribute("tuition", tuition);
 	    request.getRequestDispatcher("/WEB-INF/views/student/tuition.jsp").forward(request, response);
 	    return;
+	}
+	
+	private void showMyLecture(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Integer loginId = (Integer) request.getSession().getAttribute("student_id");
+		if (loginId == null ) {
+			response.sendRedirect(request.getContextPath() + "/common/login");
+	        return;
+		}
+		
+		
 	}
 	
 }

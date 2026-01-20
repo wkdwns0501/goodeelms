@@ -53,7 +53,7 @@ public class StudentService {
 	}
 	// 학생 일반 정보 수정
 	public void updateStudentProfile(int studentId, String phone, String email,
-	        						 String address, String studentBank) throws Exception {
+	        						 String address, String studentBank, String confirmPw) throws Exception {
 		if (address == null || address.trim().isEmpty() || address.trim().length() > 255) {
 		        throw new IllegalArgumentException("ADDR_RULE");
 		}
@@ -73,6 +73,10 @@ public class StudentService {
 		}
 		
 	    try (Connection conn = DBUtil.getConnection()) {
+	    	String dbPwHash = studentDAO.selectPasswordById(conn, studentId);
+	    	if (!EncryptUtil.isPasswordMatch(confirmPw, dbPwHash)) {
+	    	    throw new IllegalArgumentException("PROFILE_PW_MISMATCH");
+	    	}
 	        studentDAO.updateProfile(conn, studentId, phone, email, address, studentBank);
 	    }
 	}
@@ -84,14 +88,24 @@ public class StudentService {
 	    }
 		
 	    try (Connection conn = DBUtil.getConnection()) {
-	        // 현재 비번이 맞는지 확인
-	        String dbPw = studentDAO.selectPasswordById(conn, studentId);
+	    	// 현재 비번이 맞는지 확인 (해시 비교)
+	    	String dbPwHash = studentDAO.selectPasswordById(conn, studentId);
+	        if (dbPwHash == null || !EncryptUtil.isPasswordMatch(currentPw, dbPwHash)) {
+	            throw new IllegalArgumentException("PROFILE_PW_MISMATCH");
+	        }
+	        
+	        if (EncryptUtil.isPasswordMatch(newPw, dbPwHash)) {
+	            throw new IllegalArgumentException("PW_SAME");
+	        }
 
-	        if (dbPw == null) return false;
-	        if (!dbPw.equals(currentPw)) return false;
+	        // 새 비번 해시 저장
+	        String newPwHash = EncryptUtil.encryptPassword(newPw);
+	        if (newPwHash == null) {
+	            throw new Exception("PW_HASH_FAIL");
+	        }
 
 	        // 맞으면 새 비번 업데이트
-	        studentDAO.updatePassword(conn, studentId, newPw);
+	        studentDAO.updatePassword(conn, studentId, newPwHash);
 	        return true;
 	    }
 	}
