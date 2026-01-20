@@ -15,7 +15,7 @@ import com.goodeelms.service.ProfessorSignUpService;
 import com.goodeelms.util.EncryptUtil;
 import com.goodeelms.util.ExistUtil;
 
-@WebServlet("/professor/signup")
+@WebServlet("/common/signup")
 public class ProfessorSignUpController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -26,7 +26,7 @@ public class ProfessorSignUpController extends HttpServlet {
 			throws ServletException, IOException {
 		List<MajorDTO> majorList = new MajorService().getAllMajor();
 		request.setAttribute("majorList", majorList);
-		request.getRequestDispatcher("/WEB-INF/views/professor/professorSignUp.jsp").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/views/common/professorSignUp.jsp").forward(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)

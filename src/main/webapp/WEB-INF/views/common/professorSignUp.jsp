@@ -25,7 +25,7 @@
 							<p class="text-muted small mb-4">교수 시스템 이용을 위해 정보를 입력해 주세요.</p>
 
 							<form
-								action="${pageContext.request.contextPath}/professor/signup"
+								action="${pageContext.request.contextPath}/common/signup"
 								method="post">
 								<c:if test="${not empty errorMessage}">
 									<div class="alert alert-danger py-2 small text-center"
@@ -72,7 +72,7 @@
 
 								<div class="d-grid gap-2 mt-4">
 									<button type="submit" class="btn btn-primary">회원가입</button>
-									<a href="${pageContext.request.contextPath}/main.jsp"
+									<a href="/main.jsp"
 										class="btn btn-outline-secondary btn-sm text-center">취소</a>
 								</div>
 							</form>

@@ -32,13 +32,6 @@ public class ProfessorValidFilter extends HttpFilter implements Filter {
 	}
     
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-    	// 0119 임욱 / 교수 회원가입의 경우 필터 제외
-    	HttpServletRequest req = (HttpServletRequest) request;
-    	if (req.getRequestURI().contains("/professor/signup")) {
-            chain.doFilter(request, response);
-            return;
-    }
-    	
     	HttpSession session = getSession(request);
     	String valid = null;
     	try {

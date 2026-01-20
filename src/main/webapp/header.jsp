@@ -44,7 +44,7 @@
 				<a class="btn btn-sm btn-outline-light"
 					href="<c:url value='/common/login'/>">로그인</a>
 				<a class="btn btn-sm btn-light"
-					href="<c:url value='/professor/signup'/>">회원가입</a>
+					href="<c:url value='/common/signup'/>">회원가입</a>
 			</c:otherwise>
 		</c:choose>
 	</div>
