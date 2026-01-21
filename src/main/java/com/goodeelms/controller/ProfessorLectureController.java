@@ -13,11 +13,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet("/professor/lecture/*")
-public class LectureController extends HttpServlet {
+public class ProfessorLectureController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private LectureService lectureService = LectureService.getInstance();
 	private final BuildingService buildingService = BuildingService.getInstance();  
-    public LectureController() {}
+    public ProfessorLectureController() {}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	    String path = request.getPathInfo(); // /add /list
@@ -47,7 +47,7 @@ public class LectureController extends HttpServlet {
 	            page = 1;
 	        }
 
-		    final int limit = 5;
+		    final int limit = 10;
 		    final int blockSize = 10;
 
 		    // 입력 page 최소 보정
