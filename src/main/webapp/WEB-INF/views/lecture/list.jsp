@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>강의 목록</title>
+<title>강의 관리</title>
 
 <!-- Bootstrap 5 -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
@@ -13,14 +13,14 @@
 <!-- layout CSS -->
 <link rel="stylesheet" href="<c:url value='/resources/css/layout.css'/>" />
 
+<link rel="stylesheet" href="<c:url value='/resources/css/lectureDetailModal.css'/>" />
+
 <style>
-  /* 비율 기반 레이아웃: 내용 길어도 한 칸이 과하게 커지지 않게 */
   .lecture-table {
     table-layout: fixed;
     width: 100%;
   }
 
-  /* 긴 텍스트 ... 처리 */
   .lecture-table .truncate {
     display: block;
     overflow: hidden;
@@ -28,21 +28,36 @@
     text-overflow: ellipsis;
   }
   
-  /* 강의실 셀: 반응형 폭 + 말줄임 */
 	.td-room {
 	  max-width: clamp(9rem, 14vw, 14rem); /* 화면에 따라 9~14rem 사이 */
 	}
   
+  /* 강의 코드 */
   .badge-soft-lime{
 	  background-color: #d1f7c4; /* 연한 연두 */
 	  color: #1f4d2b;            /* 글자 진초록 */
 	  border: 1px solid #b7efaa; /* 살짝 테두리 */
 	}
 	
+	/* 전공 */
+	.badge-major {
+	  background-color: #eef2f6;   /* 연한 블루그레이 */
+	  color: #2f4f6f;
+	  border: 1px solid #cfd8e3;
+	  font-weight: 500;
+	}
+	
+	/* 교양 */
+	.badge-general {
+	  background-color: #f7f5f2;   /* 연한 베이지 */
+	  color: #6b5e4f;
+	  border: 1px solid #e0dbd3;
+	  font-weight: 500;
+	}
+	
 	.subline{
 	  font-size: 0.78rem;
 	}
-  
 </style>
 
 </head>
@@ -56,8 +71,8 @@
 	       <!-- 상단 타이틀 + 버튼 -->
         <div class="d-flex align-items-center justify-content-between mb-3">
           <div>
-            <h4 class="mb-0"><b>강의 목록</b></h4>
-            <small class="text-muted">내 학과(교수 소속) 강의 리스트</small>
+            <h4 class="mb-0"><b>강의 관리</b></h4>
+            <small class="text-muted">소속 학과의 개설 강의를 관리할 수 있습니다.</small>
           </div>
 
           <c:if test="${not empty sessionScope.professor_id}">
@@ -75,11 +90,11 @@
                        value="<c:out value='${keyword}'/>">
               </div>
               <div class="col-md-4 d-flex gap-2">
-                <button type="submit" class="btn btn-primary w-100">검색</button>
+                <button type="submit" class="btn btn-success w-100">검색</button>
                 <a class="btn btn-outline-secondary w-100" href="<c:url value='/professor/lecture/list'/>">초기화</a>
               </div>
             </form>
-            <div class="form-text mt-2">* 검색은 강의명/교수명/건물명 기준이며, 페이지당 5개씩 표시됩니다.</div>
+            <div class="form-text mt-2">* 검색은 강의명/교수명/건물명 기준이며, 페이지당 10개씩 표시됩니다.</div>
           </div>
         </div>
 
@@ -90,12 +105,12 @@
 			        <thead class="table-light">
 			          <tr>
 			            <th style="width:110px;">강의코드</th>
-			            <th>강의명</th>
+			            <th style="width:clamp(220px, 30vw, 360px);">강의명</th>
 			            <th style="width:120px;">교수</th>
-			            <th style="width:90px;">유형</th>
-			            <th style="width:90px;">학점</th>
+			            <th style="width:100px;">유형</th>
+			            <th style="width:80px;">학점</th>
 			            <th style="width:120px;">학기</th>
-			            <th style="width:70px;">분반</th>
+			            <th style="width:80px;">분반</th>
 			            <th style="width:150px;">강의실</th>
 			            <th style="width:100px;">정원</th>
 			          </tr>
@@ -121,10 +136,6 @@
 			                  </td>
 			                  
 												<td class="text-start">
-												  <c:url var="detailUrl" value="/lecture/detail">
-												    <c:param name="lectureId" value="${lec.lectureId}"/>
-												  </c:url>
-												  
 												  <a class="fw-semibold text-decoration-none truncate d-block lecture-detail-link"
 													   href="#"
 													     data-name="<c:out value='${lec.lectureName}'/>"
@@ -143,7 +154,6 @@
 														   title="<c:out value='${lec.lectureName}'/>">
 														  <c:out value="${lec.lectureName}"/>
 													</a>
-												
 												  <div class="text-muted truncate subline"
 												       title="<c:out value='${lec.buildingName} ${lec.lectureRoom}호 · ${lec.professorName}'/>">
 												    <c:out value="${lec.buildingName}" /> <c:out value="${lec.lectureRoom}" />호 · <c:out value="${lec.professorName}"/>
@@ -152,7 +162,8 @@
 
 			                  <td>${lec.professorName}</td>
 			                  <td>
-												  <span class="badge rounded-pill text-bg-light text-dark border">
+												  <span class="badge rounded-pill
+												    ${lec.lectureType eq '전공' ? 'badge-major' : 'badge-general'}">
 												    <c:out value="${lec.lectureType}"/>
 												  </span>
 												</td>
@@ -256,7 +267,6 @@
 				  </nav>
 				</c:if>
 
-
 	    </div>
 	  </div>
 	</main>
@@ -272,7 +282,7 @@
 	
 	      <div class="modal-body p-4">
 	        
-	        <div class="d-flex align-items-center mb-4 text-muted">
+	        <div class="d-inline-flex align-items-center mb-4 text-muted meta-line">
 	          <div class="me-3">
 	             <i class="bi bi-person-fill"></i> <span id="mLectureProf" class="fw-semibold text-dark"></span>
 	          </div>
@@ -282,9 +292,9 @@
 	          </div>
 	        </div>
 	
-	        <div class="card border-0 shadow-sm mb-4 bg-light">
+	        <div class="card border-0 shadow-sm mb-4 bg-light info-table">
 	          <div class="card-body p-0">
-	            <table class="table table-borderless mb-0">
+	            <table class="table table-borderless mb-0 info-table">
 	              <tbody>
 	                <tr class="border-bottom">
 	                  <th class="ps-4 py-3 text-secondary" style="width:100px;">강의코드</th>
@@ -379,9 +389,14 @@
 		      '<span class="badge rounded-pill badge-soft-lime fs-6 fw-normal">' + d.code + '</span>'
 		    );
 		    // 이수구분
-		    setHtml("#mLectureType", 
-		      '<span class="badge rounded-pill text-bg-light text-dark border fs-6 fw-normal">' + d.type + '</span>'
-		    );
+		    const typeText = d.type; // "전공" or "교양"
+				const typeClass = (typeText === "전공") ? "badge-major" : "badge-general";
+				setHtml(
+				  "#mLectureType",
+				  '<span class="badge rounded-pill ' + typeClass + ' fs-6 fw-normal">' +
+				    typeText +
+				  "</span>"
+				);
 		    // 정원(꽉 찼으면 빨강, 아니면 회색)
 		    const current = parseInt(d.current);
 		    const capacity = parseInt(d.capacity);
