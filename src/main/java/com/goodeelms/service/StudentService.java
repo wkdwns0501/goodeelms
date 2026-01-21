@@ -33,26 +33,12 @@ public class StudentService {
 		return studentDAO.getStudentId(studentNo);
 	}
 	
-	
-	public Map<Integer, LectureDTO> getlectureAndLectureScoreByStudentId(int studentId){ // 0120 임욱(추가) / 수강 중인 강의 조회
-		return LectureHistoryDAO.getInstance().getLectureHistoryByStudentId(studentId);
-	}
-
-	public ChangeMajorHistoryDTO getChangedMajorHistory(int studentId) { 	// 0120 임욱(추가) / 학생 전과 이력 조회
-		return ChangedMajorDAO.getInstance().getChangeMajorHistoryNameByStudentId(studentId);
-	}
-
-	public List<ScholarshipDTO> getScholarshipByStudentId(int studentId){ 	// 0120 임욱(추가) / 학생 장학 정보 조회
-		return ScholarshipDAO.getInstance().getSemesterAndAmountByStudentId(studentId);
-	}
-	
 	// 학생 정보 수정을 위한 조회
 	public StudentDTO getStudentById(int studentId) throws Exception {
 		try (Connection conn = DBUtil.getConnection()) {
             return studentDAO.selectById(conn, studentId);
         }
 	}
-	
 
 	public boolean updateStudent(StudentDTO studentDTO) { 	// 0118 임욱 추가 - 학생 정보를 업데이트 (학생 정보 수정, 초기 로그인 경우에 사용)
 		if(studentDAO.existsStudentUniqueColumn(studentDTO)) return false; 	
@@ -114,5 +100,23 @@ public class StudentService {
 	        return true;
 	    }
 	}
+	
+	
+	public Map<Integer, LectureDTO> getProgressInfoByStudentId(int studentId){ // 0120 임욱(추가) / 수강 중인 강의 정보 정회
+		return LectureHistoryDAO.getInstance().getProgressInfoByStudentId(studentId);
+	}
+	
+	public Map<Integer, LectureDTO> getlectureAndLectureScoreByStudentId(int studentId){ // 0120 임욱(추가) / 수강 중인 강의 점수 조회
+		return LectureHistoryDAO.getInstance().getLectureHistoryByStudentId(studentId);
+	}
+
+	public ChangeMajorHistoryDTO getChangedMajorHistory(int studentId) { 	// 0120 임욱(추가) / 학생 전과 이력 조회
+		return ChangedMajorDAO.getInstance().getChangeMajorHistoryNameByStudentId(studentId);
+	}
+
+	public List<ScholarshipDTO> getScholarshipByStudentId(int studentId){ 	// 0120 임욱(추가) / 학생 장학 정보 조회
+		return ScholarshipDAO.getInstance().getSemesterAndAmountByStudentId(studentId);
+	}
+	
 	
 }

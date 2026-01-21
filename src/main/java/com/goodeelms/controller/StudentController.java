@@ -61,6 +61,9 @@ public class StudentController extends HttpServlet {
 		case "/tuition":
 			showTuitionAndScholarship(request, response);
 			break;
+		case "/my-lectures":
+			showLecture(request, response);
+			break;
 		case "/grades":
 			showGrade(request, response);
 			break;
@@ -165,4 +168,17 @@ public class StudentController extends HttpServlet {
 		request.getRequestDispatcher("/WEB-INF/views/student/grades.jsp").forward(request, response);
 		return;
 	}
+	
+	protected void showLecture(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {	// 0120 임욱(추가) / 수강중인 강의 조회 
+		HttpSession session = request.getSession();
+		int student_id = (Integer) session.getAttribute("student_id");
+		
+		Map<Integer, LectureDTO> lectures = studentService.getProgressInfoByStudentId(student_id);
+		
+		request.setAttribute("lectures", lectures); 
+		request.getRequestDispatcher("/WEB-INF/views/student/lecture.jsp").forward(request, response);
+		return;
+	}
+	
 }
