@@ -132,9 +132,7 @@ public class LectureDAO {
 	}
 	
 	// 교수가 속한 학과의 강의 리스트 조회 (검색, 페이징 포함)
-	public ArrayList<LectureDTO> findPageByMajor(
-	        int majorId, int page, int limit, String keyword
-	) {
+	public ArrayList<LectureDTO> findPageByMajor(int majorId, int page, int limit, String keyword) {
 	    int offset = (page - 1) * limit;
 
 	    String sql =
@@ -152,8 +150,7 @@ public class LectureDAO {
 	        sql += "AND (l.lecture_name LIKE ? OR p.professor_name LIKE ? OR b.building_name LIKE ?) ";
 	    }
 
-	    sql += "ORDER BY l.lecture_year DESC, l.lecture_semester DESC, l.lecture_code ASC, l.lecture_section ASC " +
-	           "LIMIT ? OFFSET ?";
+	    sql += "ORDER BY l.lecture_id DESC LIMIT ? OFFSET ?";
 
 	    ArrayList<LectureDTO> list = new ArrayList<>();
 	    try (Connection conn = DBUtil.getConnection();
@@ -196,14 +193,17 @@ public class LectureDAO {
 	    return list;
 	}
 	
-	// 페이징용 총 강의 개수
+	// (교수) 페이징용 학과별 총 강의 개수 
 	public int countByMajor(int majorId, String keyword) {
 	    String sql =
-	        "SELECT COUNT(*) FROM lecture l " +
+	        "SELECT COUNT(*) " +
+	        "FROM lecture l " +
 	        "JOIN professor p ON l.professor_id = p.professor_id " +
+	        "JOIN building b ON l.building_id = b.building_id " +
 	        "WHERE l.major_id = ? ";
+
 	    if (keyword != null && !keyword.isBlank()) {
-	        sql += "AND (l.lecture_name LIKE ? OR p.professor_name LIKE ?) ";
+	        sql += "AND (l.lecture_name LIKE ? OR p.professor_name LIKE ? OR b.building_name LIKE ?) ";
 	    }
 
 	    try (Connection conn = DBUtil.getConnection();
@@ -212,6 +212,7 @@ public class LectureDAO {
 	        pstmt.setInt(i++, majorId);
 	        if (keyword != null && !keyword.isBlank()) {
 	            String k = "%" + keyword.trim() + "%";
+	            pstmt.setString(i++, k);
 	            pstmt.setString(i++, k);
 	            pstmt.setString(i++, k);
 	        }
@@ -250,6 +251,97 @@ public class LectureDAO {
 	        System.out.println("findLectureCode() 예외: " + e);
 	    }
 	    return null;
+	}
+	
+	// (학생) 전체 강의 리스트 조회 (검색, 페이징 포함)
+	public ArrayList<LectureDTO> findPageAll(int page, int limit, String keyword) {
+	    int offset = (page - 1) * limit;
+
+	    String sql =
+	        "SELECT l.lecture_id, l.lecture_code, l.lecture_name, l.lecture_room, " +
+	        "       l.lecture_credit, l.lecture_year, l.lecture_semester, l.lecture_section, " +
+	        "       l.lecture_type, l.lecture_current_people, l.lecture_capacity, " +
+	        "       l.lecture_description, l.professor_id, l.major_id, p.professor_name, " +
+	        "       b.building_name " +
+	        "FROM lecture l " +
+	        "JOIN professor p ON l.professor_id = p.professor_id " +
+	        "JOIN building b ON l.building_id = b.building_id " +
+	        "WHERE 1=1 ";
+
+	    if (keyword != null && !keyword.isBlank()) {
+	        sql += "AND (l.lecture_name LIKE ? OR p.professor_name LIKE ? OR b.building_name LIKE ?) ";
+	    }
+
+	    sql += "ORDER BY l.lecture_id DESC LIMIT ? OFFSET ?";
+
+	    ArrayList<LectureDTO> list = new ArrayList<>();
+	    try (Connection conn = DBUtil.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        int i = 1;
+	        if (keyword != null && !keyword.isBlank()) {
+	            String k = "%" + keyword.trim() + "%";
+	            pstmt.setString(i++, k);
+	            pstmt.setString(i++, k);
+	            pstmt.setString(i++, k);
+	        }
+	        pstmt.setInt(i++, limit);
+	        pstmt.setInt(i, offset);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            while (rs.next()) {
+	                LectureDTO lecture = new LectureDTO();
+	                lecture.setLectureId(rs.getInt("lecture_id"));
+	                lecture.setLectureCode(rs.getInt("lecture_code"));
+	                lecture.setLectureName(rs.getString("lecture_name"));
+	                lecture.setLectureRoom(rs.getString("lecture_room"));
+	                lecture.setLectureCredit(rs.getInt("lecture_credit"));
+	                lecture.setLectureYear(rs.getString("lecture_year"));
+	                lecture.setLectureSemester(rs.getInt("lecture_semester"));
+	                lecture.setLectureSection(rs.getString("lecture_section"));
+	                lecture.setLectureType(rs.getString("lecture_type"));
+	                lecture.setLectureCurrentPeople(rs.getInt("lecture_current_people"));
+	                lecture.setLectureCapacity(rs.getInt("lecture_capacity"));
+	                lecture.setLectureDescription(rs.getString("lecture_description"));
+	                lecture.setProfessorId(rs.getInt("professor_id"));
+	                lecture.setMajorId(rs.getInt("major_id"));
+	                lecture.setProfessorName(rs.getString("professor_name"));
+	                lecture.setBuildingName(rs.getString("building_name"));
+	                list.add(lecture);
+	            }
+	        }
+	    } catch (Exception e) {
+	        System.out.println("findPageAll 예외: " + e);
+	    }
+	    return list;
+	}
+	
+	// (학생) 페이징용 전체 강의 개수
+	public int countAll(String keyword) {
+	    String sql =
+	        "SELECT COUNT(*) FROM lecture l " +
+	        "JOIN professor p ON l.professor_id = p.professor_id " +
+	        "JOIN building b ON l.building_id = b.building_id " +
+	        "WHERE 1=1 ";
+
+	    if (keyword != null && !keyword.isBlank()) {
+	        sql += "AND (l.lecture_name LIKE ? OR p.professor_name LIKE ? OR b.building_name LIKE ?) ";
+	    }
+
+	    try (Connection conn = DBUtil.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        int i = 1;
+	        if (keyword != null && !keyword.isBlank()) {
+	            String k = "%" + keyword.trim() + "%";
+	            pstmt.setString(i++, k);
+	            pstmt.setString(i++, k);
+	            pstmt.setString(i++, k);
+	        }
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) return rs.getInt(1);
+	        }
+	    } catch (Exception e) {
+	        System.out.println("countAll() 예외: " + e);
+	    }
+	    return 0;
 	}
 	
 }

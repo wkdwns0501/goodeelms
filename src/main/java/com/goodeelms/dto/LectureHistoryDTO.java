@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LectureHistoryDTO {
 	private int studentId;
+	private int studentNo;
 	private int lectureId;
-	private String lectureStatus;
-	private double lectureScore;
+	private Double lectureScore;
+	private String studentName;
 }
