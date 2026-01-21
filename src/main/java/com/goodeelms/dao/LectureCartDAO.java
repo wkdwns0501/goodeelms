@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,12 +21,13 @@ public class LectureCartDAO {
 	}
 	
 	public int insertLectureOnCart(String lectureId, String studentId) {
-		String sql = "INSERT INTO pre_enrollment(lecture_id, student_id) VALUES(?, ?)";
+		String sql = "INSERT INTO pre_enrollment(lecture_id, student_id, pre_enrollment_status) VALUES(?, ?, ?)";
 		
 		int index = 1;
 		try(PreparedStatement pstmt = getPrepare(sql)){
 			pstmt.setString(index++, lectureId);
 			pstmt.setString(index++, studentId);
+			pstmt.setString(index++, "progress");
 			
 			int result = pstmt.executeUpdate();
 			return result;
@@ -72,17 +74,27 @@ public class LectureCartDAO {
 		}
 		return 0;
 	}
-	public List<PreEnrollmentDTO> getPreEnrollment(int studentId){
-		String sql = "SELECT lecture_id FROM pre_enrollment WHERE student_id = ?";
-		
+	public List<PreEnrollmentDTO> getPreEnrollment(int studentId, Set<String> conditions){
+		String sql = "SELECT lecture_id, pre_enrollment_status FROM pre_enrollment WHERE student_id = ? ";
+		if(conditions.size() > 0) {
+			sql += "AND pre_enrollment_status IN ("
+					+ conditions.stream().map(condition -> "?").collect(Collectors.joining(","))+ ")";
+		}
 		try(PreparedStatement pstmt = getPrepare(sql)){
-			pstmt.setInt(1, studentId);
+			int index = 1;
+			pstmt.setInt(index++, studentId);
+			if(conditions.size() > 0) {
+				for(String condition : conditions) {
+					pstmt.setString(index++, condition);
+				}
+			}
 			
 			try(ResultSet rs = pstmt.executeQuery()){
 				List<PreEnrollmentDTO> list = new ArrayList<PreEnrollmentDTO>();
 				while(rs.next()) {
 					PreEnrollmentDTO dto = new PreEnrollmentDTO();
 					dto.setLectureId(Integer.parseInt(rs.getString("lecture_id")));
+					dto.setPreEnrollmentStatus(rs.getString("pre_enrollment_status"));
 					
 					list.add(dto);
 				}
@@ -96,7 +108,7 @@ public class LectureCartDAO {
 	}
 	
 	public int clearCart(String studentId, Set<Integer> lectureIds) throws NullPointerException{
-		String sql ="DELETE FROM pre_enrollment WHERE student_id = ? ";
+		String sql ="DELETE FROM pre_enrollment WHERE student_id = ? AND pre_enrollment_status = progress";
 		if(lectureIds.size() > 0) {
 			sql += "AND lecture_id IN(" + lectureIds.stream().map(id -> "?").collect(Collectors.joining(",")) + ")";
 		}
@@ -114,6 +126,81 @@ public class LectureCartDAO {
 			return result;
 		}
 		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	public List<PreEnrollmentDTO> checkProgressCart(){
+		String sql = "SELECT l.lecture_id as lecture_id, lecture_capacity, count(p.lecture_id) as enroll_count "
+				+ "FROM pre_enrollment as p "
+				+ "JOIN lecture as l ON p.lecture_id = l.lecture_id "
+				+ "WHERE pre_enrollment_status = 'progress' "
+				+ "GROUP BY l.lecture_id, l.lecture_capacity";
+		
+		try(PreparedStatement pstmt = getPrepare(sql);){
+			
+			try(ResultSet rs = pstmt.executeQuery();){
+				List<PreEnrollmentDTO> list = new ArrayList<PreEnrollmentDTO>();
+				while(rs.next()) {
+					PreEnrollmentDTO dto = new PreEnrollmentDTO();
+					dto.setLectureId(rs.getInt("lecture_id"));
+					dto.setLectureCapacity(rs.getInt("lecture_capacity"));
+					dto.setLectureEnrollCount(rs.getInt("enroll_count"));
+					
+					list.add(dto);
+				}
+				return list;
+			}
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public int UpdatePreEnrollmentStatus(Connection conn , Set<Integer> updateSet, String updateStatus) {
+		String sql = "UPDATE pre_enrollment SET pre_enrollment_status = ? WHERE lecture_id IN("
+				+ updateSet.stream().map(id -> "?").collect(Collectors.joining(",")) + ")";
+		
+		try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+			int index = 1;
+			pstmt.setString(index++, updateStatus);
+			for(Integer id : updateSet) {
+				pstmt.setInt(index++, id);
+			}
+			
+			int result = pstmt.executeUpdate();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	public int UpdateLectureCurrentPeople(Connection conn, Map<Integer, Integer> lecMap) {
+		String sql = "UPDATE lecture SET lecture_current_people = ? WHERE lecture_id = ?";
+		
+		try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			
+			if(lecMap.size() == 0) return 0;
+			
+			
+			for(Map.Entry<Integer, Integer> entry : lecMap.entrySet()) {
+				pstmt.setInt(1, entry.getValue());
+				pstmt.setInt(2, entry.getKey());
+				
+				pstmt.addBatch();
+			}
+			
+			int[] results = pstmt.executeBatch();
+			for(int i : results) {
+				if(i == 0) return 0;
+			}
+			return 1;
+			
+		}
+		catch(SQLException e) {
 			e.printStackTrace();
 		}
 		return 0;

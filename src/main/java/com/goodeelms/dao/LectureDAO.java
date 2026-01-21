@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.util.DBUtil;
@@ -91,6 +92,27 @@ public class LectureDAO {
 	        System.out.println("findMajorIdByProfessorId() 예외: " + e);
 	    }
 	    return 0;
+	}
+	
+	// lecture_id로 major_id 찾기
+	public LectureDTO fingdMajorIdAndTypeByLectureId(int lectureId){
+		String sql = "SELECT major_id, lecture_type FROM lecture WHERE lecture_id = ?";
+		
+	    try (Connection conn = DBUtil.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setInt(1, lectureId);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	            	LectureDTO dto = new LectureDTO();
+	            	dto.setMajorId(rs.getInt("major_id"));
+	            	dto.setLectureType(rs.getString("lecture_type"));
+	            	return dto;
+	            }
+	        }
+	    } catch (Exception e) {
+	        System.out.println("findMajorIdByProfessorId() 예외: " + e);
+	    }
+	    return null;
 	}
 
 	// major_id로 major_code찾기

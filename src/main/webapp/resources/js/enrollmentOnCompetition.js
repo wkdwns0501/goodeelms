@@ -67,7 +67,7 @@ async function loadLectures(cat, word, page){
 
 async function loadCart(){
 	console.log("loadCart 호출됨");
-	const url = new URL(window.location.origin + "/student/cart/loadCart");
+	const url = new URL(window.location.origin + "/student/cart/loadComp");
 	
 	const res = await fetch(url.toString(), {
 	      method: 'GET',

@@ -170,4 +170,8 @@ public class LectureService {
         return lectureDAO.countByMajor(majorId, keyword);
     }
     
+    public LectureDTO getMajorIdAndByLectureId(int lectureId) {
+    	return lectureDAO.fingdMajorIdAndTypeByLectureId(lectureId);
+    }
+    
 }

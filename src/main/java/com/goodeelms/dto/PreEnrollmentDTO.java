@@ -11,4 +11,7 @@ public class PreEnrollmentDTO {
 	private int preEnrollmentId;
 	private int studentId;
 	private int lectureId;
+	private String preEnrollmentStatus;
+	private int lectureCapacity;	// 장바구니 마감 시 자동 신청 분기용
+	private int lectureEnrollCount;	// 장바구니 마감 시 자동 신청 분기용
 }

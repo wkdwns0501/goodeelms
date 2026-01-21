@@ -26,6 +26,7 @@ public class LectureDTO {
 	private int buildingId;
 	private String professorName; // 출력용
 	private String buildingName; // 출력용
+	private String preEnrollmentStatus;
 	
 	// 강의 코드 출력용
 	public String getLectureCodeDisplay() {

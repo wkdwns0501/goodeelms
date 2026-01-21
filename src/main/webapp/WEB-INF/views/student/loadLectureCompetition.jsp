@@ -15,7 +15,7 @@
 	        <th>과목명</th>
 	        <th style="width:140px;">교수</th>
 	        <th style="width:90px;" class="text-center">학점</th>
-	        <th style="width:140px;" class="text-center">정원</th>
+	        <th style="width:140px;" class="text-center">정원(신청)</th>
 	        <th style="width:140px;" class="text-center">담기</th>
 	      </tr>
 	    </thead>
@@ -36,12 +36,13 @@
 	          <td class="text-center">${lec.lectureCredit}</td>
 	          <td class="text-center">
 	            <span class="fw-semibold">${lec.lectureCapacity}</span>
+	            <span class="text-muted">(${lec.lectureCurrentPeople})</span>
 	          </td>
 	          <td class="text-center">
             	<!-- 장바구니 담기: POST 권장 -->
 	            <button type="submit" class="btn btn-sm btn-outline-success add-cart" 
 	            	data-lec="${lec.lectureId}" data-stu ="${sessionScope.student_id}" data-credit="${lec.lectureCredit}">
-	              장바구니 추가
+	              수강 신청
 	            </button>
 	          </td>
 	        </tr>
