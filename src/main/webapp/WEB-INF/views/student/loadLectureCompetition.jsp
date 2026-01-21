@@ -40,7 +40,7 @@
 	          </td>
 	          <td class="text-center">
             	<!-- 장바구니 담기: POST 권장 -->
-	            <button type="submit" class="btn btn-sm btn-outline-success add-cart" 
+	            <button type="submit" class="btn btn-sm btn-outline-success add-cart fw-bold fs-6"  
 	            	data-lec="${lec.lectureId}" data-stu ="${sessionScope.student_id}" data-credit="${lec.lectureCredit}">
 	              수강 신청
 	            </button>

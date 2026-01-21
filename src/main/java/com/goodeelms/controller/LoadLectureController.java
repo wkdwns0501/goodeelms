@@ -22,41 +22,29 @@ import com.goodeelms.service.StudentService;
 /**
  * Servlet implementation class LoadLectureServlet
  */
-@WebServlet("/student/loadLecture")
+@WebServlet("/student/loadLecture/*")
 public class LoadLectureController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
+	// URL 관련 필드
+	private String requestURI = null;
+	private String contextPath = null;
+	private String command = null;
+		
     public LoadLectureController() {
         super();
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		requestURI = request.getRequestURI();
+		contextPath = request.getContextPath()+"/student/loadLecture";
+		command = requestURI.substring(contextPath.length());
+		
 		String cat = request.getParameter("cat");
 		String reqId = request.getParameter("id");
 		
 		HttpSession session = request.getSession(false);
 		int sessionId = (Integer)session.getAttribute("student_id");
-		
-		if(reqId == null || reqId.isBlank()) {
-			System.out.println("잘못된 접근");
-			response.sendRedirect("/main.jsp");
-			return;
-		}
-		int requestId = 0;
-		try {
-			requestId = Integer.parseInt(reqId);
-		}
-		catch(NumberFormatException e) {
-			System.out.println("잘못된 접근");
-			response.sendRedirect("/main.jsp");
-			return;
-		}
-		
-		if(requestId != sessionId) {
-			response.sendRedirect("/main.jsp");
-			System.out.println("잘못된 접근");
-			return;
-		}
 		
 		if(cat == null || cat.isBlank()) cat = "all";
 		
@@ -111,14 +99,21 @@ public class LoadLectureController extends HttpServlet {
 		
 		List<LectureDTO> list = loadS.getLectureList(cat, searchWord, viewPage, viewLen, inCartIdSet, majorIds);
 		
-		request.setAttribute("id", reqId);
+		request.setAttribute("id", sessionId);
 		request.setAttribute("cat", cat);
 		request.setAttribute("viewPage", viewPage);
 		request.setAttribute("pageNums", pageNums);
 		request.setAttribute("lectureList", list);
 		request.setAttribute("totalCount", total_record);
-		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/student/loadLectureList.jsp");
-		rd.forward(request, response);
+		
+		if(command.equals("/cart")) {
+			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/student/loadLectureList.jsp");
+			rd.forward(request, response);
+		}
+		else if(command.equals("/comp")) {
+			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/student/loadLectureCompetition.jsp");
+			rd.forward(request, response);
+		}
 		
 	}
 

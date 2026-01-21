@@ -81,7 +81,9 @@ public class LectureCartService {
 				int peopleResult = dao.UpdateLectureCurrentPeople(conn, autoEnrollMap);
 				if(peopleResult < 1) throw new SQLException("lecture_current_people value UPDATE 실패");
 				
-				// 2. 상태 업데이트 실행
+				// 2. lecture_history에 저장
+				
+				// 3. 상태 업데이트 실행
 				int statResult = dao.UpdatePreEnrollmentStatus(conn, autoEnrollMap.keySet(), setStatus);
 				if(statResult < 1) throw new SQLException("pre_enrollment_status completed UPDATE 실패");
 			}	

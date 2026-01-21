@@ -163,6 +163,7 @@ public class LectureCartDAO {
 		String sql = "UPDATE pre_enrollment SET pre_enrollment_status = ? WHERE lecture_id IN("
 				+ updateSet.stream().map(id -> "?").collect(Collectors.joining(",")) + ")";
 		
+		System.out.println(updateSet);
 		try(PreparedStatement pstmt = conn.prepareStatement(sql)){
 			int index = 1;
 			pstmt.setString(index++, updateStatus);
@@ -171,6 +172,7 @@ public class LectureCartDAO {
 			}
 			
 			int result = pstmt.executeUpdate();
+			return result;
 		}
 		catch (SQLException e) {
 			e.printStackTrace();

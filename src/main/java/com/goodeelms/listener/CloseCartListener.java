@@ -30,7 +30,7 @@ public class CloseCartListener implements ServletContextListener {
 	@Getter
 	private static final long DURATION_AND_GAP = 7;
 	@Getter
-	private static final LocalDateTime START_CART_TIME = LocalDateTime.of(2026, 01, 20, 0, 0);
+	private static final LocalDateTime START_CART_TIME = LocalDateTime.of(2026, 01, 21, 0, 0);
 	@Getter
 	private static final LocalDateTime END_CART_TIME = START_CART_TIME.plusDays(DURATION_AND_GAP);
 	@Getter
