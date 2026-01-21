@@ -8,11 +8,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.goodeelms.dto.AdminDTO;
+import com.goodeelms.dto.MajorDTO;
 import com.goodeelms.dto.ProfessorDTO;
 import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.service.CommonService;
+import com.goodeelms.service.MajorService;
+import com.goodeelms.service.ProfessorSignUpService;
+import com.goodeelms.util.EncryptUtil;
 import com.goodeelms.util.ExistUtil;
 
 @WebServlet("/common/*")
@@ -22,6 +27,8 @@ public class CommonController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		checkPath(request, response);
+		
+		
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -44,6 +51,9 @@ public class CommonController extends HttpServlet {
 			break;
 		case "/logout":
 			logout(request, response);
+			break;
+		case "/signup":
+			signup(request, response);
 			break;
 		}
 	}
@@ -87,10 +97,10 @@ public class CommonController extends HttpServlet {
 			session.setAttribute("student_id", studentDTO.getStudentId());
 
 			String identityNum = studentDTO.getStudentIdentityNumber();
-			if (identityNum != null && identityNum.length() >= 7) {	// 초기 로그인 여부 확인 (입력 비밀번호 == 주민번호 뒷자리)
+			if (identityNum != null && identityNum.length() >= 7) { // 초기 로그인 여부 확인 (입력 비밀번호 == 주민번호 뒷자리)
 				String initialPassword = identityNum.substring(identityNum.length() - 7);
 
-				if (login_password.equals(initialPassword)) { 
+				if (login_password.equals(initialPassword)) {
 					request.setAttribute("studentDTO", studentDTO);
 					request.getRequestDispatcher("/WEB-INF/views/student/studentSignUp.jsp").forward(request, response);
 					return;
@@ -109,7 +119,7 @@ public class CommonController extends HttpServlet {
 		return;
 	}
 
-	private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession(false);
 
 		if (session != null)
@@ -118,4 +128,44 @@ public class CommonController extends HttpServlet {
 		response.sendRedirect(request.getContextPath() + "/main.jsp");
 		return;
 	}
+
+	private void signup(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		List<MajorDTO> majorList = new MajorService().getAllMajor();
+		request.setAttribute("majorList", majorList);
+		
+		String professor_email = request.getParameter("professor_email");
+		String professor_password = request.getParameter("professor_password");
+		String professor_name = request.getParameter("professor_name");
+		String major_id = request.getParameter("major_id");
+
+		if (ExistUtil.isNull(professor_email) || ExistUtil.isNull(professor_password)
+				|| ExistUtil.isNull(professor_name) || ExistUtil.isNull(major_id)) {
+			request.getRequestDispatcher("/WEB-INF/views/common/professorSignUp.jsp").forward(request, response);
+			return;
+		}
+
+		ProfessorDTO dto = new ProfessorDTO();
+		dto.setProfessorName(professor_name);
+		dto.setProfessorEmail(professor_email);
+		dto.setMajorId(Integer.parseInt(major_id));
+		request.setAttribute("professorDTO", dto); 
+
+		dto.setProfessorPassword(EncryptUtil.encryptPassword(professor_password));
+
+		int result = new ProfessorSignUpService().signup(dto);
+
+		if (result == -1) {
+			request.setAttribute("errorMessage", "이미 사용하는 메일입니다.");
+			request.getRequestDispatcher("/WEB-INF/views/common/professorSignUp.jsp").forward(request, response);
+			return;
+		} else if (result > 0) {
+			response.sendRedirect(request.getContextPath() + "/main.jsp");
+			return;
+		} else {
+			request.setAttribute("errorMessage", "회원가입 중 오류가 발생했습니다.");
+			request.getRequestDispatcher("/WEB-INF/views/common/professorSignUp.jsp").forward(request, response);
+			return;
+		} 
+	}
+
 }
