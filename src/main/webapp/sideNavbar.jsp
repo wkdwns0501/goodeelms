@@ -9,10 +9,10 @@
 		    <a class="nav-link" href="<c:url value='/student/page/enrollment'/>"><span class="nav-label">수강신청</span></a>
 		    <a class="nav-link" href="<c:url value='/student/tuition'/>"><span class="nav-label">등록금 납부 이력 </span></a>
 		    <a class="nav-link" href="<c:url value='/student/page/enrollment'/>"><span class="nav-label">수강신청</span></a>
-		    <a class="nav-link" href="<c:url value='/student/lecture'/>"><span class="nav-label">강의 목록</span></a>
+		    <a class="nav-link" href="<c:url value='/student/lecture'/>"><span class="nav-label">강의목록</span></a>
 		    <a class="nav-link" href="<c:url value='/student/assignments'/>"><span class="nav-label">과제</span></a>
 		    <a class="nav-link" href="<c:url value='/student/exams'/>"><span class="nav-label">시험</span></a>
-		    <a class="nav-link" href="<c:url value='/student/grades'/>"><span class="nav-label">성적조회</span></a>
+		    <a class="nav-link" href="<c:url value='/student/grade/list'/>"><span class="nav-label">성적조회</span></a>
 	    </c:when>	
     	<c:when test="${sessionScope.user_role == 'ADMIN'}">
 	    	<a class="nav-link" href="<c:url value='/admin/studentStatus/page'/>"><span class="nav-label">학사관리</span></a>
@@ -22,8 +22,8 @@
 	    </c:when>
 	  	<c:when test="${sessionScope.user_role == 'PROFESSOR'}">
 			  <hr class="my-2 mx-3" />
-			  <a class="nav-link" href="<c:url value='/professor/lecture/list'/>"><span class="nav-label">강의 관리</span></a>
-			  <a class="nav-link" href="<c:url value='/professor/grade/list'/>"><span class="nav-label">성적 관리</span></a>
+			  <a class="nav-link" href="<c:url value='/professor/lecture/list'/>"><span class="nav-label">강의관리</span></a>
+			  <a class="nav-link" href="<c:url value='/professor/grade/list'/>"><span class="nav-label">성적관리</span></a>
 			</c:when>
 			<c:otherwise>
 				<a class="nav-link" href="<c:url value='/common/dashboard'/>"><span class="nav-label">대시보드</span></a>
