@@ -56,7 +56,7 @@ public class CommonController extends HttpServlet {
 	private void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String login_id = request.getParameter("login_id");
 		String login_password = request.getParameter("login_password");
-
+		
 		if (login_id == null && login_password == null) { // 1. 페이지 첫 진입 시 (파라미터가 아예 없는 경우)
 			request.getRequestDispatcher("/WEB-INF/views/common/loginForm.jsp").forward(request, response);
 			return;

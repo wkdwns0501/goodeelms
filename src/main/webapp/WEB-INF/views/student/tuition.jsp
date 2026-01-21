@@ -88,6 +88,58 @@
 					</div>
 				</section>
 
+
+				<section class="mb-5">
+					<div
+						class="card border-0 shadow-sm border-top border-primary border-5">
+						<div class="card-body p-4">
+							<h6 class="fw-bold mb-3">
+								<i class="bi bi-wallet2 me-2"></i>등록금 납부하기
+							</h6>
+
+							<c:choose>
+								<c:when test="${tuition.paymentStatus != '납부완료'}">
+									<form
+										action="${pageContext.request.contextPath}/student/tuition/pay"
+										method="post" class="row g-3">
+										<div class="col-md-8">
+											<div class="input-group">
+												<span class="input-group-text bg-white">₩</span> <input
+													type="number" name="payment" id="paymentInput"
+													class="form-control" placeholder="납부할 금액을 입력하세요" min="1000"
+													max="${4500000 - tuition.paymentAmount}" required
+													oninput="formatDisplay(this)">
+											</div>
+											<div id="amountDisplay"
+												class="mt-1 small fw-bold text-primary"
+												style="height: 20px;"></div>
+											<small class="text-muted mt-1 d-block"> 최대 납부 가능 금액:
+												<fmt:formatNumber value="${4500000 - tuition.paymentAmount}"
+													type="number" />원 <a href="javascript:void(0);"
+												onclick="document.getElementById('paymentInput').value=${4500000 - tuition.paymentAmount}; formatDisplay(document.getElementById('paymentInput'));"
+												class="ms-2 badge bg-secondary text-decoration-none">전액
+													입력</a>
+											</small>
+										</div>
+										<div class="col-md-4">
+											<button type="submit" class="btn btn-primary w-100 fw-bold">
+												<i class="bi bi-credit-card me-1"></i> 납입하기
+											</button>
+										</div>
+									</form>
+								</c:when>
+								<c:otherwise>
+									<div class="text-center py-2">
+										<p class="text-success mb-0 fw-bold">
+											<i class="bi bi-check-all me-1"></i>이번 학기 등록금을 모두 납부하셨습니다.
+										</p>
+									</div>
+								</c:otherwise>
+							</c:choose>
+						</div>
+					</div>
+				</section>
+
 				<section class="mb-5">
 					<div class="card border-0 shadow-sm">
 						<div class="card-header bg-white py-3 border-bottom">
@@ -112,7 +164,7 @@
 									<tr>
 										<th class="ps-4 text-muted bg-light">납부 방식</th>
 										<td class="ps-4">가상계좌 이체 <small
-											class="text-secondary ms-2">(구디은행 123-456-7890123)</small>
+											class="text-secondary ms-2">(구디은행 ${account})</small>
 										</td>
 									</tr>
 								</tbody>
@@ -149,7 +201,8 @@
 									</c:forEach>
 									<c:if test="${empty scholarship}">
 										<tr>
-											<td colspan="3" class="py-5 text-center text-muted small">장학수혜 내역이 존재하지 않습니다.</td>
+											<td colspan="3" class="py-5 text-center text-muted small">장학수혜
+												내역이 존재하지 않습니다.</td>
 										</tr>
 									</c:if>
 								</tbody>
@@ -166,5 +219,21 @@
 
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+	<script>
+		function formatDisplay(input) {
+			const display = document.getElementById('amountDisplay');
+			const value = input.value;
+
+			if (value) {
+				// 숫자를 3자리마다 콤마 찍기
+				const formatted = Number(value).toLocaleString('ko-KR');
+				display.innerText = "확인 금액: " + formatted + " 원";
+			} else {
+				display.innerText = "";
+			}
+		}
+	</script>
+
 </body>
 </html>

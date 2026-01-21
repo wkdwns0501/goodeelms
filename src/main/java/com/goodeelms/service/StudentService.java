@@ -122,6 +122,14 @@ public class StudentService {
 		return LectureHistoryDAO.getInstance().getProbationByStudentId(studentId);
 	}
 	
-	
+	public StudentDTO getIdentityNumAndNo(int studentId) {
+		StudentDTO student = studentDAO.getIdentityNumAndNo(studentId);
+		if (student == null) {
+			System.out.println("studentService 예외 발생 (값이 null)");
+			return null;
+		} else {
+			return student;
+		}
+	}
 	
 }

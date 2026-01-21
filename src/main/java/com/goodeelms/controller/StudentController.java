@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
@@ -60,6 +60,9 @@ public class StudentController extends HttpServlet {
 			case "/tuition":
 				showTuitionAndScholarship(request, response);
 				break;
+			case "/tuition/pay":
+		        payTuitionOrScholarship(request, response);
+		        break;
 			case "/my-lectures":
 				showLecture(request, response);
 				break;
@@ -114,28 +117,66 @@ public class StudentController extends HttpServlet {
 		}
 	}
 
-	protected void showTuitionAndScholarship(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException { 	// 0120 임욱(수정) / 장학 정보 조회 추가
-		HttpSession session = request.getSession();
-		int student_id = (Integer) session.getAttribute("student_id");
-		
-		TuitionPaymentDTO dto = new TuitionService().readTuition(student_id);
-		List<ScholarshipDTO> scholarship = new StudentService().getScholarshipByStudentId(student_id);
-		
-		
-		if(dto == null || scholarship == null) {
-			request.setAttribute("msg", "등록금 및 장학 정보를 조회할 수 없습니다.");
-			request.getRequestDispatcher("/WEB-INF/views/student/tuition.jsp").forward(request, response);
-			return;
-		}
-		
-		request.setAttribute("tuition", dto);
-		request.setAttribute("scholarship", scholarship);
-		
-		request.getRequestDispatcher("/WEB-INF/views/student/tuition.jsp").forward(request, response);
-		return;
+	protected void showTuitionAndScholarship(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	    HttpSession session = request.getSession();
+	    int student_id = (Integer) session.getAttribute("student_id");
+	    
+	    TuitionPaymentDTO dto = new TuitionService().readTuition(student_id);
+	    List<ScholarshipDTO> scholarship = new StudentService().getScholarshipByStudentId(student_id);
+	    
+	    if(dto == null) {
+	        request.setAttribute("msg", "등록금 정보를 조회할 수 없습니다.");
+	        request.getRequestDispatcher("/WEB-INF/views/student/tuition.jsp").forward(request, response);
+	        return;
+	    }
+	    
+	    String msgParam = request.getParameter("msg");
+	    if ("success".equals(msgParam)) {
+	        request.setAttribute("msg", "등록금 납부가 정상적으로 처리되었습니다.");
+	    }
+	    
+	    StudentDTO student = studentService.getIdentityNumAndNo(student_id); 
+	    String virtualAccount = "정보 없음"; 
+	    
+	    if (student != null && student.getStudentIdentityNumber() != null && student.getStudentNo() != null) {
+	        try {
+	            String identityNum = student.getStudentIdentityNumber(); 
+	            String studentNo = student.getStudentNo();
+	            
+	            String frontNum = identityNum.substring(7, 10); 
+	            String backNum = studentNo.substring(studentNo.length() - 7);
+	            
+	            virtualAccount = frontNum + "-" + backNum;
+	        } catch (Exception e) {
+	            System.err.println("계좌 번호 생성 중 인덱스 오류: " + e.getMessage());
+	        }
+	    }
+	    
+	    request.setAttribute("account", virtualAccount);
+	    request.setAttribute("tuition", dto);
+	    request.setAttribute("scholarship", scholarship);
+	    
+	    request.getRequestDispatcher("/WEB-INF/views/student/tuition.jsp").forward(request, response);
 	}
 
+	protected void payTuitionOrScholarship(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	    HttpSession session = request.getSession();
+	    int student_id = (Integer) session.getAttribute("student_id");
+	    
+	    String payStr = request.getParameter("payment");
+	    String schStr = request.getParameter("scholarship");
+	    int paymentTuition = (payStr != null) ? Integer.parseInt(payStr) : 0;
+	    int paymentScholarship = (schStr != null) ? Integer.parseInt(schStr) : 0;
+	    
+	    TuitionService tService = new TuitionService();
+	    
+	    if(paymentTuition > 0) { tService.getTuitionPaymentAfterPay(student_id, paymentTuition); } 
+	    if(paymentScholarship > 0) { tService.getTuitionPaymentAfterPay(student_id, paymentScholarship); }
+	    
+	    response.sendRedirect(request.getContextPath() + "/student/tuition?msg=success");
+	}
+
+	
 	protected void showStatusAndMajorHistory(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException { 	// 0120 임욱(수정) / 전공, 학적 변동 이력, 전공 변동 이력 출력
 		HttpSession session = request.getSession();
@@ -154,7 +195,6 @@ public class StudentController extends HttpServlet {
 		request.getRequestDispatcher("/WEB-INF/views/student/majorAndStatus.jsp").forward(request, response);
 		return;
 	}
-
 	
 	protected void showGrade(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {	// 0120 임욱(추가) / 성적 조회 
