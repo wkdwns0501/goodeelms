@@ -19,7 +19,6 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet("/professor/grade/*")
 public class ProfessorGradeController extends HttpServlet {
     private static final long serialVersionUID = 1L;
-
     // 페이지당 학생 수
     private static final int PAGE_SIZE = 10;
     // 시간대 고정(ZonedDateTime)
@@ -235,7 +234,7 @@ public class ProfessorGradeController extends HttpServlet {
         }
     }
     
-    // 인코딩 (쿼리파라미터에 한글 인코딩에 사용)
+    // 쿼리 파라미터 인코딩
     private String urlEncode(String s) {
         try {
             return URLEncoder.encode(s, "UTF-8");
@@ -244,7 +243,7 @@ public class ProfessorGradeController extends HttpServlet {
         }
     }
     
-    // 년도, 학기를 쌍으로 사용하기 위한 객체
+    // 년도, 학기를 세트로 사용하기 위한 객체
     private static class SemesterKey {
         final int year;
         final int semester;
