@@ -1,11 +1,14 @@
 package com.goodeelms.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.goodeelms.dto.StudentDTO;
+import com.goodeelms.dto.StudentStatusHistoryDTO;
 import com.goodeelms.dto.TuitionPaymentDTO;
 import com.goodeelms.service.LectureService;
 import com.goodeelms.service.StudentService;
+import com.goodeelms.service.StudentStatusService;
 import com.goodeelms.service.TuitionService;
 
 import jakarta.servlet.ServletException;
@@ -59,7 +62,7 @@ public class StudentController extends HttpServlet {
          showStudentMajor(request, response);
          break;
       case "/lecture":
-    	  showStudentLecture(request, response);
+    	  showLectureList(request, response);
     	  break;
       default:
          System.out.println("정의되지 않은 경로 요청됨: " + path);
@@ -106,9 +109,9 @@ public class StudentController extends HttpServlet {
    protected void showTuition(HttpServletRequest request, HttpServletResponse response)
          throws ServletException, IOException {
       HttpSession session = request.getSession();
-      int student_id = (Integer) session.getAttribute("student_id");
+      int studentId = (Integer) session.getAttribute("student_id");
 
-      TuitionPaymentDTO tuition = new TuitionService().readTuition(student_id);
+      TuitionPaymentDTO tuition = new TuitionService().readTuition(studentId);
       request.setAttribute("tuition", tuition);
 
       request.getRequestDispatcher("/WEB-INF/views/student/tuition.jsp").forward(request, response);
@@ -118,9 +121,9 @@ public class StudentController extends HttpServlet {
    protected void showStatusHistory(HttpServletRequest request, HttpServletResponse response)
          throws ServletException, IOException {
       HttpSession session = request.getSession();
-      int student_id = (Integer) session.getAttribute("student_id");
+      int studentId = (Integer) session.getAttribute("student_id");
       
-//      List<StudentStatusHistoryDTO> list = new StudentStatusService().getStatusHistory(student_id);
+//      List<StudentStatusHistoryDTO> list = new StudentStatusService().getStatusHistory(studentId);
 
 //      request.setAttribute("statusList", list);
       request.getRequestDispatcher("/WEB-INF/views/student/statusHistory.jsp").forward(request, response);
@@ -130,12 +133,13 @@ public class StudentController extends HttpServlet {
    protected void showStudentMajor(HttpServletRequest request, HttpServletResponse response)
          throws ServletException, IOException {
       HttpSession session = request.getSession();
-      int student_id = (Integer) session.getAttribute("student_id");
+      int studentId = (Integer) session.getAttribute("studentId");
       
       
    }
    
-   private void showStudentLecture(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+   // 학생 강의 목록
+   private void showLectureList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	   Integer loginId = (Integer) request.getSession().getAttribute("student_id");
        if (loginId == null) {
            response.sendRedirect(request.getContextPath() + "/common/login");
