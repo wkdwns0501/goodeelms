@@ -14,7 +14,6 @@ import java.util.Map;
 
 import com.goodeelms.dto.ChangeMajorHistoryDTO;
 import com.goodeelms.dto.LectureDTO;
-import com.goodeelms.dto.LectureHistoryDTO;
 import com.goodeelms.dto.ScholarshipDTO;
 import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.dto.StudentStatusHistoryDTO;
@@ -55,27 +54,27 @@ public class StudentController extends HttpServlet {
 		}
 
 		switch (path) {
-		case "/signup":
-			signup(request, response);
-			break;
-		case "/tuition":
-			showTuitionAndScholarship(request, response);
-			break;
-		case "/my-lectures":
-			showLecture(request, response);
-			break;
-		case "/grades":
-			showGrade(request, response);
-			break;
-		case "/history/majorAndStatus":
-			showStatusAndMajorHistory(request, response);
-			break;
-		case "/history/rewardAndPunishment":
-			// 추가 필요
-			break;
-		default:
-			System.out.println("정의되지 않은 경로 요청됨: " + path);
-			response.sendRedirect(request.getContextPath() + "/main.jsp");
+			case "/signup":
+				signup(request, response);
+				break;
+			case "/tuition":
+				showTuitionAndScholarship(request, response);
+				break;
+			case "/my-lectures":
+				showLecture(request, response);
+				break;
+			case "/grades":
+				showGrade(request, response);
+				break;
+			case "/history/majorAndStatus":
+				showStatusAndMajorHistory(request, response);
+				break;
+			case "/history/rewardAndPunishment":
+				showReawrdAndPunishments(request, response);
+				break;
+			default:
+				System.out.println("정의되지 않은 경로 요청됨: " + path);
+				response.sendRedirect(request.getContextPath() + "/main.jsp");
 		}
 	}
 
@@ -169,15 +168,27 @@ public class StudentController extends HttpServlet {
 		return;
 	}
 	
-	protected void showLecture(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException {	// 0120 임욱(추가) / 수강중인 강의 조회 
+	protected void showLecture(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {	// 0120 임욱(추가) / 수강중인 강의 조회 
 		HttpSession session = request.getSession();
 		int student_id = (Integer) session.getAttribute("student_id");
 		
 		Map<Integer, LectureDTO> lectures = studentService.getProgressInfoByStudentId(student_id);
 		
 		request.setAttribute("lectures", lectures); 
-		request.getRequestDispatcher("/WEB-INF/views/student/lecture.jsp").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/views/student/lectures.jsp").forward(request, response);
+		return;
+	}
+	
+	protected void showReawrdAndPunishments(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {	
+		HttpSession session = request.getSession(); // 0121 임욱(추가) / 학사경고, 장학 정보 조회
+		int student_id = (Integer) session.getAttribute("student_id");
+	
+		List<LectureDTO> probagation = studentService.getProbationByStudentId(student_id);
+		List<ScholarshipDTO> scholarship = new StudentService().getScholarshipByStudentId(student_id);
+		
+		request.setAttribute("probagation", probagation); 
+		request.setAttribute("scholarship", scholarship); 
+		request.getRequestDispatcher("/WEB-INF/views/student/rewardAndPunishment.jsp").forward(request, response);
 		return;
 	}
 	

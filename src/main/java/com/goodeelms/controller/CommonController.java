@@ -24,20 +24,15 @@ import com.goodeelms.util.ExistUtil;
 public class CommonController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		checkPath(request, response);
-		
-		
-	}
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		checkPath(request, response);
 	}
 
-	private void checkPath(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		checkPath(request, response);
+	}
+
+	private void checkPath(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String path = request.getPathInfo();
 
 		if (ExistUtil.isNull(path) || path.equals("/")) {
@@ -46,15 +41,15 @@ public class CommonController extends HttpServlet {
 		}
 
 		switch (path) {
-		case "/login":
-			login(request, response);
-			break;
-		case "/logout":
-			logout(request, response);
-			break;
-		case "/signup":
-			signup(request, response);
-			break;
+			case "/login":
+				login(request, response);
+				break;
+			case "/logout":
+				logout(request, response);
+				break;
+			case "/signup":
+				signup(request, response);
+				break;
 		}
 	}
 

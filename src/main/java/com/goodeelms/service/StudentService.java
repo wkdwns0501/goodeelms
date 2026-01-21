@@ -110,13 +110,18 @@ public class StudentService {
 		return LectureHistoryDAO.getInstance().getLectureHistoryByStudentId(studentId);
 	}
 
-	public ChangeMajorHistoryDTO getChangedMajorHistory(int studentId) { 	// 0120 임욱(추가) / 학생 전과 이력 조회
+	public ChangeMajorHistoryDTO getChangedMajorHistory(int studentId) { // 0120 임욱(추가) / 학생 전과 이력 조회
 		return ChangedMajorDAO.getInstance().getChangeMajorHistoryNameByStudentId(studentId);
 	}
 
-	public List<ScholarshipDTO> getScholarshipByStudentId(int studentId){ 	// 0120 임욱(추가) / 학생 장학 정보 조회
+	public List<ScholarshipDTO> getScholarshipByStudentId(int studentId){ // 0120 임욱(추가) / 학생 장학 정보 조회
 		return ScholarshipDAO.getInstance().getSemesterAndAmountByStudentId(studentId);
 	}
+	
+	public List<LectureDTO> getProbationByStudentId(int studentId){ // 0120 임욱(추가) / 학사경고(평균2.0이하) 조회
+		return LectureHistoryDAO.getInstance().getProbationByStudentId(studentId);
+	}
+	
 	
 	
 }

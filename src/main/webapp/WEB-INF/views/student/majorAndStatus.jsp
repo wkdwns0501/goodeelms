@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>학적정보 조회</title>
+<title>GoodeeLMS</title>
 
 <!-- Bootstrap 5 -->
 <link
@@ -24,9 +24,6 @@
 		<div class="container-fluid">
 			<div class="page-shell">
 
-
-
-
 				<div
 					class="d-flex justify-content-between align-items-center mb-5 pb-3 border-bottom">
 					<div>
@@ -36,7 +33,6 @@
 						<p class="text-muted mb-0">현재 전공 정보와 과거 학적 변동 사항을 확인하실 수 있습니다.</p>
 					</div>
 				</div>
-
 
 				<div class="mb-5">
 					<h5 class="fw-bold mb-3">

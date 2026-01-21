@@ -8,14 +8,13 @@
   	<c:choose>
   	<c:when test="${sessionScope.user_role == 'STUDENT'}">
     <a class="nav-link" href="<c:url value='/student/page/enrollment'/>"><span class="nav-label">수강신청</span></a>
-    <a class="nav-link" href="<c:url value='/student/page/enrollment'/>"><span class="nav-label">수강신청</span></a>
     <a class="nav-link" href="<c:url value='/student/my-lectures'/>"><span class="nav-label">내 강의</span></a>
     <a class="nav-link" href="<c:url value='/student/assignments'/>"><span class="nav-label">과제</span></a>
     <a class="nav-link" href="<c:url value='/student/exams'/>"><span class="nav-label">시험</span></a>
     <a class="nav-link" href="<c:url value='/student/grades'/>"><span class="nav-label">성적조회</span></a>
-    <a class="nav-link" href="<c:url value='/student/tuition'/>"><span class="nav-label">등록금 납부 이력 </span></a>
+    <a class="nav-link" href="<c:url value='/student/tuition'/>"><span class="nav-label">등록금 납입 이력</span></a>
     <a class="nav-link" href="<c:url value='/student/history/majorAndStatus'/>"><span class="nav-label">전공/학과변경/학적변동</span></a>
-    <a class="nav-link" href="<c:url value='/student/history/rewardAndPunishment'/>"><span class="nav-label">포상/징계/우등</span></a>
+    <a class="nav-link" href="<c:url value='/student/history/rewardAndPunishment'/>"><span class="nav-label">학사경고/우등 이력 조회</span></a>
     </c:when>	
     	<c:when test="${sessionScope.user_role == 'ADMIN'}">
 	    	<a class="nav-link" href="<c:url value='/admin/studentStatus/page'/>"><span class="nav-label">학사관리</span></a>

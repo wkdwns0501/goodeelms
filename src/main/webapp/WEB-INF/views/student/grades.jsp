@@ -23,7 +23,7 @@
 	<main class="content">
 		<div class="container-fluid">
 			<div class="page-shell">
-				<h5 class="mb-2">강의 내역 조회</h5>
+				<h5 class="mb-2">강의성적 조회</h5>
 				<p class="text-muted mb-3">
 				<table class="table table-hover align-middle">
 					<thead class="table-dark">
@@ -44,17 +44,16 @@
 						        <td>${lecture.lectureSemester}학기</td>
 						        <td>${lecture.lectureCode}</td>
 						        <td>${lecture.lectureName}</td>
-						        
-						        <td class="fw-bold text-primary">
-						            <c:choose>
-						                <c:when test="${lecture.score == 4.5}"><span class="text-success">4.5 (A+)</span></c:when>
-						                <c:when test="${lecture.score == 4.0}"><span class="text-success">4.0 (A)</span></c:when>
-						                <c:when test="${lecture.score == 3.5}"><span class="text-success">3.5 (B+)</span></c:when>
-						                <c:when test="${lecture.score == 3.0}"><span class="text-success">3.0 (B)</span></c:when>
-						                <c:when test="${lecture.score == 2.5}"><span class="text-success">2.5 (C+)</span></c:when>
-						                <c:when test="${lecture.score == 2.0}"><span class="text-success">2.0 (C)</span></c:when>
-						                <c:otherwise><span class="text-danger"> ${lecture.score} (F) </span></c:otherwise>
-						            </c:choose>
+						        <td>
+											<span class="${lecture.score >= 1.5 ? 'text-success' : 'text-danger'}">
+											    ${lecture.score} 
+											    (${lecture.score >= 4.5 ? 'A+' : 
+											      lecture.score >= 4.0 ? 'A' : 
+											      lecture.score >= 3.5 ? 'B+' : 
+											      lecture.score >= 2.5 ? 'C+' : 
+											      lecture.score >= 1.5 ? 'D+' : 
+											      lecture.score > 0 ? 'D' : 'F'})
+											</span>
 						        </td>
 						
 						        <td>

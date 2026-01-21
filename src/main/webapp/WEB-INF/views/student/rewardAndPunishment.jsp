@@ -42,79 +42,43 @@
 
 				<div class="mb-5 text-center">
 					<h4 class="fw-bold mb-2">
-						<i class="bi bi-credit-card-2-front me-2 text-primary"></i>등록금 납부
-						및 장학 현황
+						<i class="bi bi-credit-card-2-front me-2 text-primary"></i>학사경보 / 장학이력
 					</h4>
-					<p class="text-muted mb-3">당해 학기 납부 내역과 장학 수혜 정보를 한눈에 확인하세요.</p>
-					<span
-						class="badge ${tuition.paymentStatus == '납부완료' ? 'bg-success' : 'bg-warning text-dark'} p-2 px-4 fs-6 shadow-sm">
-						현재 상태: ${tuition.paymentStatus} </span>
+					<p class="text-muted mb-3">학사경고와 장학이력을 조회합니다.</p>
 				</div>
 
-				<section class="mb-5">
-					<div class="card border-0 shadow-sm mb-3">
-						<div
-							class="card-body p-4 d-flex justify-content-between align-items-center">
-							<span class="text-muted fw-bold"><i
-								class="bi bi-dash-square me-2"></i>총 등록금</span>
-							<h3 class="fw-bold text-dark mb-0">4,500,000원</h3>
-						</div>
-					</div>
-
-					<div class="card border-0 shadow-sm bg-light mb-3">
-						<div
-							class="card-body p-4 d-flex justify-content-between align-items-center">
-							<span class="text-muted fw-bold"><i
-								class="bi bi-check-circle-fill me-2 text-primary"></i>납부한 금액</span>
-							<h3 class="fw-bold text-primary mb-0">
-								<fmt:formatNumber value="${tuition.paymentAmount}" type="number" />
-								원
-							</h3>
-						</div>
-					</div>
-
-					<div
-						class="card border-0 shadow-sm border-start border-danger border-5 mb-3">
-						<div
-							class="card-body p-4 d-flex justify-content-between align-items-center">
-							<span class="text-danger fw-bold"><i
-								class="bi bi-exclamation-triangle-fill me-2"></i>미납 잔액</span>
-							<h3 class="fw-bold text-danger mb-0">
-								<fmt:formatNumber value="${4500000 - tuition.paymentAmount}"
-									type="number" />
-								원
-							</h3>
-						</div>
-					</div>
-				</section>
-
-				<section class="mb-5">
+				<section class="mb-4">
 					<div class="card border-0 shadow-sm">
 						<div class="card-header bg-white py-3 border-bottom">
 							<h6 class="mb-0 fw-bold">
-								<i class="bi bi-file-earmark-text me-2 text-secondary"></i>납부 상세
-								정보
+								<i class="bi bi-gift me-2 text-danger"></i>학사 경고 상세
 							</h6>
 						</div>
 						<div class="table-responsive">
-							<table class="table align-middle mb-0">
+							<table class="table table-hover align-middle mb-0">
+								<thead class="table-light">
+									<tr class="text-center">
+										<th style="width: 30%;">해당년도 </th>
+										<th style="width: 30%;">학기</th>
+										<th style="width: 30%;">평균 점수</th>
+									</tr>
+								</thead>
+								
 								<tbody>
-									<tr>
-										<th class="ps-4 text-muted bg-light" style="width: 250px;">최종
-											납부 일시</th>
-										<td class="ps-4 fw-bold text-dark"><c:choose>
-												<c:when test="${not empty tuition.paymentDate}">${tuition.formattedPaymentDate}</c:when>
-												<c:otherwise>
-													<span class="text-muted fw-normal">납부 기록 없음</span>
-												</c:otherwise>
-											</c:choose></td>
-									</tr>
-									<tr>
-										<th class="ps-4 text-muted bg-light">납부 방식</th>
-										<td class="ps-4">가상계좌 이체 <small
-											class="text-secondary ms-2">(구디은행 123-456-7890123)</small>
-										</td>
-									</tr>
+									<c:forEach var="probagationDTO" items="${probagation}">
+										<tr class="text-center">
+											<td>${probagationDTO.lectureYear}년</td>
+											<td>${probagationDTO.lectureSemester}학기</td> 
+											<td>${probagationDTO.score}</td>
+										</tr>
+									</c:forEach>
+								
+									<c:if test="${empty probagation}">
+										<tr>
+											<td colspan="3" class="py-5 text-center text-muted small">학새경고
+												내역이 존재하지 않습니다.</td>
+										</tr>
+									</c:if>
 								</tbody>
 							</table>
 						</div>
@@ -149,7 +113,8 @@
 									</c:forEach>
 									<c:if test="${empty scholarship}">
 										<tr>
-											<td colspan="3" class="py-5 text-center text-muted small">장학수혜 내역이 존재하지 않습니다.</td>
+											<td colspan="3" class="py-5 text-center text-muted small">장학수혜
+												내역이 존재하지 않습니다.</td>
 										</tr>
 									</c:if>
 								</tbody>
