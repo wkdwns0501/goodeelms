@@ -213,7 +213,7 @@ public class StudentDAO {
 	public StudentDTO selectById(Connection conn, int studentId) throws SQLException {
         String sql =
             "SELECT student_id, student_no, student_name, student_phone, " +
-            "       student_gender, student_address, student_status, student_email, student_bank, " +
+            "       student_gender, student_address, student_status, student_email, student_bank " +
             "FROM student WHERE student_id = ?";
         
         try (PreparedStatement pstmt = conn.prepareStatement(sql)){

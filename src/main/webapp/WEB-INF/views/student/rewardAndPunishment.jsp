@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -58,8 +59,7 @@
 							<table class="table table-hover align-middle mb-0">
 								<thead class="table-light">
 									<tr class="text-center">
-										<th style="width: 30%;">해당년도 </th>
-										<th style="width: 30%;">학기</th>
+										<th style="width: 30%;">해당학기</th>
 										<th style="width: 30%;">평균 점수</th>
 									</tr>
 								</thead>
@@ -67,8 +67,7 @@
 								<tbody>
 									<c:forEach var="probagationDTO" items="${probagation}">
 										<tr class="text-center">
-											<td>${probagationDTO.lectureYear}년</td>
-											<td>${probagationDTO.lectureSemester}학기</td> 
+											<td>${probagationDTO.lectureYear}-${probagationDTO.lectureSemester}</td> 
 											<td>${probagationDTO.score}</td>
 										</tr>
 									</c:forEach>
@@ -104,7 +103,7 @@
 								<tbody>
 									<c:forEach var="scholarshipDTO" items="${scholarship}">
 										<tr class="text-center">
-											<td>${scholarshipDTO.scholarshipSemester}</td>
+											<td>${scholarshipDTO.formattedSemester}</td>
 											<td class="text-muted small">교내 장학금(성적우수)</td>
 											<td class="text-end pe-5 fw-bold text-success">+ <fmt:formatNumber
 													value="${scholarshipDTO.scholarshipAmount}" type="number" />원

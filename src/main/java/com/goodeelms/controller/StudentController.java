@@ -63,7 +63,7 @@ public class StudentController extends HttpServlet {
 		case "/tuition/pay":
 	        payTuitionOrScholarship(request, response);
 	        break;
-		  case "/lecture":
+		case "/lecture":
 	    	  showLectureList(request, response);
 	    	  break;
 		case "/grades":
@@ -74,6 +74,9 @@ public class StudentController extends HttpServlet {
 			break;
 		case "/history/rewardAndPunishment":
 			showReawrdAndPunishments(request, response);
+			break;
+		case "/my-lectures":	
+			showLecture(request, response);
 			break;
 		default:
 			System.out.println("정의되지 않은 경로 요청됨: " + path);
@@ -215,7 +218,7 @@ public class StudentController extends HttpServlet {
 		Map<Integer, LectureDTO> lectures = studentService.getProgressInfoByStudentId(student_id);
 		
 		request.setAttribute("lectures", lectures); 
-		request.getRequestDispatcher("/WEB-INF/views/student/lectures.jsp").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/views/student/myLectures.jsp").forward(request, response);
 		return;
 	}
 	
