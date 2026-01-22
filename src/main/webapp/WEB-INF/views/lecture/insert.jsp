@@ -23,10 +23,10 @@
 	    <div class="page-shell">
 	      <div class="d-flex align-items-center justify-content-between mb-3">
 				  <div>
-				    <h4 class="mb-0">강의 등록</h4>
+				    <h4 class="mb-0"><b>강의 등록</b></h4>
 				    <small class="text-muted">필수 항목을 입력하고 등록 버튼을 눌러주세요.</small>
 				  </div>
-				  <a class="btn btn-outline-secondary btn-sm" href="<c:url value='/lecture/list'/>">목록</a>
+				  <a class="btn btn-outline-secondary btn-sm" href="<c:url value='/professor/lecture/list'/>">목록</a>
 				</div>
 				
 				<!-- 에러 메시지 영역 (컨트롤러에서 request.setAttribute("error", "...") 했을 때) -->

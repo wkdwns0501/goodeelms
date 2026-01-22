@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>강의 관리</title>
+<title>강의 목록</title>
 
 <!-- Bootstrap 5 -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
@@ -29,7 +29,7 @@
   }
   
 	.td-room {
-	  max-width: clamp(9rem, 14vw, 14rem); /* 화면에 따라 9~14rem 사이 */
+	  max-width: clamp(9rem, 14vw, 14rem);
 	}
   
   /* 강의 코드 */
@@ -71,19 +71,19 @@
 	       <!-- 상단 타이틀 + 버튼 -->
         <div class="d-flex align-items-center justify-content-between mb-3">
           <div>
-            <h4 class="mb-0"><b>강의 관리</b></h4>
-            <small class="text-muted">소속 학과의 개설 강의를 관리할 수 있습니다.</small>
+            <h4 class="mb-0"><b>강의 목록</b></h4>
+            <small class="text-muted">전체 강의 정보를 확인할 수 있습니다.</small>
           </div>
-
-          <c:if test="${not empty sessionScope.professor_id}">
-            <a class="btn btn-success btn-sm" href="<c:url value='/professor/lecture/add'/>">+ 강의 등록</a>
+          
+          <c:if test="${not empty sessionScope.student_id}">
+             <a class="btn btn-success btn-sm" href="<c:url value='/student/enrollment/cart'/>">장바구니 보기 &raquo;</a>
           </c:if>
         </div>
 
         <!-- 검색창 -->
         <div class="card shadow-sm border-0 mb-3">
           <div class="card-body">
-            <form method="get" action="<c:url value='/professor/lecture/list'/>" class="row g-2 align-items-center">
+            <form method="get" action="<c:url value='/student/lecture'/>" class="row g-2 align-items-center">
               <div class="col-md-8">
                 <input type="text" name="keyword" class="form-control"
                        placeholder="강의명 또는 교수명 또는 건물명 검색"
@@ -91,7 +91,7 @@
               </div>
               <div class="col-md-4 d-flex gap-2">
                 <button type="submit" class="btn btn-success w-100">검색</button>
-                <a class="btn btn-outline-secondary w-100" href="<c:url value='/professor/lecture/list'/>">초기화</a>
+                <a class="btn btn-outline-secondary w-100" href="<c:url value='/student/lecture'/>">초기화</a>
               </div>
             </form>
             <div class="form-text mt-2">* 검색은 강의명/교수명/건물명 기준이며, 페이지당 10개씩 표시됩니다.</div>
@@ -199,7 +199,7 @@
 				      <!-- << : 이전 블록 -->
 				      <li class="page-item ${startPage <= 1 ? 'disabled' : ''}">
 				        <a class="page-link"
-				           href="<c:url value='/professor/lecture/list'>
+				           href="<c:url value='/student/lecture'>
 				                  <c:param name='page' value='${prevBlockPage}'/>
 				                  <c:if test='${not empty keyword}'>
 				                    <c:param name='keyword' value='${keyword}'/>
@@ -212,7 +212,7 @@
 				      <!-- < : 이전 페이지 -->
 				      <li class="page-item ${page <= 1 ? 'disabled' : ''}">
 				        <a class="page-link"
-				           href="<c:url value='/professor/lecture/list'>
+				           href="<c:url value='/student/lecture'>
 				                  <c:param name='page' value='${page - 1}'/>
 				                  <c:if test='${not empty keyword}'>
 				                    <c:param name='keyword' value='${keyword}'/>
@@ -226,7 +226,7 @@
 				      <c:forEach var="p" begin="${startPage}" end="${endPage}">
 				        <li class="page-item ${p == page ? 'active' : ''}">
 				          <a class="page-link"
-				             href="<c:url value='/professor/lecture/list'>
+				             href="<c:url value='/student/lecture'>
 				                    <c:param name='page' value='${p}'/>
 				                    <c:if test='${not empty keyword}'>
 				                      <c:param name='keyword' value='${keyword}'/>
@@ -240,7 +240,7 @@
 				      <!-- > : 다음 페이지 -->
 				      <li class="page-item ${page >= totalPage ? 'disabled' : ''}">
 				        <a class="page-link"
-				           href="<c:url value='/professor/lecture/list'>
+				           href="<c:url value='/student/lecture'>
 				                  <c:param name='page' value='${page + 1}'/>
 				                  <c:if test='${not empty keyword}'>
 				                    <c:param name='keyword' value='${keyword}'/>
@@ -253,7 +253,7 @@
 				      <!-- >> : 다음 블록 -->
 				      <li class="page-item ${endPage >= totalPage ? 'disabled' : ''}">
 				        <a class="page-link"
-				           href="<c:url value='/professor/lecture/list'>
+				           href="<c:url value='/student/lecture'>
 				                  <c:param name='page' value='${nextBlockPage}'/>
 				                  <c:if test='${not empty keyword}'>
 				                    <c:param name='keyword' value='${keyword}'/>
@@ -333,12 +333,6 @@
   <%@ include file="/footer.jsp" %>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <script>
-  	// 성공 alert 3초
-	  const success = document.getElementById("successAlert");
-	  if (success) setTimeout(() => success.classList.add("d-none"), 3000);
-	</script>
 	
 	<script> 
 		// 모달 스크립트

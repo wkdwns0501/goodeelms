@@ -18,6 +18,7 @@ public class LectureDTO {
 	private int lectureSemester;
 	private String lectureSection;
 	private String lectureType;
+	private String lectureStatus;
 	private int lectureCurrentPeople;
 	private int lectureCapacity;
 	private int professorId;

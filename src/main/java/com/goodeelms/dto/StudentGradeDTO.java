@@ -7,10 +7,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LectureHistoryDTO {
-	private int studentId;
-	private int studentNo;
+public class StudentGradeDTO {
 	private int lectureId;
+	private int lectureCode;
+	private String lectureName;
+	private String lectureSection;
+	private String lectureYear;
+	private int lectureSemester;
 	private Double lectureScore;
-	private String studentName;
 }
