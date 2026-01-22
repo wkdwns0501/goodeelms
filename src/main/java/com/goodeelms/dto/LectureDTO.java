@@ -27,7 +27,7 @@ public class LectureDTO {
 	private int buildingId;
 	private String professorName; // 출력용
 	private String buildingName; // 출력용
-	
+	private boolean isEvaluated;
 	// 강의 코드 출력용
 	public String getLectureCodeDisplay() {
 	    return String.format("%07d", lectureCode);

@@ -14,17 +14,18 @@ import java.util.ArrayList;
 import com.goodeelms.dto.ProfessorDTO;
 import com.goodeelms.service.ProfessorManageService;
 
-@WebServlet("/professorManage/*")
+@WebServlet("/admin/professorManage/*")
 public class ProfessorManageController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		String requestURI = request.getRequestURI();
 		String contextPath = request.getContextPath(); 
 		String command = requestURI.substring(contextPath.length());
-		
+				
 		// 내비바 통한 교수 관리 페이지 진입
-		if(command.equals("/professorManage/page")) {
+		if(command.equals("/admin/professorManage/page")) {
 			ProfessorManageService pms = new ProfessorManageService();
 			ArrayList<ProfessorDTO> list = pms.getAllProfessorList();
 			
@@ -35,7 +36,7 @@ public class ProfessorManageController extends HttpServlet {
 		}
 		
 		// 검색 입력값에 따른 교수 목록
-		if(command.equals("/professorManage/search")) {
+		if(command.equals("/admin/professorManage/search")) {
 			String professorName = request.getParameter("professorName");
 			String majorName = request.getParameter("majorName");
 			String professorEmail = request.getParameter("professorEmail");
@@ -57,8 +58,14 @@ public class ProfessorManageController extends HttpServlet {
 		String contextPath = request.getContextPath(); 
 		String command = requestURI.substring(contextPath.length());
 		
+		if (session == null || session.getAttribute("admin_id") == null) {
+            // 세션 아이디 관리자인지 확인 => 로그인 페이지로 리다이렉트 하거나 에러 처리
+            response.sendRedirect(contextPath + "/common/login");
+            return;
+		}
+		
 		// 교수 상태 업데이트 
-		if(command.equals("/professorManage/updateStatus")) {
+		if(command.equals("/admin/professorManage/updateStatus")) {
 
 			String professorId = request.getParameter("professorId");
 			String newProfessorStatus = request.getParameter("newProfessorStatus");
@@ -77,7 +84,7 @@ public class ProfessorManageController extends HttpServlet {
 
 		    // 6. 리다이렉트 실행
 		    // 결과(res)와 검색 조건들을 다시 붙여서 /professor/search로 보냄
-		    String redirectUrl = contextPath + "/professorManage/search?res=" + result 
+		    String redirectUrl = contextPath + "/admin/professorManage/search?res=" + result 
 		                          + "&professorName=" + encName 
 		                          + "&majorName=" + encMajor 
 		                          + "&professorEmail=" + sNo;

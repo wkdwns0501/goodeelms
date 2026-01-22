@@ -22,7 +22,10 @@ import com.goodeelms.dto.StudentDTO;
 /**
  * Servlet Filter implementation class StudentValidFilter
  */
-@WebFilter("/admin/*")
+@WebFilter(urlPatterns = {
+	    "/admin/*",               // 기존 관리자 페이지들
+	    "/common/board/admin/*"   // [추가] 게시판 관리 기능 주소
+	})
 public class AdminValidFilter extends HttpFilter implements Filter {
     public AdminValidFilter() {
         super();
@@ -38,6 +41,9 @@ public class AdminValidFilter extends HttpFilter implements Filter {
     		valid = ((Integer)session.getAttribute("admin_id")).toString();
     	}
     	catch(NullPointerException e) {
+    		valid = null;
+    	}
+    	catch(NumberFormatException e) {
     		valid = null;
     	}
     	if(valid == null || valid.isBlank()) {
