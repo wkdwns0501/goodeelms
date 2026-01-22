@@ -141,6 +141,31 @@ public class StudentDAO {
 		return result;
 	}
 
+	public StudentDTO getIdentityNumAndNo (int studentId) { // 0122 임욱 추가
+		String sql = "SELECT student_identity_number, student_no FROM student WHERE student_id = ? ";
+		StudentDTO dto = null;
+
+		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setInt(1, studentId);
+			
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if(rs.next()) {
+					dto = new StudentDTO();
+					dto.setStudentIdentityNumber(rs.getString("student_identity_number"));
+					dto.setStudentNo(rs.getString("student_no"));
+				}
+			} catch(Exception e) {
+				System.out.println("getIdentityNumAndNo() 예외: " + e.getMessage());
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			System.out.println("getIdentityNumAndNo() 예외: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return dto;
+	}
+	
+	
 // =============== 01.17 (토) 이전 작성 =================== 
 	public List<StudentMajorDTO> getMajors(String studentId) {
 		String sql = "SELECT * FROM student_major WHERE student_id = ?";
@@ -188,7 +213,7 @@ public class StudentDAO {
 	public StudentDTO selectById(Connection conn, int studentId) throws SQLException {
         String sql =
             "SELECT student_id, student_no, student_name, student_phone, " +
-            "       student_gender, student_address, student_status, student_email, student_bank " +
+            "       student_gender, student_address, student_status, student_email, student_bank, " +
             "FROM student WHERE student_id = ?";
         
         try (PreparedStatement pstmt = conn.prepareStatement(sql)){

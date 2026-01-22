@@ -21,6 +21,7 @@ public class StudentValidFilter extends HttpFilter implements Filter {
 	public StudentValidFilter() {
 		super();
 	}
+
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
     	HttpSession session = getSession(request);
     	String valid = null;

@@ -16,18 +16,18 @@
 
 				<span class="text-white small me-2"> <c:choose>
 						<c:when test="${user_role eq 'STUDENT'}">
-							<strong>${studentDTO.studentName}</strong>
+							<strong>${user_name}</strong>
 						</c:when>
 
 						<c:when test="${user_role eq 'PROFESSOR'}">
-							<strong>${professorDTO.professorName}</strong>
+							<strong>${user_name}</strong>
 						</c:when>
 
 						<c:when test="${user_role eq 'ADMIN'}">
-							<strong>${adminDTO.adminName}</strong>
+							<strong>${user_name}</strong>
 						</c:when>
 					</c:choose> 님 <span
-					class="badge ${user_role eq 'ADMIN' ? 'bg-danger' : 'bg-secondary'} ms-1">${user_role}</span>
+					class="badge ${user_role eq 'ADMIN' ? 'bg-danger' : 'bg-primary'} ms-1">${user_role}</span>
 				</span>
 
 				<%-- 학생 전용 버튼 --%>
@@ -44,7 +44,7 @@
 				<a class="btn btn-sm btn-outline-light"
 					href="<c:url value='/common/login'/>">로그인</a>
 				<a class="btn btn-sm btn-light"
-					href="<c:url value='/professor/signup'/>">회원가입</a>
+					href="<c:url value='/common/signup'/>">회원가입</a>
 			</c:otherwise>
 		</c:choose>
 	</div>
