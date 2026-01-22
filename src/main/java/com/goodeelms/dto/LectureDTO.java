@@ -18,6 +18,7 @@ public class LectureDTO {
 	private int lectureSemester;
 	private String lectureSection;
 	private String lectureType;
+	private String lectureStatus;
 	private int lectureCurrentPeople;
 	private int lectureCapacity;
 	private int professorId;
@@ -27,7 +28,7 @@ public class LectureDTO {
 	private String professorName; // 출력용
 	private String buildingName; // 출력용
 	private String preEnrollmentStatus;
-	
+	private boolean isEvaluated;
 	
 	// 강의 코드 출력용
 	public String getLectureCodeDisplay() {

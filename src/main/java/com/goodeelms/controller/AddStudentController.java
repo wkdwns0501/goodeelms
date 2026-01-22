@@ -6,6 +6,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -15,17 +17,18 @@ import com.goodeelms.dto.MajorDTO;
 import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.service.StudentRegisterService;
 
-@WebServlet("/addStudent/*")
+@WebServlet("/admin/addStudent/*")
 public class AddStudentController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		String requestURI = request.getRequestURI();
 		String contextPath = request.getContextPath(); 
 		String command = requestURI.substring(contextPath.length());
 		
 		// 첫 페이지 진입시 
-		if(command.equals("/addStudent/list")) {
+		if(command.equals("/admin/addStudent/list")) {
 			StudentRegisterService srs = new StudentRegisterService();
 			
 			// 전체 학생 조회
@@ -40,7 +43,7 @@ public class AddStudentController extends HttpServlet {
 		}
 		
 		// 검색 조건에 따른 학생 목록 조회
-		if(command.equals("/addStudent/search")) {
+		if(command.equals("/admin/addStudent/search")) {
 			String studentName = request.getParameter("studentName");
 			String majorName = request.getParameter("majorName");
 			String studentNo = request.getParameter("studentNo");
@@ -56,12 +59,13 @@ public class AddStudentController extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		String requestURI = request.getRequestURI();
 		String contextPath = request.getContextPath(); 
 		String command = requestURI.substring(contextPath.length());
 		
 		// 신입생 기초 정보 등록
-		if(command.equals("/addStudent/register")) {
+		if(command.equals("/admin/addStudent/register")) {
 			StudentDTO studentDTO = new StudentDTO();
 			studentDTO.setStudentName(request.getParameter("studentName")); 
 			studentDTO.setStudentGender(request.getParameter("studentGender")); 
@@ -95,7 +99,7 @@ public class AddStudentController extends HttpServlet {
 				// student_major 테이블 작성
 				int writeResult = srs.writeStudentMajor(newStudentId, majorId);
 				if(registerResult > 0 && writeResult > 0) {
-				response.sendRedirect(request.getContextPath() + "/addStudent/list");	
+				response.sendRedirect(request.getContextPath() + "/admin/addStudent/list");	
 				}
 				else {
 					

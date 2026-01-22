@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class LectureEvaluationDTO {
 	private int evaluationId;
 	private int rating;
+	private String comment;
 	private LocalDateTime evaluatedAt;
 	private int studentId;
 	private int lectureId;

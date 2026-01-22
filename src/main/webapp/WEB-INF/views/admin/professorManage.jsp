@@ -49,7 +49,7 @@ function checkForm(form) {
 	    </div>
 
         <!-- 검색 영역 -->
-        <form action="<c:url value='/professorManage/search'/>" method="get" class="row g-2 mb-3">
+        <form action="<c:url value='/admin/professorManage/search'/>" method="get" class="row g-2 mb-3">
           <div class="col-md-3">
             <label class="form-label mb-1">이름</label>
             <input type="text" name="professorName" class="form-control form-control-sm" value="${param.professorName}">
@@ -92,7 +92,7 @@ function checkForm(form) {
                       <td>${s.professorEmail}</td>
                       <td>${s.professorStatus}</td>
                       <td>
-                        <form action="<c:url value='/professorManage/updateStatus'/>" method="post" class="d-flex gap-1 align-items-center">
+                        <form action="<c:url value='/admin/professorManage/updateStatus'/>" method="post" class="d-flex gap-1 align-items-center">
                           <select name="newProfessorStatus" class="form-select form-select-sm flex-grow-1">
                             <option value="재직" ${s.professorStatus == '재직' ? 'selected' : ''}>재직</option>
                             <option value="휴직" ${s.professorStatus == '휴직' ? 'selected' : ''}>휴직</option>

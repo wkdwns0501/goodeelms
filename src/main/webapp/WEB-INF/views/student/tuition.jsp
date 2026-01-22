@@ -90,7 +90,7 @@
 										<c:choose>
 											<c:when test="${not empty tuition.paymentDate}">
 											<fmt:formatDate value="${tuition.paymentDate}"/>
-												
+											
 											</c:when>
 											<c:otherwise>-</c:otherwise>
 										</c:choose></td>

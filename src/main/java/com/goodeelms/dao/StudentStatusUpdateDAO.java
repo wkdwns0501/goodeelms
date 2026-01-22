@@ -129,7 +129,7 @@ public class StudentStatusUpdateDAO {
 	}
 	
 	// student_status_history 에 기록을 작성하는 메서드
-	public int writeStatusHistory(String studentId, String newStudentStatus, String statusReason, String adminId) {
+	public int writeStatusHistory(String studentId, String newStudentStatus, String statusReason, int adminId) {
 		String sql = "INSERT INTO student_status_history (status_type, status_reason, student_id, admin_id) "
 					+ "VALUES (?, ?, ?, ?)";
 		
@@ -138,7 +138,7 @@ public class StudentStatusUpdateDAO {
 			pstmt.setString(1, newStudentStatus);
 			pstmt.setString(2, statusReason);
 			pstmt.setInt(3, Integer.parseInt(studentId));
-			pstmt.setInt(4, Integer.parseInt(adminId));
+			pstmt.setInt(4, adminId);
 			return pstmt.executeUpdate();
 		} catch (Exception e) {
 			System.out.println("writeStatusHistory() 예외 발생: " + e);
