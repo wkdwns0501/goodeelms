@@ -1,5 +1,7 @@
 package com.goodeelms.filter;
 
+import java.io.IOException;
+
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -11,12 +13,6 @@ import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
-import com.goodeelms.dto.StudentDTO;
 
 /**
  * Servlet Filter implementation class StudentValidFilter
@@ -30,27 +26,24 @@ public class StudentValidFilter extends HttpFilter implements Filter {
     public void init(FilterConfig fConfig) throws ServletException {
 	}
     
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-         HttpSession session = getSession(request);
-         String valid = null;
-
-         try {
-            valid = ((Integer) session.getAttribute("student_id")).toString();
-         } catch (NullPointerException e) {
-            valid = null;
-         }
-
-         System.out.println(valid);
-
-         if (valid == null || valid.isBlank()) {
-            HttpServletResponse rsp = (HttpServletResponse) response;
-            rsp.sendRedirect("/main.jsp?error=noDTO");
-            return;
-         }
-
-         chain.doFilter(request, response);
-      }
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    	HttpSession session = getSession(request);
+    	String valid = null;
+	
+    	try { 
+    		valid = ((Integer)session.getAttribute("student_id")).toString(); 
+    	} catch(NullPointerException | NumberFormatException e) { 
+    		valid = null; 
+    	}
+    	
+    	if(valid == null || valid.isBlank()) {
+    		HttpServletResponse rsp = (HttpServletResponse)response;
+    		rsp.sendRedirect("/main.jsp?error=noDTO");
+    		return;
+    	}
+    	
+    	chain.doFilter(request, response);
+    }
     
     private HttpSession getSession(ServletRequest request) {
     	HttpServletRequest req = (HttpServletRequest) request;

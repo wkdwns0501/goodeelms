@@ -1,0 +1,45 @@
+@charset "UTF-8";
+
+#lectureDetailModal .modal-body .meta-line{
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+}
+
+#lectureDetailModal .modal-body .meta-line .vr{
+  width: 2px;
+  opacity: 1;
+  background-color: #dee2e6;
+}
+
+#lectureDetailModal .modal-body .info-table{
+  border: 1px solid #e3e7ee;      /* 기존보다 살짝 진하게 */
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #fff;
+}
+
+#lectureDetailModal .modal-body table.info-table th,
+#lectureDetailModal .modal-body table.info-table td{
+  border-bottom: 1px solid #e3e7ee !important;  /* 행 구분선 선명 */
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+  vertical-align: middle;
+}
+
+#lectureDetailModal .modal-body table.info-table tr:last-child th,
+#lectureDetailModal .modal-body table.info-table tr:last-child td{
+  border-bottom: 0 !important;
+}
+
+#lectureDetailModal .modal-body table.info-table tr > *:nth-child(3){
+  border-left: 1px solid #e3e7ee !important;
+}
+
+#lectureDetailModal .modal-body table.info-table th{
+  text-align: center;
+  font-weight: 600;
+  color: #6c757d;
+  white-space: nowrap;
+}

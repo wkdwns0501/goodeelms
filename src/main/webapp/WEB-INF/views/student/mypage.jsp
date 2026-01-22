@@ -9,9 +9,6 @@
 <title>마이페이지</title>
 
 <!-- Bootstrap 5 -->
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-	rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 
 <!-- layout CSS -->
@@ -19,78 +16,6 @@
 
 </head>
 <body>
-	<%@ include file="/header.jsp"%>
-	<%@ include file="/sideNavbar.jsp"%>
-
-	<main class="content">
-		<div class="container-fluid">
-			<div class="page-shell">
-				<h5 class="mb-4">
-					<i class="bi bi-person-badge"></i> 마이페이지 (학생 정보)
-				</h5>
-
-				<div class="card shadow-sm">
-					<div class="card-header bg-white">
-						<h6 class="card-title mb-0">기본 인적 사항</h6>
-					</div>
-					<div class="card-body">
-						<div class="table-responsive">
-							<table class="table table-bordered align-middle">
-								<colgroup>
-									<col style="width: 20%; background-color: #f8f9fa;">
-									<col style="width: 30%;">
-									<col style="width: 20%; background-color: #f8f9fa;">
-									<col style="width: 30%;">
-								</colgroup>
-								<tbody>
-									<tr>
-										<th class="text-center">학번</th>
-										<td>${sessionScope.studentDTO.studentNo}</td>
-										<th class="text-center">성명</th>
-										<td>${sessionScope.studentDTO.studentName}</td>
-									</tr>
-									<tr>
-										<th class="text-center">주민번호</th>
-										<td>${sessionScope.studentDTO.studentIdentityNumber}</td>
-										<th class="text-center">성별</th>
-										<td>${sessionScope.studentDTO.studentGender}</td>
-									</tr>
-									<tr>
-										<th class="text-center">연락처</th>
-										<td>${sessionScope.studentDTO.studentPhone}</td>
-										<th class="text-center">이메일</th>
-										<td>${sessionScope.studentDTO.studentEmail}</td>
-									</tr>
-									<tr>
-										<th class="text-center">학적 상태</th>
-										<td>${sessionScope.studentDTO.studentStatus} </td>
-										<th class="text-center">학생 계좌</th>
-										<td>${sessionScope.studentDTO.studentBank}</td>
-									</tr>
-									<tr>
-										<th class="text-center">주소</th>
-										<td colspan="3">${sessionScope.studentDTO.studentAddress}</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-
-						<div class="d-flex justify-content-end gap-2 mt-3">
-							<button type="button" class="btn btn-sm btn-outline-primary">정보수정 </button>
-						</div>
-					</div>
-				</div>
-
-			</div>
-		</div>
-	</main>
-
-	<%@ include file="/footer.jsp"%>
-
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-		
-		
 	<%@ include file="/header.jsp" %>
  	<%@ include file="/sideNavbar.jsp" %>
   
@@ -102,7 +27,7 @@
 			    <p class="text-muted mb-3">학생 인적사항 조회 및 수정</p>
 			    
 			    <c:if test="${not empty msg}">
-					  <div class="alert alert-success alert-dismissible fade show" role="alert">
+					  <div id="resultAlert" class="alert alert-success alert-dismissible fade show" role="alert">
 					    <c:choose>
 					      <c:when test="${msg == 'profile_ok'}">개인정보가 수정되었습니다.</c:when>
 					      <c:when test="${msg == 'pw_ok'}">비밀번호가 변경되었습니다.</c:when>
@@ -113,13 +38,15 @@
 					</c:if>
 					
 					<c:if test="${not empty err}">
-					  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+					  <div id="resultAlert" class="alert alert-danger alert-dismissible fade show" role="alert">
 					    <c:choose>
-					      <c:when test="${err == 'profile_dup'}">전화번호 또는 이메일이 이미 사용 중입니다.</c:when>
+					      <c:when test="${err == 'profile_fail'}">수정에 실패했습니다.</c:when>
 					      <c:when test="${err == 'pw_mismatch'}">현재 비밀번호가 올바르지 않습니다.</c:when>
 					      <c:when test="${err == 'pw_rule'}">새 비밀번호는 영문 소문자와 숫자를 포함한 6자 이상이어야 합니다.</c:when>
 					      <c:when test="${err == 'addr_rule'}">주소는 비워둘 수 없고 255자 이하로 입력해야 합니다.</c:when>
 					      <c:when test="${err == 'acc_rule'}">계좌번호는 숫자 3자리-숫자 7자리 형식으로 입력해야 합니다.</c:when>
+					      <c:when test="${err == 'profile_pw_mismatch'}">현재 비밀번호가 올바르지 않습니다.</c:when>
+					      <c:when test="${err == 'pw_same'}">새 비밀번호는 현재 비밀번호와 다르게 입력해주세요.</c:when>
 					      <c:otherwise>요청 처리 중 오류가 발생했습니다.</c:otherwise>
 					    </c:choose>
 					    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -135,33 +62,33 @@
 					        <table class="table table-bordered align-middle mb-4">
 					            <tbody>
 					                <tr>
-					                    <th class="table-light" style="width: 20%;">학번</th>
-					                    <td>${student.studentNo}</td>
-					                    <th class="table-light" style="width: 20%;">이름</th>
-					                    <td>${student.studentName}</td>
+				                    <th class="table-light" style="width: 20%;">학번</th>
+				                    <td>${student.studentNo}</td>
+				                    <th class="table-light" style="width: 20%;">이름</th>
+				                    <td>${student.studentName}</td>
 					                </tr>
 					                <tr>
-					                    <th class="table-light">전화번호</th>
-					                    <td>${student.studentPhone}</td>
-					                    <th class="table-light">성별</th>
-					                    <td>${student.studentGender}</td>
+				                    <th class="table-light">전화번호</th>
+				                    <td>${student.studentPhone}</td>
+				                    <th class="table-light">성별</th>
+				                    <td>${student.studentGender}</td>
 					                </tr>
 					                <tr>
-					                    <th class="table-light">주소</th>
-					                    <td colspan="3">${student.studentAddress}</td>
+				                    <th class="table-light">주소</th>
+				                    <td colspan="3">${student.studentAddress}</td>
 					                </tr>
 					                <tr>
-					                    <th class="table-light">재적 상태</th>
-					                    <td>${student.studentStatus}</td>
-					                    <th class="table-light">이메일</th>
-					                    <td>${student.studentEmail}</td>
+				                    <th class="table-light">재적 상태</th>
+				                    <td>${student.studentStatus}</td>
+				                    <th class="table-light">이메일</th>
+				                    <td>${student.studentEmail}</td>
 					                </tr>
 					                <tr>
-					                    <th class="table-light">은행명 / 계좌 정보</th>
-					                    <td colspan="3">
-					                    	<c:set var="bankParts" value="${fn:split(student.studentBank, ' ')}"/>
-					                    	${bankParts[0]} / ${bankParts[1]}
-					                    </td>
+				                    <th class="table-light">은행명 / 계좌 정보</th>
+				                    <td colspan="3">
+				                    	<c:set var="bankParts" value="${fn:split(student.studentBank, ' ')}"/>
+				                    	${bankParts[0]} / ${bankParts[1]}
+				                    </td>
 					                </tr>
 					            </tbody>
 					        </table>
@@ -176,7 +103,7 @@
 				            
 				          	<button class="btn btn-outline-primary"
 								          data-bs-toggle="collapse"
-								          data-bs-target="#pwForm">
+								          data-bs-target="#pwFormWrap">
 								      비밀번호 변경하기
 								  	</button>
 					        </div>
@@ -285,7 +212,17 @@
 																	</div>
 														    </div>
 															</div>
-					
+															<!-- 현재 비밀번호 확인 -->
+															<div class="mb-3">
+															  <label for="confirmPassword" class="form-label">현재 비밀번호 확인</label>
+															  <input type="password"
+															         class="form-control"
+															         id="confirmPassword"
+															         name="confirmPassword"
+															         placeholder="현재 비밀번호를 입력하세요">
+															  <div id="confirmPwError" class="invalid-feedback d-none"></div>
+															</div>
+															
 					                    <div class="text-end">
 				                        <button type="submit" class="btn btn-success">
 				                            저장
@@ -303,7 +240,7 @@
 					            </div>
 					        </div>
 									
-									<div class="collapse mt-3" id="pwForm">
+									<div class="collapse mt-3" id="pwFormWrap">
 									  <div class="card card-body border">
 											
 											<h5 class="fw-bold mt-2">비밀번호 변경</h5>
@@ -314,12 +251,12 @@
 									      <div class="row g-3">
 									        <div class="col-md-6">
 									          <label class="form-label">현재 비밀번호</label>
-									          <input type="password" name="currentPassword" class="form-control" required>
+									          <input type="password" name="currentPassword" class="form-control" placeholder="현재 비밀번호를 입력하세요" required>
 									          <div id="currentPwError" class="invalid-feedback d-none">현재 비밀번호를 입력해주세요.</div>
 									        </div>
 									        <div class="col-md-6">
 									          <label class="form-label">새 비밀번호</label>
-									          <input type="password" name="newPassword" class="form-control" required>
+									          <input type="password" name="newPassword" class="form-control" placeholder="바꿀 비밀번호를 입력하세요" required>
 									          <div id="newPwError" class="invalid-feedback d-none"></div>
 									        </div>
 									      </div>
@@ -329,7 +266,7 @@
 									        <button type="button"
 									                class="btn btn-secondary"
 									                data-bs-toggle="collapse"
-									                data-bs-target="#pwForm">
+									                data-bs-target="#pwFormWrap">
 									          취소
 									        </button>
 									      </div>
@@ -349,5 +286,12 @@
 	
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="<c:url value='/resources/js/updateStudentInfo.js'/>"></script>
+  <script>
+	  // 저장 결과 알림 4초 후 자동 숨김
+	  const resultAlert = document.getElementById("resultAlert");
+	  if (resultAlert) {
+	    setTimeout(() => resultAlert.classList.add("d-none"), 4000);
+	  }
+	</script>
 </body>
 </html>

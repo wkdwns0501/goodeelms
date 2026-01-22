@@ -2,7 +2,6 @@
  * 
  * 
  */
-
 // 인적사항 수정 검증
 (function () {
   const form = document.getElementById("profileForm");
@@ -17,19 +16,18 @@
   const emailIdEl = document.getElementById("emailId");
   const emailDomainEl = document.getElementById("emailDomain");
   const emailHiddenEl = document.getElementById("studentEmailHidden");
-	
-	const addressErr = document.getElementById("addressError");
-
 	const accountEl = document.getElementById("accountNumber");
+	const addressEl = document.getElementById("studentAddress");
+	const confirmPwEl = document.getElementById("confirmPassword");
 
 	const accountRegex = /^\d{3}-\d{7}$/;
-
 
   // 에러 요소들
   const phoneErr = document.getElementById("phoneError");
   const emailErr = document.getElementById("emailError");
-	const addressEl = document.getElementById("studentAddress");
+	const addressErr = document.getElementById("addressError");
 	const accountErr = document.getElementById("accountError");
+	const confirmPwErr = document.getElementById("confirmPwError");
 
   // 에러 표시/숨김
   function showInvalid(el, errEl) {
@@ -44,6 +42,7 @@
     if (errEl) {
 			errEl.classList.add("d-none");
 			errEl.classList.remove("d-block");
+			//errEl.textContent = "";
 	  }
   }
 
@@ -88,7 +87,8 @@
 	
 	if (addressEl) addressEl.addEventListener("input", () => hideInvalid(addressEl, addressErr));
 	if (accountEl) accountEl.addEventListener("input", () => hideInvalid(accountEl, accountErr));
-
+	if (confirmPwEl) confirmPwEl.addEventListener("input", () => hideInvalid(confirmPwEl, confirmPwErr));
+	
 	// submit 때 전체 검증
 	form.addEventListener("submit", function (e) {
 	  let ok = true;
@@ -137,7 +137,14 @@
 		} else {
 		  accountEl.value = acc;
 		}
-
+		
+		// 현재 비밀번호 확인
+		const confirmPw = confirmPwEl ? confirmPwEl.value.trim() : "";
+		if (!confirmPw) {
+		  showInvalid(confirmPwEl, confirmPwErr);
+		  if (confirmPwErr) confirmPwErr.textContent = "현재 비밀번호를 입력해주세요.";
+		  ok = false;
+		}
 
 	  if (!ok) e.preventDefault();
 	});
@@ -163,7 +170,10 @@
   }
   function hideInvalid(el, errEl) {
     if (el) el.classList.remove("is-invalid");
-    if (errEl) errEl.classList.add("d-none");
+    if (errEl) {
+			errEl.classList.add("d-none");
+			//errEl.textContent = "";
+		}
   }
 
   if (curEl) curEl.addEventListener("input", () => hideInvalid(curEl, curErr));
@@ -187,7 +197,7 @@
 	  // 새 비번 형식 검증
 	  if (!newPwRegex.test(npw)) {
 	    showInvalid(newEl, newErr);
-	    newErr.textContent = "새 비밀번호는 영문 소문자와 숫자를 포함한 4자 이상이어야 합니다.";
+	    newErr.textContent = "새 비밀번호는 영문 소문자와 숫자를 포함한 6자 이상이어야 합니다.";
 	    ok = false;
 	  }
 
