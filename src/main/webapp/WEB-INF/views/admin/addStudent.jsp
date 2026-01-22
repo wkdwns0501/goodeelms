@@ -55,7 +55,7 @@ function autoHyphen(target) {
 		            <strong>학생 등록</strong>
 		          </div>
 		          <div class="card-body">
-		            <form action="<c:url value='/addStudent/register'/>" method="post" id="studentForm" 
+		            <form action="<c:url value='/admin/addStudent/register'/>" method="post" id="studentForm" 
 		            onsubmit="return validateStudentForm()">
 
 					  <!-- 1열: 이름 / 성별 -->
@@ -145,7 +145,7 @@ function autoHyphen(target) {
 		            <strong>학생 목록</strong>
 		          </div>
 		          <div class="card-body p-0">
-		           <form action="<c:url value='/addStudent/search'/>" method="get"
+		           <form action="<c:url value='/admin/addStudent/search'/>" method="get"
 					      class="row g-2 mb-2">
 					
 					  <div class="col-md-4">
@@ -174,18 +174,17 @@ function autoHyphen(target) {
 					  </div>
 					</form>
 					<div class="table-responsive" style="max-height: 500px;">
-					  <table class="table table-sm table-hover mb-0">
+					  <table class="table table-sm table-hover mb-0" style="table-layout: fixed; width: 100%;">
 					    <thead class="table-light sticky-top">
 					      <tr>
-					        <th>학번</th>
-					        <th>이름</th>
-					        <th>주민번호</th>
-					        <th>전공</th>
-					        <th>핸드폰</th>
-					        <th>성별</th>
-					        <th>주소</th>
-					        <th>상태</th>
-					        <th>계좌</th>
+					        <th style="width: 10%;">학번</th>
+					        <th style="width: 5%;">이름</th>
+					        <th style="width: 12%;">주민번호</th>
+					        <th style="width: 24%;">전공</th>
+					        <th style="width: 12%;">핸드폰</th>
+					        <th style="width: 6%;">성별</th>
+					        <th style="width: 28%;">주소</th>
+					        <th style="width: 5%;">상태</th>
 					      </tr>
 					    </thead>
 					
@@ -198,11 +197,10 @@ function autoHyphen(target) {
 					          <td>${s.majorName}</td>
 					          <td>${s.studentPhone}</td>
 					          <td>${s.studentGender}</td>
-					          <td class="text-truncate" style="max-width:150px;">
-					            ${s.studentAddress}
-					          </td>
+					          <td class="text-truncate" style="max-width:150px;" title="${s.studentAddress}">
+								  ${s.studentAddress}
+							  </td>
 					          <td>${s.studentStatus}</td>
-					          <td>${s.studentBank}</td>
 					        </tr>
 					      </c:forEach>
 					

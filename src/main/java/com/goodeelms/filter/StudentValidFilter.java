@@ -30,31 +30,27 @@ public class StudentValidFilter extends HttpFilter implements Filter {
     public void init(FilterConfig fConfig) throws ServletException {
 	}
     
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-    	HttpSession session = getSession(request);
-    	StudentDTO dto = (StudentDTO)session.getAttribute("studentDTO");
-    int valid = dto.getStudentId();
-	/*
-	 * try { valid = ((Integer)session.getAttribute("student_id")).toString(); }
-	 * catch(NullPointerException e) { valid = null; }
-	 */
-    	
-    	System.out.println(valid);
-    	
-		/*
-		 * if(valid == null || valid.isBlank()) { HttpServletResponse rsp =
-		 * (HttpServletResponse)response; rsp.sendRedirect("/main.jsp?error=noDTO");
-		 * return; }
-		 */
-//    	StudentDTO valid = (StudentDTO)session.getAttribute("studentDTO");
-//    	if(valid == null) {
-//    		HttpServletResponse rsp = (HttpServletResponse)response;
-//    		rsp.sendRedirect("/main.jsp?error=noDTO");
-//    		return;
-//    	}
-    	
-    	chain.doFilter(request, response);
-    }
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+         HttpSession session = getSession(request);
+         String valid = null;
+
+         try {
+            valid = ((Integer) session.getAttribute("student_id")).toString();
+         } catch (NullPointerException e) {
+            valid = null;
+         }
+
+         System.out.println(valid);
+
+         if (valid == null || valid.isBlank()) {
+            HttpServletResponse rsp = (HttpServletResponse) response;
+            rsp.sendRedirect("/main.jsp?error=noDTO");
+            return;
+         }
+
+         chain.doFilter(request, response);
+      }
     
     private HttpSession getSession(ServletRequest request) {
     	HttpServletRequest req = (HttpServletRequest) request;

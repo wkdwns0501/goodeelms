@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.service.StudentStatusService;
 
-@WebServlet("/studentStatus/*")
+@WebServlet("/admin/studentStatus/*")
 public class StatusController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -25,7 +25,7 @@ public class StatusController extends HttpServlet {
 		String command = requestURI.substring(contextPath.length());
 		
 		// 내비바 통한 학사관리 페이지 입장
-		if(command.equals("/studentStatus/page")) {
+		if(command.equals("/admin/studentStatus/page")) {
 			// 최초 보여줄 전체 학생 list 가져와서 출력
 			StudentStatusService ss = new StudentStatusService();
 			ArrayList<StudentDTO> list = ss.getAllStudentList();
@@ -35,8 +35,9 @@ public class StatusController extends HttpServlet {
 			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/admin/status.jsp");
 			rd.forward(request, response);
 		}
+		
 		// 검색 조건 통한 학생 목록 조회
-		if(command.equals("/studentStatus/search")) {
+		if(command.equals("/admin/studentStatus/search")) {
 			String studentName = request.getParameter("studentName");
 			String majorName = request.getParameter("majorName");
 			String studentNo = request.getParameter("studentNo");
@@ -57,7 +58,6 @@ public class StatusController extends HttpServlet {
 	
 	
 	
-	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession(false);
 		
@@ -66,15 +66,9 @@ public class StatusController extends HttpServlet {
 		String command = requestURI.substring(contextPath.length());
 		
 		// 학생 학적 상태 변경 하기
-		if(command.equals("/studentStatus/updateStatus")) {
-//			if (session == null || session.getAttribute("adminId") == null) {
-//	            // 로그인 페이지로 리다이렉트 하거나 에러 처리
-//	            response.sendRedirect(contextPath + "/login");
-//	            return;
+		if(command.equals("/admin/studentStatus/updateStatus")) {
 			
-			// test용 adminId 임시 부여
-			String adminId = (String) session.getAttribute("adminId");
-			adminId = "1";
+			int adminId = (Integer)session.getAttribute("admin_id");
 			
 			// 
 			String studentNo = request.getParameter("studentNo");
@@ -100,7 +94,7 @@ public class StatusController extends HttpServlet {
 
 		    // 6. 리다이렉트 실행
 		    // 결과(res)와 검색 조건들을 다시 붙여서 /student/search로 보냅니다.
-		    String redirectUrl = contextPath + "/studentStatus/search?res=" + result 
+		    String redirectUrl = contextPath + "/admin/studentStatus/search?res=" + result 
 		                          + "&studentName=" + encName 
 		                          + "&majorName=" + encMajor 
 		                          + "&studentNo=" + sNo;

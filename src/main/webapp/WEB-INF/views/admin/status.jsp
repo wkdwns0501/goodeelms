@@ -49,7 +49,7 @@ function checkForm(form) {
 	    </div>
 
         <!-- 검색 영역 -->
-        <form action="<c:url value='/studentStatus/search'/>" method="get" class="row g-2 mb-3">
+        <form action="<c:url value='/admin/studentStatus/search'/>" method="get" class="row g-2 mb-3">
           <div class="col-md-3">
             <label class="form-label mb-1">이름</label>
             <input type="text" name="studentName" class="form-control form-control-sm" value="${param.studentName}">
@@ -93,7 +93,7 @@ function checkForm(form) {
                       <td>${s.majorName}</td>
                       <td>${s.studentStatus}</td>
                       <td>
-                        <form action="<c:url value='/studentStatus/updateStatus'/>" method="post" class="d-flex gap-1 align-items-center">
+                        <form action="<c:url value='/admin/studentStatus/updateStatus'/>" method="post" class="d-flex gap-1 align-items-center">
                           <select name="newStudentStatus" class="form-select form-select-sm flex-grow-1">
                             <option value="재학" ${s.studentStatus == '재학' ? 'selected' : ''}>재학</option>
                             <option value="휴학" ${s.studentStatus == '휴학' ? 'selected' : ''}>휴학</option>

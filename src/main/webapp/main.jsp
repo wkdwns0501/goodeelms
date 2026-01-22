@@ -29,7 +29,7 @@
 			  <a href="#" class="btn btn-sm btn-outline-secondary">예시 버튼 2</a>
 			</div>
     </div>
-  </div>
+ 	 </div>
 	</main>
   
   <%@ include file="footer.jsp" %>
