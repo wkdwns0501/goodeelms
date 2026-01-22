@@ -27,7 +27,7 @@
 			    <p class="text-muted mb-3">학생 인적사항 조회 및 수정</p>
 			    
 			    <c:if test="${not empty msg}">
-					  <div class="alert alert-success alert-dismissible fade show" role="alert">
+					  <div id="resultAlert" class="alert alert-success alert-dismissible fade show" role="alert">
 					    <c:choose>
 					      <c:when test="${msg == 'profile_ok'}">개인정보가 수정되었습니다.</c:when>
 					      <c:when test="${msg == 'pw_ok'}">비밀번호가 변경되었습니다.</c:when>
@@ -38,7 +38,7 @@
 					</c:if>
 					
 					<c:if test="${not empty err}">
-					  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+					  <div id="resultAlert" class="alert alert-danger alert-dismissible fade show" role="alert">
 					    <c:choose>
 					      <c:when test="${err == 'profile_fail'}">수정에 실패했습니다.</c:when>
 					      <c:when test="${err == 'pw_mismatch'}">현재 비밀번호가 올바르지 않습니다.</c:when>
@@ -286,5 +286,12 @@
 	
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="<c:url value='/resources/js/updateStudentInfo.js'/>"></script>
+  <script>
+	  // 저장 결과 알림 4초 후 자동 숨김
+	  const resultAlert = document.getElementById("resultAlert");
+	  if (resultAlert) {
+	    setTimeout(() => resultAlert.classList.add("d-none"), 4000);
+	  }
+	</script>
 </body>
 </html>
