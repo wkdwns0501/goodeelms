@@ -20,7 +20,7 @@ public class StudentStatusHistoryDTO {
 	
 	public String getFormattedStatusAt() {
 	    if (this.statusAt == null) return "";
-	    return this.statusAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+	    return this.statusAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 	}
 	
 }

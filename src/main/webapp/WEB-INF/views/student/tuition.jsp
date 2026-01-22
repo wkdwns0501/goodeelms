@@ -106,7 +106,7 @@
 											<div class="input-group">
 												<span class="input-group-text bg-white">₩</span> <input
 													type="number" name="payment" id="paymentInput"
-													class="form-control" placeholder="납부할 금액을 입력하세요" min="1000"
+													class="form-control" placeholder="납부할 금액을 입력하세요" min="100000"
 													max="${4500000 - tuition.paymentAmount}" required
 													oninput="formatDisplay(this)">
 											</div>
@@ -116,7 +116,8 @@
 											<small class="text-muted mt-1 d-block"> 최대 납부 가능 금액:
 												<fmt:formatNumber value="${4500000 - tuition.paymentAmount}"
 													type="number" />원 <a href="javascript:void(0);"
-												onclick="document.getElementById('paymentInput').value=${4500000 - tuition.paymentAmount}; formatDisplay(document.getElementById('paymentInput'));"
+												onclick="document.getElementById('paymentInput').value=${4500000 - tuition.paymentAmount}; 
+												formatDisplay(document.getElementById('paymentInput'));"
 												class="ms-2 badge bg-secondary text-decoration-none">전액
 													입력</a>
 											</small>

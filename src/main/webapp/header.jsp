@@ -27,7 +27,7 @@
 							<strong>${user_name}</strong>
 						</c:when>
 					</c:choose> 님 <span
-					class="badge ${user_role eq 'ADMIN' ? 'bg-danger' : 'bg-secondary'} ms-1">${user_role}</span>
+					class="badge ${user_role eq 'ADMIN' ? 'bg-danger' : 'bg-primary'} ms-1">${user_role}</span>
 				</span>
 
 				<%-- 학생 전용 버튼 --%>

@@ -75,7 +75,7 @@
 								
 									<c:if test="${empty probagation}">
 										<tr>
-											<td colspan="3" class="py-5 text-center text-muted small">학새경고
+											<td colspan="3" class="py-5 text-center text-muted small">학사경고
 												내역이 존재하지 않습니다.</td>
 										</tr>
 									</c:if>

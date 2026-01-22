@@ -19,6 +19,6 @@ public class TuitionPaymentDTO {
 	
 	public String getFormattedPaymentDate() {
 	    if (this.paymentDate == null) return "";
-	    return this.paymentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+	    return this.paymentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 	}
 }

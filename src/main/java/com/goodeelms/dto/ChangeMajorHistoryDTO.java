@@ -23,6 +23,6 @@ public class ChangeMajorHistoryDTO {
 	
 	public String getFormattedChangedMajorDate() {
 	    if (this.changedAt == null) return "";
-	    return this.changedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+	    return this.changedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 	}
 }
