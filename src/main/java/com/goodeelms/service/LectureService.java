@@ -1,6 +1,8 @@
 package com.goodeelms.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.goodeelms.dao.LectureDAO;
 import com.goodeelms.dto.LectureDTO;
@@ -69,7 +71,8 @@ public class LectureService {
 	        throw new IllegalArgumentException("이미 개설된 강의입니다. (중복 또는 제약조건 오류)");
 	    }
 	}
-
+	
+	// 강의 등록 검증
     private void validateForInsert(LectureDTO l) {
         if (l == null) {
             throw new IllegalArgumentException("강의 정보가 없습니다.");
@@ -169,5 +172,28 @@ public class LectureService {
         }
         return lectureDAO.countByMajor(majorId, keyword);
     }
+
+    // 학생용 강의 전체 리스트
+    public ArrayList<LectureDTO> getLecturePageForStudent(int page, int limit, String keyword) {
+        if (page < 1) page = 1;
+        if (limit < 1) limit = 5;
+        return lectureDAO.findPageAll(page, limit, keyword);
+    }
+
+    // 페이징을 위한 전체 강의 수
+    public int getLectureTotalCountForStudent(String keyword) {
+        return lectureDAO.countAll(keyword);
+    }
     
+    public LectureDTO getMajorIdAndByLectureId(int lectureId) {
+    	return lectureDAO.fingdMajorIdAndTypeByLectureId(lectureId);
+    }
+    
+    public List<LectureDTO> getLectureOfStudentId(String student_id){
+    	return lectureDAO.getLectureOfStudent(student_id);
+    }
+    
+    public Set<Integer> getLectureCodeWithLectureId(Set<Integer> lectureIds){
+    	return lectureDAO.getLectureCodeWithLectureId(lectureIds);
+    }
 }

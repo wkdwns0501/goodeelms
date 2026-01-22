@@ -15,7 +15,7 @@
 	        <th>과목명</th>
 	        <th style="width:140px;">교수</th>
 	        <th style="width:90px;" class="text-center">학점</th>
-	        <th style="width:140px;" class="text-center">정원(신청)</th>
+	        <th style="width:140px;" class="text-center">정원</th>
 	        <th style="width:140px;" class="text-center">담기</th>
 	      </tr>
 	    </thead>
@@ -29,14 +29,13 @@
 	          <td>
 	            <div class="fw-semibold">${lec.lectureName}</div>
 	            <div class="text-muted small">
-	              ${lec.lectureDescription} · ${lec.lectureRoom} · ${lec.lectureType}
+	              ${lec.majorName} · ${lec.lectureRoom} · ${lec.lectureType}
 	            </div>
 	          </td>
 	          <td>${lec.professorName}</td>
 	          <td class="text-center">${lec.lectureCredit}</td>
 	          <td class="text-center">
 	            <span class="fw-semibold">${lec.lectureCapacity}</span>
-	            <span class="text-muted">(${lec.lectureCurrentPeople})</span>
 	          </td>
 	          <td class="text-center">
             	<!-- 장바구니 담기: POST 권장 -->

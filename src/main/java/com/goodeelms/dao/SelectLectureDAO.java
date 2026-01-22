@@ -24,16 +24,16 @@ public class SelectLectureDAO {
 		
 	}
 	
-	public List<LectureDTO> SelectLectures(String cat, String searchWord, int viewPage, int viewLen, Set<Integer> lectureIdSet, Set<Integer> professorIdSet, int ...majorIds){
+	public List<LectureDTO> SelectLectures(String cat, String searchWord, int viewPage, int viewLen, Set<Integer> lectureCodeSet, Set<Integer> professorIdSet, int ...majorIds){
 		String sql = "SELECT  lecture_id, lecture_code, lecture_name, lecture_description, lecture_room, lecture_credit, lecture_type, "
 				+ "lecture_capacity, major_id, professor_id, lecture_current_people ";
 		
 		// 쿼리 조건 삽입
-		sql += getQueryString(searchWord, cat, lectureIdSet, professorIdSet);
+		sql += getQueryString(searchWord, cat, lectureCodeSet, professorIdSet);
 
 		sql += "ORDER BY lecture_id DESC LIMIT ? OFFSET ?";
 		
-		try(PreparedStatement pstmt = getPrepareStatement(sql, searchWord, cat, lectureIdSet, professorIdSet, majorIds)){
+		try(PreparedStatement pstmt = getPrepareStatement(sql, searchWord, cat, lectureCodeSet, professorIdSet, majorIds)){
 			// Limit, Offset
 			pstmt.setInt(queryIndex++, viewLen);
 			pstmt.setInt(queryIndex++, (viewPage - 1) * viewLen);
@@ -64,13 +64,13 @@ public class SelectLectureDAO {
 		return null;
 	}
 	
-	public int getLectureListOnCartCount(String cat, String searchWord, Set<Integer> lectureIdSet, Set<Integer> professorIdSet, int ...majorIds) {
+	public int getLectureListOnCartCount(String cat, String searchWord, Set<Integer> lectureCodeSet, Set<Integer> professorIdSet, int ...majorIds) {
 		String sql = "SELECT COUNT(*) as cnt ";
 
 		// 공통 쿼리 조건 삽입
-		sql += getQueryString(searchWord, cat, lectureIdSet, professorIdSet);
+		sql += getQueryString(searchWord, cat, lectureCodeSet, professorIdSet);
 		
-		try(PreparedStatement pstmt = getPrepareStatement(sql, searchWord, cat, lectureIdSet, professorIdSet, majorIds)){
+		try(PreparedStatement pstmt = getPrepareStatement(sql, searchWord, cat, lectureCodeSet, professorIdSet, majorIds)){
 
 			try(ResultSet rs = pstmt.executeQuery()){
 				if(rs.next()) {
@@ -141,7 +141,7 @@ public class SelectLectureDAO {
 		return null;
 	}
 	
-	public String getQueryString(String searchWord, String cat, Set<Integer> lectureIdSet, Set<Integer> professorIdSet) {
+	public String getQueryString(String searchWord, String cat, Set<Integer> lectureCodeSet, Set<Integer> professorIdSet) {
 		// 공통 조건
 		StringBuilder sb = new StringBuilder();
 		sb.append("FROM lecture ");
@@ -158,14 +158,14 @@ public class SelectLectureDAO {
 			}
 			sb.append(")");
 		}
-		if(lectureIdSet.size() > 0) {
-			sb.append(" AND lecture_id NOT IN (" + lectureIdSet.stream().map(item -> "?").collect(Collectors.joining(",")) + ")");
+		if(lectureCodeSet.size() > 0) {
+			sb.append(" AND lecture_code NOT IN (" + lectureCodeSet.stream().map(item -> "?").collect(Collectors.joining(",")) + ")");
 		}
 		
 		return sb.toString();
 	}
 	
-	public PreparedStatement getPrepareStatement(String sql, String searchWord, String cat, Set<Integer> lectureIdSet, Set<Integer> professorIdSet, int ...majorIds) throws SQLException{
+	public PreparedStatement getPrepareStatement(String sql, String searchWord, String cat, Set<Integer> lectureCodeSet, Set<Integer> professorIdSet, int ...majorIds) throws SQLException{
 		queryIndex = 1;
 		// 날짜
 		LocalDateTime dateTime = LocalDateTime.now();
@@ -197,8 +197,8 @@ public class SelectLectureDAO {
 				}
 			}
 		}
-		if(lectureIdSet.size() > 0) {
-			for(Integer id : lectureIdSet) {
+		if(lectureCodeSet.size() > 0) {
+			for(Integer id : lectureCodeSet) {
 				pstmt.setInt(queryIndex++, id);
 			}
 		}

@@ -110,7 +110,7 @@ public class StudentRegisterDAO {
 			pstmt.setString(5, studentDTO.getStudentIdentityNumber());
 			pstmt.setString(6, studentDTO.getStudentNo());
 			return pstmt.executeUpdate();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.out.println("studentRegister() 예외 발생: " + e);
 		}	return 0;
 	}

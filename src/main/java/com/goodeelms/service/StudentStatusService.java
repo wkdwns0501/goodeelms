@@ -29,7 +29,7 @@ public class StudentStatusService {
 	}
 	
 	// student 테이블 status 변경 및 history 작성
-	public int processStatusUpdate (String studentId, String newStudentStatus, String statusReason, String adminId) {
+	public int processStatusUpdate (String studentId, String newStudentStatus, String statusReason, int adminId) {
 		StudentStatusUpdateDAO dao = StudentStatusUpdateDAO.getInstance();
 		int updateResult = dao.updateStudentStatus(studentId, newStudentStatus);
 		

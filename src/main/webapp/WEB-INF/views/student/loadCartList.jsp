@@ -7,7 +7,7 @@
     <span class="text-muted small">총 <strong>${totalCount}</strong>강의</span>
   </div>
 
-  <div class="list-group list-group-flush">
+  <div class="list-group list-group-flush" id="cartEl" data-user="${sessionScope.student_id}">
   	<c:set var="totalCartCredit" value = "0"/>
     <!-- 예시: cartItems -->
     <c:forEach var="lec" items="${lectureList}">
@@ -21,29 +21,26 @@
             </div>
           </div>
 
-          <button type="button" class="btn btn-sm btn-outline-danger delete-cart" data-target="${lec.lectureId}" data-user="${sessionScope.student_id}">삭제</button>
+          <button type="button" class="btn btn-sm btn-outline-danger delete-cart" data-target="${lec.lectureId}">삭제</button>
         </div>
       </div>
     </c:forEach>
-    <div class="card-body border-top">
+    <c:if test="${empty lectureList}">
+      <div class="list-group-item text-center text-muted py-4">
+        장바구니가 비어있습니다.
+      </div>
+    </c:if>
+    <div class="d-grid gap-2 justify-content-end my-3">
+    	<button type="button" class="btn btn-danger me-2" id="clearBtn">장바구니 비우기</button>
+    </div>
+    <div class="card-body">
 	    <div class="d-flex justify-content-between mb-2">
 	      <span class="text-muted">합계 학점</span>
 	      <span class="fw-semibold" id="creditInfo" data-total="${totalCartCredit}" data-limit="${limitCartCredit}">
 	      ${totalCartCredit} / ${limitCartCredit} 학점
 	      </span>
 	    </div>
-	
-	    <div class="d-grid gap-2">
-	      <form method="post" action="<c:url value='/enroll/cart/clear'/>" class="m-0">
-	        <button type="submit" class="btn btn-outline-secondary">장바구니 비우기</button>
-	      </form>
-	    </div>
 	  </div>
-    <c:if test="${empty lectureList}">
-      <div class="list-group-item text-center text-muted py-4">
-        장바구니가 비어있습니다.
-      </div>
-    </c:if>
   </div>
 
   

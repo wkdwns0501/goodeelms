@@ -3,9 +3,12 @@ package com.goodeelms.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.util.DBUtil;
@@ -94,6 +97,27 @@ public class LectureDAO {
 	    }
 	    return 0;
 	}
+	
+	// lecture_id로 major_id 찾기
+	public LectureDTO fingdMajorIdAndTypeByLectureId(int lectureId){
+		String sql = "SELECT major_id, lecture_type FROM lecture WHERE lecture_id = ?";
+		
+	    try (Connection conn = DBUtil.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setInt(1, lectureId);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	            	LectureDTO dto = new LectureDTO();
+	            	dto.setMajorId(rs.getInt("major_id"));
+	            	dto.setLectureType(rs.getString("lecture_type"));
+	            	return dto;
+	            }
+	        }
+	    } catch (Exception e) {
+	        System.out.println("findMajorIdByProfessorId() 예외: " + e);
+	    }
+	    return null;
+	}
 
 	// major_id로 major_code찾기
 	public String findMajorCodeByMajorId(int majorId) {
@@ -134,16 +158,14 @@ public class LectureDAO {
 	}
 	
 	// 교수가 속한 학과의 강의 리스트 조회 (검색, 페이징 포함)
-	public ArrayList<LectureDTO> findPageByMajor(
-	        int majorId, int page, int limit, String keyword
-	) {
+	public ArrayList<LectureDTO> findPageByMajor(int majorId, int page, int limit, String keyword) {
 	    int offset = (page - 1) * limit;
 
 	    String sql =
 	    	    "SELECT l.lecture_id, l.lecture_code, l.lecture_name, l.lecture_room, " +
 	    	    "       l.lecture_credit, l.lecture_year, l.lecture_semester, l.lecture_section, " +
 	    	    "       l.lecture_type, l.lecture_current_people, l.lecture_capacity, " +
-	    	    "       l.professor_id, l.major_id, p.professor_name, " +
+	    	    "       l.lecture_description, l.professor_id, l.major_id, p.professor_name, " +
 	    	    "       b.building_name " +
 	    	    "FROM lecture l " +
 	    	    "JOIN professor p ON l.professor_id = p.professor_id " +
@@ -154,8 +176,7 @@ public class LectureDAO {
 	        sql += "AND (l.lecture_name LIKE ? OR p.professor_name LIKE ? OR b.building_name LIKE ?) ";
 	    }
 
-	    sql += "ORDER BY l.lecture_year DESC, l.lecture_semester DESC, l.lecture_code ASC, l.lecture_section ASC " +
-	           "LIMIT ? OFFSET ?";
+	    sql += "ORDER BY l.lecture_id DESC LIMIT ? OFFSET ?";
 
 	    ArrayList<LectureDTO> list = new ArrayList<>();
 	    try (Connection conn = DBUtil.getConnection();
@@ -184,6 +205,7 @@ public class LectureDAO {
 	                lecture.setLectureType(rs.getString("lecture_type"));
 	                lecture.setLectureCurrentPeople(rs.getInt("lecture_current_people"));
 	                lecture.setLectureCapacity(rs.getInt("lecture_capacity"));
+	                lecture.setLectureDescription(rs.getString("lecture_description"));
 	                lecture.setProfessorId(rs.getInt("professor_id"));
 	                lecture.setMajorId(rs.getInt("major_id"));
 	                lecture.setProfessorName(rs.getString("professor_name"));
@@ -197,14 +219,17 @@ public class LectureDAO {
 	    return list;
 	}
 	
-	// 페이징용 총 강의 개수
+	// (교수) 페이징용 학과별 총 강의 개수 
 	public int countByMajor(int majorId, String keyword) {
 	    String sql =
-	        "SELECT COUNT(*) FROM lecture l " +
+	        "SELECT COUNT(*) " +
+	        "FROM lecture l " +
 	        "JOIN professor p ON l.professor_id = p.professor_id " +
+	        "JOIN building b ON l.building_id = b.building_id " +
 	        "WHERE l.major_id = ? ";
+
 	    if (keyword != null && !keyword.isBlank()) {
-	        sql += "AND (l.lecture_name LIKE ? OR p.professor_name LIKE ?) ";
+	        sql += "AND (l.lecture_name LIKE ? OR p.professor_name LIKE ? OR b.building_name LIKE ?) ";
 	    }
 
 	    try (Connection conn = DBUtil.getConnection();
@@ -213,6 +238,7 @@ public class LectureDAO {
 	        pstmt.setInt(i++, majorId);
 	        if (keyword != null && !keyword.isBlank()) {
 	            String k = "%" + keyword.trim() + "%";
+	            pstmt.setString(i++, k);
 	            pstmt.setString(i++, k);
 	            pstmt.setString(i++, k);
 	        }
@@ -251,6 +277,184 @@ public class LectureDAO {
 	        System.out.println("findLectureCode() 예외: " + e);
 	    }
 	    return null;
+	}
+	
+	// 수강신청 적용 시 count ++
+	public int updateLectureCurrentPeople(Connection conn, String lectureId) {
+		String sql = "UPDATE lecture " +
+	             "SET lecture_current_people = lecture_current_people + 1 " +
+	             "WHERE lecture_id = ? AND lecture_current_people < lecture_capacity";
+		
+		try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+			pstmt.setString(1, lectureId);
+			
+			return pstmt.executeUpdate();
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	// student_id로 수강 예정 강의 조회하기
+	public List<LectureDTO> getLectureOfStudent(String student_id){
+		String sql = "SELECT l.lecture_id as lecture_id, l.lecture_code, l.lecture_name, l.lecture_credit, " 
+					+"l.lecture_type, l.professor_id, l.major_id " 
+					+ "FROM lecture_history as lh "
+					+ "JOIN lecture as l ON l.lecture_id = lh.lecture_id "
+					+ "WHERE lh.student_id = ? AND l.lecture_status = '예정'";
+		
+		try(Connection conn = DBUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)){
+			
+			pstmt.setString(1, student_id);
+			
+			try(ResultSet rs = pstmt.executeQuery()){
+				List<LectureDTO> list = new ArrayList<LectureDTO>();
+				while(rs.next()) {
+					LectureDTO dto = new LectureDTO();
+					dto.setLectureId(rs.getInt("lecture_id"));
+					dto.setLectureCode(rs.getInt("lecture_code"));
+					dto.setLectureName(rs.getString("lecture_name"));
+					dto.setLectureCredit(rs.getInt("lecture_credit"));
+					dto.setLectureType(rs.getString("lecture_type"));
+					dto.setProfessorId(rs.getInt("professor_id"));
+					dto.setMajorId(rs.getInt("major_id"));
+					
+					list.add(dto);
+				}
+				return list;
+			}
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	// lecture_id로 lecture_code 가져오기
+	public Set<Integer> getLectureCodeWithLectureId(Set<Integer> lectureIds){
+		if(lectureIds.size() == 0) return null;
+		
+		String sql = "SELECT lecture_code FROM lecture WHERE lecture_id IN("
+				+ lectureIds.stream().map(id -> "?").collect(Collectors.joining(",")) +")";
+		
+		try(Connection conn = DBUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)){
+			int index = 1;
+			for(Integer id : lectureIds) {
+				pstmt.setInt(index++, id);
+			}
+			
+			try(ResultSet rs = pstmt.executeQuery()){
+				Set<Integer> set = new HashSet<Integer>();
+				while(rs.next()) {
+					set.add(rs.getInt("lecture_code"));
+				}
+//				System.out.println("getLectureCodeWithLectureId_SetSize: " + set.size());
+				return set;
+			}
+			catch(SQLException e) {
+				System.out.println("ResultSet Ex");
+				e.printStackTrace();
+			}
+		}
+		catch(SQLException e) {
+			System.out.println("getLectureCodeWithLectureId Catch");
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	// (학생) 전체 강의 리스트 조회 (검색, 페이징 포함)
+	public ArrayList<LectureDTO> findPageAll(int page, int limit, String keyword) {
+	    int offset = (page - 1) * limit;
+
+	    String sql =
+	        "SELECT l.lecture_id, l.lecture_code, l.lecture_name, l.lecture_room, " +
+	        "       l.lecture_credit, l.lecture_year, l.lecture_semester, l.lecture_section, " +
+	        "       l.lecture_type, l.lecture_current_people, l.lecture_capacity, " +
+	        "       l.lecture_description, l.professor_id, l.major_id, p.professor_name, " +
+	        "       b.building_name " +
+	        "FROM lecture l " +
+	        "JOIN professor p ON l.professor_id = p.professor_id " +
+	        "JOIN building b ON l.building_id = b.building_id " +
+	        "WHERE 1=1 ";
+
+	    if (keyword != null && !keyword.isBlank()) {
+	        sql += "AND (l.lecture_name LIKE ? OR p.professor_name LIKE ? OR b.building_name LIKE ?) ";
+	    }
+
+	    sql += "ORDER BY l.lecture_id DESC LIMIT ? OFFSET ?";
+
+	    ArrayList<LectureDTO> list = new ArrayList<>();
+	    try (Connection conn = DBUtil.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        int i = 1;
+	        if (keyword != null && !keyword.isBlank()) {
+	            String k = "%" + keyword.trim() + "%";
+	            pstmt.setString(i++, k);
+	            pstmt.setString(i++, k);
+	            pstmt.setString(i++, k);
+	        }
+	        pstmt.setInt(i++, limit);
+	        pstmt.setInt(i, offset);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            while (rs.next()) {
+	                LectureDTO lecture = new LectureDTO();
+	                lecture.setLectureId(rs.getInt("lecture_id"));
+	                lecture.setLectureCode(rs.getInt("lecture_code"));
+	                lecture.setLectureName(rs.getString("lecture_name"));
+	                lecture.setLectureRoom(rs.getString("lecture_room"));
+	                lecture.setLectureCredit(rs.getInt("lecture_credit"));
+	                lecture.setLectureYear(rs.getString("lecture_year"));
+	                lecture.setLectureSemester(rs.getInt("lecture_semester"));
+	                lecture.setLectureSection(rs.getString("lecture_section"));
+	                lecture.setLectureType(rs.getString("lecture_type"));
+	                lecture.setLectureCurrentPeople(rs.getInt("lecture_current_people"));
+	                lecture.setLectureCapacity(rs.getInt("lecture_capacity"));
+	                lecture.setLectureDescription(rs.getString("lecture_description"));
+	                lecture.setProfessorId(rs.getInt("professor_id"));
+	                lecture.setMajorId(rs.getInt("major_id"));
+	                lecture.setProfessorName(rs.getString("professor_name"));
+	                lecture.setBuildingName(rs.getString("building_name"));
+	                list.add(lecture);
+	            }
+	        }
+	    } catch (Exception e) {
+	        System.out.println("findPageAll 예외: " + e);
+	    }
+	    return list;
+	}
+	
+	// (학생) 페이징용 전체 강의 개수
+	public int countAll(String keyword) {
+	    String sql =
+	        "SELECT COUNT(*) FROM lecture l " +
+	        "JOIN professor p ON l.professor_id = p.professor_id " +
+	        "JOIN building b ON l.building_id = b.building_id " +
+	        "WHERE 1=1 ";
+
+	    if (keyword != null && !keyword.isBlank()) {
+	        sql += "AND (l.lecture_name LIKE ? OR p.professor_name LIKE ? OR b.building_name LIKE ?) ";
+	    }
+
+	    try (Connection conn = DBUtil.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        int i = 1;
+	        if (keyword != null && !keyword.isBlank()) {
+	            String k = "%" + keyword.trim() + "%";
+	            pstmt.setString(i++, k);
+	            pstmt.setString(i++, k);
+	            pstmt.setString(i++, k);
+	        }
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) return rs.getInt(1);
+	        }
+	    } catch (Exception e) {
+	        System.out.println("countAll() 예외: " + e);
+	    }
+	    return 0;
 	}
 	
 }

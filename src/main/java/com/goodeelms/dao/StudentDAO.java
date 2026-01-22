@@ -47,7 +47,7 @@ public class StudentDAO {
 	}
 
 	public StudentDTO getStudentByNo(String no) {
-		String sql = "SELECT * FROM student WHERE student_no  = ?";
+		String sql = "SELECT * FROM student WHERE student_no = ?";
 		StudentDTO dto = null;
 
 		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {

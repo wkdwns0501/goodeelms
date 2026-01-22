@@ -3,10 +3,13 @@ package com.goodeelms.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.util.DBUtil;
@@ -20,7 +23,7 @@ public class LectureHistoryDAO {
 	public static LectureHistoryDAO getInstance() {
 		return instance;
 	}
-
+	
 	public Map<Integer, LectureDTO> getLectureHistoryByStudentId(int studentId) { // 0120 임욱(추가) / 수강했던 전체 강의 이력 조회
 		String sql = "SELECT L.lecture_id, L.lecture_code, L.lecture_name, "
 				+ "L.lecture_year, L.lecture_semester, LH.lecture_score "
@@ -133,6 +136,72 @@ public class LectureHistoryDAO {
 	}
 	
 	
+	// 수강신청 중복 회피
+	public int searchLectureIdOfHistory(String student_id, String lecture_id) {
+		String sql = "SELECT COUNT(*) as count FROM lecture_history WHERE student_id = ? AND lecture_id = ?";
+		
+		try(Connection conn = DBUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)){
+			
+			pstmt.setString(1, student_id);
+			pstmt.setString(2, lecture_id);
+			
+			try(ResultSet rs = pstmt.executeQuery()){
+				if(rs.next()) {
+					int count = rs.getInt("count");
+					return count;
+				}
+				return 0;
+			}
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return 1;
+	}
 	
+	// 수강신청 자동 승인 대상 History에 추가
+	public int insertLectureHistoryByNewLecture(Connection conn, Set<Integer> lectureIdSet) {
+		if(lectureIdSet.size() < 1) return 0;
+		String placeholder = lectureIdSet.stream().map(id -> "?").collect(Collectors.joining(","));
+		
+		String sql = "INSERT INTO lecture_history (student_id, lecture_id) "
+				+ "SELECT student_id, lecture_id "
+				+ "FROM pre_enrollment "
+				+ "WHERE lecture_id IN (" + placeholder + ") "
+				+ "AND pre_enrollment_status = 'progress'";
+		
+		try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+			int index = 1;
+			for(Integer id : lectureIdSet) {
+				pstmt.setInt(index++, id);
+			}
+			
+			int result = pstmt.executeUpdate();
+			System.out.println(result);
+			return result;
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
 	
+	// 수강 강의 목록에 추가
+	public int insertNewLectureToHistory(Connection conn, String student_id, String lecture_id) {
+		String sql = "INSERT INTO lecture_history(student_id, lecture_id) "
+				+ "VALUES(?, ?)";
+		
+		try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+			
+			pstmt.setString(1, student_id);
+			pstmt.setString(2, lecture_id);
+			
+			return pstmt.executeUpdate();
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
 }

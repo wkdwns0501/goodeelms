@@ -12,8 +12,9 @@ import lombok.NoArgsConstructor;
 public class BoardDTO {
 	private int boardId;
 	private String boardTitle;
-	private String boardType;
 	private String boardContent;
 	private LocalDateTime boardRegAt;
-	private int adminId;	
+	private int adminId;
+	private int hit;
+	private String isImportant;
 }
