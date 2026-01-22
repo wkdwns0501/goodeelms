@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
@@ -19,13 +18,9 @@ import jakarta.servlet.http.HttpSession;
  */
 @WebFilter("/student/*")
 public class StudentValidFilter extends HttpFilter implements Filter {
-    public StudentValidFilter() {
-        super();
-    }
-    
-    public void init(FilterConfig fConfig) throws ServletException {
+	public StudentValidFilter() {
+		super();
 	}
-    
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
     	HttpSession session = getSession(request);
     	String valid = null;

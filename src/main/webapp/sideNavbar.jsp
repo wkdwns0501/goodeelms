@@ -8,6 +8,17 @@
     	    <a class="nav-link" href="<c:url value='/common/board/list'/>"><span class="nav-label">공지사항</span></a> 
     	    <hr class="my-2 mx-3" /> 
   	<c:choose>
+<<<<<<< HEAD
+  	<c:when test="${sessionScope.user_role == 'STUDENT'}">
+    <a class="nav-link" href="<c:url value='/student/enrollment/cart'/>"><span class="nav-label">수강신청 장바구니</span></a>
+    <a class="nav-link" href="<c:url value='/student/tuition'/>"><span class="nav-label">등록금 납부 이력 </span></a>
+    <a class="nav-link" href="<c:url value='/student/enrollment/competition'/>"><span class="nav-label">수강신청</span></a>
+    <a class="nav-link" href="<c:url value='/student/my-lectures'/>"><span class="nav-label">내 강의</span></a>
+    <a class="nav-link" href="<c:url value='/student/assignments'/>"><span class="nav-label">과제</span></a>
+    <a class="nav-link" href="<c:url value='/student/exams'/>"><span class="nav-label">시험</span></a>
+    <a class="nav-link" href="<c:url value='/student/grades'/>"><span class="nav-label">성적조회</span></a>
+    </c:when>	
+=======
 	  	<c:when test="${sessionScope.user_role == 'STUDENT'}">
 		    <a class="nav-link" href="<c:url value='/student/page/enrollment'/>"><span class="nav-label">수강신청</span></a>
 		    <a class="nav-link" href="<c:url value='/student/tuition'/>"><span class="nav-label">등록금 납부 이력 </span></a>
@@ -18,6 +29,7 @@
 		    <a class="nav-link" href="<c:url value='/student/grade/list'/>"><span class="nav-label">성적조회</span></a>
 		    <a class="nav-link" href="<c:url value='/student/evaluation/list'/>"><span class="nav-label">강의평가</span></a>
 	    </c:when>	
+>>>>>>> ee1b518c5dd6b80a61750eabbdf10fc138a86316
     	<c:when test="${sessionScope.user_role == 'ADMIN'}">
 	    	<a class="nav-link" href="<c:url value='/admin/studentStatus/page'/>"><span class="nav-label">학사관리</span></a>
 	   		<a class="nav-link" href="<c:url value='/admin/professorManage/page'/>"><span class="nav-label">계정관리</span></a>

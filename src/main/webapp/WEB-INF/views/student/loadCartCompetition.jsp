@@ -17,22 +17,31 @@
             <div class="fw-semibold">${lec.lectureName}</div>
             <div class="text-muted small">
               ${lec.majorName} · ${lec.professorName} · ${lec.lectureCredit}학점
-              <c:set var="totalCartCredit" value="${totalCartCredit + lec.lectureCredit}"/>
+              <c:if test="${lec.preEnrollmentStatus eq 'completed'}">
+	              <c:set var="totalCartCredit" value="${totalCartCredit + lec.lectureCredit}"/>
+              </c:if>
             </div>
           </div>
 
-          <button type="button" class="btn btn-sm btn-outline-danger delete-cart" data-target="${lec.lectureId}">삭제</button>
+          <div class="d-flex justify-content-between gap-3">
+	          <c:if test="${lec.preEnrollmentStatus eq 're_apply'}">
+		          <div class="text-center justify-content-center">
+		          	<p class="fs-6 fw-bold">(${lec.lectureCurrentPeople} / ${lec.lectureCapacity})</p>
+		          </div>
+	          </c:if>
+	          
+					    <c:choose>
+				        <c:when test="${lec.preEnrollmentStatus eq 'completed'}">
+				        	<p class="btn btn-sm btn-success fw-bold fs-6">수강 신청 완료</p>
+				        </c:when>
+				        <c:when test="${lec.preEnrollmentStatus eq 're_apply'}">
+				        	<p class="btn btn-sm btn-danger fw-bold fs-6">수강 신청 실패</p>
+				        </c:when>
+					    </c:choose>
+          </div>
         </div>
       </div>
     </c:forEach>
-    <c:if test="${empty lectureList}">
-      <div class="list-group-item text-center text-muted py-4">
-        장바구니가 비어있습니다.
-      </div>
-    </c:if>
-    <div class="d-grid gap-2 justify-content-end my-3">
-    	<button type="button" class="btn btn-danger me-2" id="clearBtn">장바구니 비우기</button>
-    </div>
     <div class="card-body">
 	    <div class="d-flex justify-content-between mb-2">
 	      <span class="text-muted">합계 학점</span>
@@ -40,7 +49,13 @@
 	      ${totalCartCredit} / ${limitCartCredit} 학점
 	      </span>
 	    </div>
+	
 	  </div>
+    <c:if test="${empty lectureList}">
+      <div class="list-group-item text-center text-muted py-4">
+        장바구니가 비어있습니다.
+      </div>
+    </c:if>
   </div>
 
   

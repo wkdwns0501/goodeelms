@@ -2,6 +2,7 @@ package com.goodeelms.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.goodeelms.dao.LectureDAO;
 import com.goodeelms.dto.LectureDTO;
@@ -184,4 +185,15 @@ public class LectureService {
         return lectureDAO.countAll(keyword);
     }
     
+    public LectureDTO getMajorIdAndByLectureId(int lectureId) {
+    	return lectureDAO.fingdMajorIdAndTypeByLectureId(lectureId);
+    }
+    
+    public List<LectureDTO> getLectureOfStudentId(String student_id){
+    	return lectureDAO.getLectureOfStudent(student_id);
+    }
+    
+    public Set<Integer> getLectureCodeWithLectureId(Set<Integer> lectureIds){
+    	return lectureDAO.getLectureCodeWithLectureId(lectureIds);
+    }
 }

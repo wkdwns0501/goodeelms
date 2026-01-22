@@ -14,6 +14,7 @@ import java.util.Set;
 
 import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.dto.PreEnrollmentDTO;
+import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.dto.StudentMajorDTO;
 import com.goodeelms.service.LoadLectureService;
 import com.goodeelms.service.StudentService;
@@ -21,44 +22,29 @@ import com.goodeelms.service.StudentService;
 /**
  * Servlet implementation class LoadLectureServlet
  */
-@WebServlet("/student/loadLecture")
+@WebServlet("/student/loadLecture/*")
 public class LoadLectureController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
+	// URL 관련 필드
+	private String requestURI = null;
+	private String contextPath = null;
+	private String command = null;
+		
     public LoadLectureController() {
         super();
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		requestURI = request.getRequestURI();
+		contextPath = request.getContextPath()+"/student/loadLecture";
+		command = requestURI.substring(contextPath.length());
+		
 		String cat = request.getParameter("cat");
-		System.out.println("cat: "+ cat);
 		String reqId = request.getParameter("id");
-		System.out.println("reqId: "+ reqId);
 		
 		HttpSession session = request.getSession(false);
 		int sessionId = (Integer)session.getAttribute("student_id");
-		System.out.println("sessionId: "+ sessionId);
-		
-		if(reqId == null || reqId.isBlank()) {
-			System.out.println("잘못된 접근");
-			response.sendRedirect("/main.jsp");
-			return;
-		}
-		int requestId = 0;
-		try {
-			requestId = Integer.parseInt(reqId);
-		}
-		catch(NumberFormatException e) {
-			System.out.println("잘못된 접근");
-			response.sendRedirect("/main.jsp");
-			return;
-		}
-		
-		if(requestId != sessionId) {
-			response.sendRedirect("/main.jsp");
-			System.out.println("잘못된 접근");
-			return;
-		}
 		
 		if(cat == null || cat.isBlank()) cat = "all";
 		
@@ -102,27 +88,32 @@ public class LoadLectureController extends HttpServlet {
 		// 어떤 단어 검색했는지
 		String searchWord = request.getParameter("search_word");
 		// 장바구니에 등록 된 강의 idSet 가져오기
-		Set<Integer> inCartIdSet = (Set<Integer>)session.getAttribute("lectureIdSet");
+		Set<Integer> inLectureCodeSet = (Set<Integer>)session.getAttribute("lectureCodeSet");
 		// 로드 서비스 생성
 		LoadLectureService loadS = new LoadLectureService();
-		int total_record = loadS.getLecturesCount(cat, searchWord, inCartIdSet, majorIds);
+		int total_record = loadS.getLecturesCount(cat, searchWord, inLectureCodeSet, majorIds);
 		int pageNums = (int)Math.ceil((double) total_record / viewLen);
 		if (pageNums == 0) pageNums = 1;
 		if (viewPage > pageNums) viewPage = pageNums;
 //		if(pageNums > 1 && viewPage == 1) viewLen = total_record % viewLen;
-		System.out.println("viewPage: " + viewPage);
 		
-		List<LectureDTO> list = loadS.getLectureList(cat, searchWord, viewPage, viewLen, inCartIdSet, majorIds);
+		List<LectureDTO> list = loadS.getLectureList(cat, searchWord, viewPage, viewLen, inLectureCodeSet, majorIds);
 		
-		request.setAttribute("id", reqId);
+		request.setAttribute("id", sessionId);
 		request.setAttribute("cat", cat);
 		request.setAttribute("viewPage", viewPage);
 		request.setAttribute("pageNums", pageNums);
 		request.setAttribute("lectureList", list);
 		request.setAttribute("totalCount", total_record);
-		System.out.println("lectureListSize: " + list.size());
-		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/student/loadLectureList.jsp");
-		rd.forward(request, response);
+		
+		if(command.equals("/cart")) {
+			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/student/loadLectureList.jsp");
+			rd.forward(request, response);
+		}
+		else if(command.equals("/comp")) {
+			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/student/loadLectureCompetition.jsp");
+			rd.forward(request, response);
+		}
 		
 	}
 
