@@ -18,7 +18,7 @@ public class LoadLectureService {
 	MajorDAO majorDAO = MajorDAO.getInstance();
 	ProfessorDAO professorDAO = ProfessorDAO.getInstance();
 	
-	public List<LectureDTO> getLectureList(String cat, String searchWord, int viewPage, int viewLen, Set<Integer> lectureIdSet, int ...majorIds){
+	public List<LectureDTO> getLectureList(String cat, String searchWord, int viewPage, int viewLen, Set<Integer> lectureCodeSet, int ...majorIds){
 		
 		if(!validLectureListParams(cat)) {
 			System.out.println("LoadLectureS에서 cat이 null일 수 없음");
@@ -29,7 +29,7 @@ public class LoadLectureService {
 		Set<Integer> professorIdSet = getProfessorIds(searchWord);
 		
 		SelectLectureDAO dao = new SelectLectureDAO();
-		List<LectureDTO> list = dao.SelectLectures(cat, searchWord, viewPage, viewLen, lectureIdSet, professorIdSet, majorIds);
+		List<LectureDTO> list = dao.SelectLectures(cat, searchWord, viewPage, viewLen, lectureCodeSet, professorIdSet, majorIds);
 		
 		if(list == null || list.size() == 0) {
 			return list = new ArrayList<LectureDTO>();
@@ -53,12 +53,12 @@ public class LoadLectureService {
 		return list;
 	}
 	
-	public int getLecturesCount(String cat, String searchWord, Set<Integer> idSet, int ...majorIds) {
+	public int getLecturesCount(String cat, String searchWord, Set<Integer> lectureCodeSet, int ...majorIds) {
 		SelectLectureDAO dao = new SelectLectureDAO();
 		
 		// 동명이인 있을 수 있으니 Set에 Id 담아
 		Set<Integer> professorIdSet = getProfessorIds(searchWord);
-		return dao.getLectureListOnCartCount(cat, searchWord, idSet, professorIdSet, majorIds);
+		return dao.getLectureListOnCartCount(cat, searchWord, lectureCodeSet, professorIdSet, majorIds);
 	}
 	
 	public List<LectureDTO> getLectureOfStudentCart(Set<Integer> lectureIdSet){

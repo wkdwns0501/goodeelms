@@ -4,6 +4,8 @@
  */
 const listArea = document.querySelector("#lectureListArea");
 const cartArea = document.querySelector("#lectureCartArea");
+const historyArea = document.querySelector("#lectureCompletedArea");
+
 const userId = document.querySelector("#sessionUserId")?.value;
 const searchForm = document.querySelector("#lectureSearchForm");
 const executeCheckEl = document.querySelector("#remainTimeSet");
@@ -81,24 +83,48 @@ async function loadCart(){
 	
 	const html = await res.text();
 	cartArea.innerHTML = html;
-
-	// 장바구니 html에서 요소 얻기	
-	const creditArea = cartArea.querySelector("#creditInfo");
-	totalCartCredit = creditArea.dataset.total;
-	limitCartCredit = creditArea.dataset.limit;
-	loadLectures(currentCat,currentWord, currentPage);
 }
 
-async function addCartLecture(lecId, stuId, credit){
-	// 학점 있는지 검증
-	if(!credit) return;
-	// 장바구니 유효 시간인지 검증
+async function loadHistory(){
+	const url = new URL(window.location.origin + "/student/addlecture/nowEnroll");
+		
+		const res = await fetch(url.toString(), {
+			method: 'get',
+			headers: {
+			    'Content-Type': 'application/x-www-form-urlencoded',
+			    'X-Requested-With': 'fetch'
+			  },
+		});
+		
+	if(!res.ok){
+		console.error('수강 이력 조회 실패', res.status);
+	}
+	
+	const html = await res.text();
+	historyArea.innerHTML = html;
+	
+	console.log(res.status);
+	// 장바구니 html에서 요소 얻기	
+	//const creditArea = historyArea.querySelector("#creditInfo");
+	//totalCartCredit = creditArea.dataset.total;
+	//limitCartCredit = creditArea.dataset.limit;
+	
+	loadLectures(currentCat, currentWord, currentPage);
+}
+
+async function executeAddLecture(lecId, stuId, credit){
+	// 수강신청 유효 시간인지 검증
 	executeUpdate();
+	
+	// 수강신청 시 한 학기 수강 가능 학점 비교
 	if(Number(totalCartCredit) + Number(credit) > Number(limitCartCredit)){
 		alert("최대 학점을 초과할 수 없습니다.")
 		return;
 	}
-	const url = new URL(window.location.origin + "/student/cart/addCart");
+	
+	confirm("한번 신청하면 취소할 수 없습니다. 신청하시겠습니까?");
+	
+	const url = new URL(window.location.origin + "/student/addlecture");
 	
 	const res = await fetch(url.toString(), {
 		method: 'POST',
@@ -113,76 +139,24 @@ async function addCartLecture(lecId, stuId, credit){
 	});
 	
 	if (!res.ok) {
-		if(res.status === 400){
-			alert("이미 장바구니에 등록 된 강의입니다.");
-		}
-		else if(res.status === 406){
-			alert("교양이 아닌 경우 전공과 부전공만 장바구니 추가 가능합니다.");
-			console.log(res.status);
-		}
-		else if(res.status === 500){
-			alert("장바구니 추가에 실패했습니다.");
+		switch(res.status){
+			case 204:
+				alert("해당 강의를 조회할 수 없습니다.");
+				break;
+			case 400:
+				alert("이미 수강신청 등록 된 강의입니다.");
+				break;
+			case 406:
+				alert("교양이 아닌 경우 전공과 부전공만 수강 가능합니다.");
+				break;
+			case 500:
+				alert("수강신청에 실패했습니다. 인원 현재 신청 인원을 확인하세요.");
+				break;
 		}
     console.error('장바구니 추가 실패', res.status);
-    return;
-  }
+	}
 	
-	loadCart();
-}
-
-async function deleteCartLecture(lectureId, studentId){
-	// 장바구니 유효 시간인지 검증
-	executeUpdate();
-	const url = new URL(window.location.origin + "/student/cart/deleteCart");
-		
-	const res = await fetch(url.toString(), {
-		method: 'POST',
-		headers: {
-		    'Content-Type': 'application/x-www-form-urlencoded',
-		    'X-Requested-With': 'fetch'
-		  },
-	  body: new URLSearchParams({
-	    lecture_id: lectureId,
-	    student_id: studentId
-	  })
-	});
-		
-	if (!res.ok) {
-    console.error('장바구니 삭제 실패', res.status);
-    return;
-  }
-	
-	loadCart();
-}
-
-async function clearCart(studentId){
-	// 장바구니 유효 시간인지 검증
-	executeUpdate();
-	
-	const url = new URL(window.location.origin + "/student/cart/clearCart");
-	const res = await fetch(url.toString(), {
-		method: 'POST',
-		headers: {
-		    'Content-Type': 'application/x-www-form-urlencoded',
-		    'X-Requested-With': 'fetch'
-		  },
-	  body: new URLSearchParams({
-	    student_id: studentId
-	  })
-	});
-	
-	if (!res.ok) {
-		if(res.status === 400){
-			alert("장바구니가 비어있습니다.");
-		}
-		else if(res.status === 500){
-			alert("장바구니 비우기 실패했습니다.");
-		}
-    console.error('장바구니 삭제 실패', res.status);
-    return;
-  }
-	// 장바구니 불러오기
-	loadCart();
+	loadHistory();
 }
 
 document.querySelectorAll(".is-cat").forEach(btn => {
@@ -211,27 +185,7 @@ listArea.addEventListener('click', async(e) =>{
 		const addstu = c.dataset.stu;
 		const credit = c.dataset.credit;
 		
-		await addCartLecture(addLec, addstu, credit);
-	}
-	
-});
-
-cartArea.addEventListener('click', async(e) =>{
-	const delBtn = e.target.closest("button.delete-cart");
-	const clearBtn = e.target.closest("button#clearBtn");
-	
-	const el = cartArea.querySelector("#cartEl");
-	const studentId = el.dataset.user;
-	if(!delBtn && !clearBtn) return;
-	e.preventDefault();
-	
-	if(delBtn){
-		const lectureId = delBtn.dataset.target;
-		
-		await deleteCartLecture(lectureId, studentId);
-	}
-	else if(clearBtn){
-		await clearCart(studentId);
+		await executeAddLecture(addLec, addstu, credit);
 	}
 	
 });
@@ -244,3 +198,4 @@ searchForm.addEventListener('submit', async (e) => {
 })
 
 loadCart();
+loadHistory();

@@ -14,12 +14,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.goodeelms.dao.LectureCartDAO;
+import com.goodeelms.dao.LectureHistoryDAO;
 import com.goodeelms.dto.PreEnrollmentDTO;
 import com.goodeelms.listener.CloseCartListener;
 import com.goodeelms.util.DBUtil;
 
 public class LectureCartService {
 	LectureCartDAO dao = LectureCartDAO.getInstance();
+	LectureHistoryDAO historyDAO = LectureHistoryDAO.getInstance();
 	
 	public int insertLectureOnCart(String lectureId, String studentId) {
 		
@@ -82,6 +84,8 @@ public class LectureCartService {
 				if(peopleResult < 1) throw new SQLException("lecture_current_people value UPDATE 실패");
 				
 				// 2. lecture_history에 저장
+				int insertResult = historyDAO.insertLectureHistoryByNewLecture(conn, autoEnrollMap.keySet());
+				if(insertResult < 1) throw new SQLException("lecture_history INSERT 실패");
 				
 				// 3. 상태 업데이트 실행
 				int statResult = dao.UpdatePreEnrollmentStatus(conn, autoEnrollMap.keySet(), setStatus);

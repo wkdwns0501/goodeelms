@@ -25,6 +25,11 @@
         </div>
       </div>
     </c:forEach>
+    <c:if test="${empty lectureList}">
+      <div class="list-group-item text-center text-muted py-4">
+        장바구니가 비어있습니다.
+      </div>
+    </c:if>
     <div class="d-grid gap-2 justify-content-end my-3">
     	<button type="button" class="btn btn-danger me-2" id="clearBtn">장바구니 비우기</button>
     </div>
@@ -35,13 +40,7 @@
 	      ${totalCartCredit} / ${limitCartCredit} 학점
 	      </span>
 	    </div>
-	
 	  </div>
-    <c:if test="${empty lectureList}">
-      <div class="list-group-item text-center text-muted py-4">
-        장바구니가 비어있습니다.
-      </div>
-    </c:if>
   </div>
 
   

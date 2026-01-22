@@ -88,16 +88,16 @@ public class LoadLectureController extends HttpServlet {
 		// 어떤 단어 검색했는지
 		String searchWord = request.getParameter("search_word");
 		// 장바구니에 등록 된 강의 idSet 가져오기
-		Set<Integer> inCartIdSet = (Set<Integer>)session.getAttribute("lectureIdSet");
+		Set<Integer> inLectureCodeSet = (Set<Integer>)session.getAttribute("lectureCodeSet");
 		// 로드 서비스 생성
 		LoadLectureService loadS = new LoadLectureService();
-		int total_record = loadS.getLecturesCount(cat, searchWord, inCartIdSet, majorIds);
+		int total_record = loadS.getLecturesCount(cat, searchWord, inLectureCodeSet, majorIds);
 		int pageNums = (int)Math.ceil((double) total_record / viewLen);
 		if (pageNums == 0) pageNums = 1;
 		if (viewPage > pageNums) viewPage = pageNums;
 //		if(pageNums > 1 && viewPage == 1) viewLen = total_record % viewLen;
 		
-		List<LectureDTO> list = loadS.getLectureList(cat, searchWord, viewPage, viewLen, inCartIdSet, majorIds);
+		List<LectureDTO> list = loadS.getLectureList(cat, searchWord, viewPage, viewLen, inLectureCodeSet, majorIds);
 		
 		request.setAttribute("id", sessionId);
 		request.setAttribute("cat", cat);

@@ -29,7 +29,7 @@
 	          <td>
 	            <div class="fw-semibold">${lec.lectureName}</div>
 	            <div class="text-muted small">
-	              ${lec.lectureDescription} · ${lec.lectureRoom} · ${lec.lectureType}
+	              ${lec.majorName} · ${lec.lectureRoom} · ${lec.lectureType}
 	            </div>
 	          </td>
 	          <td>${lec.professorName}</td>
@@ -39,9 +39,9 @@
 	            <span class="text-muted">(${lec.lectureCurrentPeople})</span>
 	          </td>
 	          <td class="text-center">
-            	<!-- 장바구니 담기: POST 권장 -->
+            	<!-- 수강신청 : POST 권장 -->
 	            <button type="submit" class="btn btn-sm btn-outline-success add-cart fw-bold fs-6"  
-	            	data-lec="${lec.lectureId}" data-stu ="${sessionScope.student_id}" data-credit="${lec.lectureCredit}">
+	            	data-lec="${lec.lectureId}" data-stu ="${sessionScope.student_id}">
 	              수강 신청
 	            </button>
 	          </td>

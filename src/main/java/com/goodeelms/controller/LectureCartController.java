@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.dto.PreEnrollmentDTO;
@@ -65,8 +66,13 @@ public class LectureCartController extends HttpServlet {
 		}
 		// 공통
 		cartList = selectCartService.getCartDataOfStudent(studentId, enrollmentStatusSet);
-		// lecture_id 얻어온 걸로 강의 정보 불러오기
+		
+		// lecture_id 얻어온 걸로 강의 코드 가져오기
 		Set<Integer> lectureIdSet = new HashSet<Integer>();
+		Set<Integer> lectureCodeSet = LectureService.getInstance().getLectureCodeWithLectureId(cartList.stream().map(PreEnrollmentDTO::getLectureId).collect(Collectors.toSet()));
+		
+		if(lectureCodeSet == null) lectureCodeSet = new HashSet<Integer>();
+		// UI에서 수강 신청 완료 vs 수강 신청 실패
 		Map<Integer, String> enrollStat = new HashMap<Integer, String>();
 		for(PreEnrollmentDTO dto:cartList) {
 			if(dto != null) {
@@ -82,10 +88,12 @@ public class LectureCartController extends HttpServlet {
 			lectureList = selectLectureService.getLectureOfStudentCart(lectureIdSet);
 		}
 		
+//		Set<Integer> lectureCodes = new HashSet<Integer>(); 
 		for(LectureDTO dto : lectureList) {
 			// progress || re_apply
 			// 수강신청 시 자동 신청 된건지 미신청 된건지
 			dto.setPreEnrollmentStatus(enrollStat.get(dto.getLectureId()));
+			
 		}
 		
 		request.setAttribute("totalCount", lectureList.size());
@@ -93,7 +101,12 @@ public class LectureCartController extends HttpServlet {
 		// Limit 학점
 		request.setAttribute("limitCartCredit", 21);
 		// 강의 리스트(LoadLectureController)에서 장바구니 담긴 강의 빼야해서 세션에 저장함
-		session.setAttribute("lectureIdSet", lectureIdSet);
+		// 수강신청일 때는 다른 걸 빼야해서 Skip
+		if("/student/cart/loadCart".equals(command)) {
+			// 다른 곳에서 같은 이름으로 setAttribute한거 지우기
+			session.removeAttribute("lectureCodeSet");
+			session.setAttribute("lectureCodeSet", lectureCodeSet);
+		}
 		
 		if("/student/cart/loadCart".equals(command)) {
 			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/student/loadCartList.jsp");

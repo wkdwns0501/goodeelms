@@ -10,6 +10,5 @@ import lombok.NoArgsConstructor;
 public class LectureHistoryDTO {
 	private int studentId;
 	private int lectureId;
-	private String lectureStatus;
 	private double lectureScore;
 }

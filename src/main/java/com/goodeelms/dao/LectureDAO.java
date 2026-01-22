@@ -3,8 +3,12 @@ package com.goodeelms.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.util.DBUtil;
@@ -273,4 +277,90 @@ public class LectureDAO {
 	    return null;
 	}
 	
+	// 수강신청 적용 시 count ++
+	public int updateLectureCurrentPeople(Connection conn, String lectureId) {
+		String sql = "UPDATE lecture " +
+	             "SET lecture_current_people = lecture_current_people + 1 " +
+	             "WHERE lecture_id = ? AND lecture_current_people < lecture_capacity";
+		
+		try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+			pstmt.setString(1, lectureId);
+			
+			return pstmt.executeUpdate();
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	// student_id로 수강 예정 강의 조회하기
+	public List<LectureDTO> getLectureOfStudent(String student_id){
+		String sql = "SELECT l.lecture_id as lecture_id, l.lecture_code, l.lecture_name, l.lecture_credit, " 
+					+"l.lecture_type, l.professor_id, l.major_id " 
+					+ "FROM lecture_history as lh "
+					+ "JOIN lecture as l ON l.lecture_id = lh.lecture_id "
+					+ "WHERE lh.student_id = ? AND l.lecture_status = '예정'";
+		
+		try(Connection conn = DBUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)){
+			
+			pstmt.setString(1, student_id);
+			
+			try(ResultSet rs = pstmt.executeQuery()){
+				List<LectureDTO> list = new ArrayList<LectureDTO>();
+				while(rs.next()) {
+					LectureDTO dto = new LectureDTO();
+					dto.setLectureId(rs.getInt("lecture_id"));
+					dto.setLectureCode(rs.getInt("lecture_code"));
+					dto.setLectureName(rs.getString("lecture_name"));
+					dto.setLectureCredit(rs.getInt("lecture_credit"));
+					dto.setLectureType(rs.getString("lecture_type"));
+					dto.setProfessorId(rs.getInt("professor_id"));
+					dto.setMajorId(rs.getInt("major_id"));
+					
+					list.add(dto);
+				}
+				return list;
+			}
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	// lecture_id로 lecture_code 가져오기
+	public Set<Integer> getLectureCodeWithLectureId(Set<Integer> lectureIds){
+		if(lectureIds.size() == 0) return null;
+		
+		String sql = "SELECT lecture_code FROM lecture WHERE lecture_id IN("
+				+ lectureIds.stream().map(id -> "?").collect(Collectors.joining(",")) +")";
+		
+		try(Connection conn = DBUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)){
+			int index = 1;
+			for(Integer id : lectureIds) {
+				pstmt.setInt(index++, id);
+			}
+			
+			try(ResultSet rs = pstmt.executeQuery()){
+				Set<Integer> set = new HashSet<Integer>();
+				while(rs.next()) {
+					set.add(rs.getInt("lecture_code"));
+				}
+//				System.out.println("getLectureCodeWithLectureId_SetSize: " + set.size());
+				return set;
+			}
+			catch(SQLException e) {
+				System.out.println("ResultSet Ex");
+				e.printStackTrace();
+			}
+		}
+		catch(SQLException e) {
+			System.out.println("getLectureCodeWithLectureId Catch");
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

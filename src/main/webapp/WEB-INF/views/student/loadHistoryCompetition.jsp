@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="card shadow-sm">
   <div class="card-header d-flex align-items-center justify-content-between">
-    <span class="fw-semibold">장바구니</span>
+    <span class="fw-semibold">수강신청 현황</span>
     <span class="text-muted small">총 <strong>${totalCount}</strong>강의</span>
   </div>
 
@@ -17,9 +17,9 @@
             <div class="fw-semibold">${lec.lectureName}</div>
             <div class="text-muted small">
               ${lec.majorName} · ${lec.professorName} · ${lec.lectureCredit}학점
-              <c:if test="${lec.preEnrollmentStatus eq 'completed'}">
+              <%-- <c:if test="${lec.preEnrollmentStatus eq 'completed'}"> --%>
 	              <c:set var="totalCartCredit" value="${totalCartCredit + lec.lectureCredit}"/>
-              </c:if>
+              <%-- </c:if> --%>
             </div>
           </div>
 
@@ -35,7 +35,9 @@
 				        	<p class="btn btn-sm btn-success fw-bold fs-6">수강 신청 완료</p>
 				        </c:when>
 				        <c:when test="${lec.preEnrollmentStatus eq 're_apply'}">
-				        	<p class="btn btn-sm btn-danger fw-bold fs-6">수강 신청 실패</p>
+					        <button type="button" class="btn btn-sm btn-info fw-bold fs-6 add-on-cart" data-target ="${lec.lectureId}" data-credit="${lec.lectureCredit}">
+					        수강 신청하기
+									</button>
 				        </c:when>
 					    </c:choose>
           </div>

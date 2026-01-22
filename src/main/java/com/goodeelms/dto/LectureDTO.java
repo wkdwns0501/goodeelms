@@ -28,6 +28,7 @@ public class LectureDTO {
 	private String buildingName; // 출력용
 	private String preEnrollmentStatus;
 	
+	
 	// 강의 코드 출력용
 	public String getLectureCodeDisplay() {
 	    return String.format("%07d", lectureCode);
