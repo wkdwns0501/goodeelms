@@ -99,8 +99,21 @@ function generateSemesterOptions() {
 
 <main class="content">
   <div class="container-fluid">
-	<div class="card mb-3">
+	  	<ul class="nav nav-tabs mb-3" id="scholarshipTab">
+		  <li class="nav-item">
+		    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-register">신규 등록/조회</button>
+		  </li>
+		  <li class="nav-item">
+		    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-manage">변경/관리</button>
+		  </li>
+		</ul>
+		
   	  <div class="card-body">
+
+  	  </div>
+
+<div class="tab-content">
+<div class="tab-pane fade show active" id="tab-register">
 		<form action="<c:url value='/admin/confirmScholarship/list'/>"
 		      method="get"
 		      class="row g-2 align-items-end">
@@ -127,9 +140,6 @@ function generateSemesterOptions() {
 		    </div>
 		  </div>
 		</form>
-  	  </div>
-	</div>
-
 <div class="card">
   <form action="<c:url value='/admin/confirmScholarship/confirm'/>" method="post">
   <input type="hidden" name="yearSemester" value="${currentSemester}">   
@@ -180,6 +190,76 @@ function generateSemesterOptions() {
       	</button>
     </div>  
   </form>
+</div>
+</div>
+	<div class="tab-pane fade" id="tab-manage">
+			<form action="<c:url value='/admin/confirmScholarship/list'/>"
+		      method="get"
+		      class="row g-2 align-items-end">
+		
+		  <div class="col-md-4">
+		    <label class="form-label">조회 학기</label>
+		
+		    <div class="row g-2">
+		      <div class="col-auto">
+		        <select id="semesterSelect"
+		                name="yearSemester"
+		                class="form-select form-select-sm"
+		                style="width: 200px"
+		                required>
+		          <option value="" selected disabled>-- 학기 선택 --</option>
+		        </select>
+		      </div>
+		
+		      <div class="col-auto d-grid">
+		        <button class="btn btn-sm btn-secondary">
+		          조회
+		        </button>
+		      </div>
+		    </div>
+		  </div>
+		</form>
+      <div class="card">
+  <form action="<c:url value='/admin/confirmScholarship/confirm'/>" method="post">
+  <input type="hidden" name="yearSemester" value="${currentSemester}">   
+    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+      <table class="table table-sm align-middle table-hover mb-0">
+        <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+          <tr>
+            <th>학번</th>
+            <th>이름</th>
+            <th>학과</th>
+            <th>평점 (4.5)</th>
+            <th class="text-center">장학생</th>
+          </tr>
+        </thead>
+        <tbody>
+          <c:forEach var="s" items="${scholarshipList}">
+            <tr>
+              <td>${s.studentNo}</td>
+              <td>${s.studentName}</td>
+              <td>${s.majorName}</td>
+              <td>${s.gpa}</td>
+              <td class="text-center">
+				  <div class="form-check form-switch d-inline-block">
+				    <input class="form-check-input custom-switch" 
+				           type="checkbox" 
+				           name="checkConfirmed" 
+				           value="${s.studentId}" 
+				           <%-- 각 행의 student id --%>
+				           id="switch_${s.studentId}"
+				           ${s.isConfirmed == 'Y' ? 'checked disabled' : ''}>
+				    <label class="form-check-label" for="switch_${s.studentId}"></label>
+				  </div>
+			  </td>
+            </tr>
+          </c:forEach>
+        </tbody>
+      </table>
+    </div> 
+  </form>
+</div>
+</div>
 </div>
 </div>
 </main>

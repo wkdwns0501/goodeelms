@@ -94,7 +94,7 @@ public class StudentController extends HttpServlet {
 
       HttpSession session = request.getSession();
       StudentDTO updateStudent = (StudentDTO) session.getAttribute("studentDTO");
-      
+
 		if (newPw.equals(originPw)) { // 기존 비밀번호와 동일하면 다시 입력하도록
 			request.setAttribute("errorMessage", "기존 비밀번호와 동일합니다.");
 			request.getRequestDispatcher("/WEB-INF/views/student/studentSignUp.jsp").forward(request, response);

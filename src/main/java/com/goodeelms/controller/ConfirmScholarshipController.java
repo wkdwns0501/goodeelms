@@ -33,6 +33,7 @@ public class ConfirmScholarshipController extends HttpServlet {
 			if (!ssc.isAccessPeriod()) {
 				// alert 유틸 호출
 				AlertUtil.alertAndRedirect(response, "장학 관리 기간이 아닙니다.", contextPath + "/main.jsp");
+				return;
 			}
 	        
 			String yearSemester = request.getParameter("yearSemester");

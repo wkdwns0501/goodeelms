@@ -23,15 +23,19 @@ public class BoardController extends HttpServlet {
 		String contextPath = request.getContextPath(); 
 		String command = requestURI.substring(contextPath.length());
 		
+		// 첫 진입 or 그냥 목록으로 올때
 		if(command.equals("/common/board/list"))  {
 			
 			String keyword = request.getParameter("searchKeyword");
 			if(keyword == null) keyword = "";
 			
+			// 페이지 번호
 			String pageNumStr = request.getParameter("pageNum");
 			int pageNum = (pageNumStr == null) ? 1 : Integer.parseInt(pageNumStr);
 			
+			// 한페이지 보여줄 게시글 수
 			int pageSize = 12;
+			// 해당 페이지의 첫번째 게시글의 인덱스(?)
 			int startRow = (pageNum - 1) * pageSize;
 			
 			BoardService bs = new BoardService();
@@ -50,11 +54,13 @@ public class BoardController extends HttpServlet {
 			rd.forward(request, response);
 		}
 		
+		// 작성 페이지 이동
 		if(command.equals("/common/board/admin/write"))  {
 			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/board/boardWrite.jsp");
 			rd.forward(request, response);
 		}
 		
+		// 해당 게시글 상세보기로 이동
 		if(command.equals("/common/board/detail")) {
 			String idStr = request.getParameter("id");
 			if(idStr != null) {
@@ -68,6 +74,7 @@ public class BoardController extends HttpServlet {
 			}
 		}
 		
+		// 관리자 : 수정 페이지로 이동
 		if(command.equals("/common/board/admin/edit")) {
 			int boardId = Integer.parseInt(request.getParameter("id"));
 			
@@ -86,12 +93,13 @@ public class BoardController extends HttpServlet {
 		String contextPath = request.getContextPath(); 
 		String command = requestURI.substring(contextPath.length());
 		
-		
+		// 게시글 등록
 		if(command.equals("/common/board/admin/insert")) {
 			BoardDTO boardDTO = new BoardDTO();
 			boardDTO.setBoardTitle(request.getParameter("boardTitle"));
 			boardDTO.setBoardContent(request.getParameter("boardContent"));
 			boardDTO.setAdminId((Integer)session.getAttribute("admin_id"));
+			// "중요(상단고정)" 체크 여부
 			String important = request.getParameter("isImportant");
 			boardDTO.setIsImportant(important != null ? "Y" : "N");
 			
@@ -106,6 +114,7 @@ public class BoardController extends HttpServlet {
 			}
 		}
 		
+		// 게시글 삭제
 		if(command.equals("/common/board/admin/delete")) {
 			int boardId = Integer.parseInt(request.getParameter("id"));
 			BoardService bs = new BoardService();
@@ -119,6 +128,7 @@ public class BoardController extends HttpServlet {
 			}
 		}
 		
+		// 게시글 수정
 		if(command.equals("/common/board/admin/update")) {
 			BoardDTO boardDTO = new BoardDTO();
 			boardDTO.setBoardId(Integer.parseInt(request.getParameter("boardId")));
