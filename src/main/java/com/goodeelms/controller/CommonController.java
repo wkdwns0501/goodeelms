@@ -96,7 +96,7 @@ public class CommonController extends HttpServlet {
 				String initialPassword = identityNum.substring(identityNum.length() - 7);
 
 				if (loginPassword.equals(initialPassword)) {
-					request.setAttribute("studentDTO", studentDTO);
+					session.setAttribute("studentDTO", studentDTO);
 					request.getRequestDispatcher("/WEB-INF/views/student/studentSignUp.jsp").forward(request, response);
 					return;
 				}

@@ -16,6 +16,7 @@ import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.dto.MajorDTO;
 import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.service.StudentRegisterService;
+import com.goodeelms.util.EncryptUtil;
 
 @WebServlet("/admin/addStudent/*")
 public class AddStudentController extends HttpServlet {
@@ -74,6 +75,10 @@ public class AddStudentController extends HttpServlet {
 			(request.getParameter("identityFront")+"-"+request.getParameter("identityBack")); 
 			studentDTO.setStudentNo(request.getParameter("studentNo")); 
 			studentDTO.setStudentPhone(request.getParameter("studentPhone"));
+			
+			String passWord = EncryptUtil.encryptPassword(request.getParameter("identityBack"));
+			studentDTO.setStudentPassword(passWord);
+			System.out.println(passWord);
 			int majorId = Integer.parseInt(request.getParameter("majorId"));
 			StudentRegisterService srs = new StudentRegisterService();
 			

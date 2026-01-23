@@ -99,6 +99,8 @@ function checkForm(form) {
                             <option value="휴학" ${s.studentStatus == '휴학' ? 'selected' : ''}>휴학</option>
                             <option value="졸업" ${s.studentStatus == '졸업' ? 'selected' : ''}>졸업</option>
                             <option value="퇴학" ${s.studentStatus == '퇴학' ? 'selected' : ''}>퇴학</option>
+                            <option value="자퇴" ${s.studentStatus == '자퇴' ? 'selected' : ''}>자퇴</option>
+                            <option value="재적" ${s.studentStatus == '재적' ? 'selected' : ''}>재적</option>
                           </select>
                           <input type="text" name="statusReason" class="form-control form-control-sm">
                          
