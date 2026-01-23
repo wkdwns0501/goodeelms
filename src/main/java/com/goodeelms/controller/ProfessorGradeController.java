@@ -60,18 +60,15 @@ public class ProfessorGradeController extends HttpServlet {
     		response.sendRedirect(request.getContextPath() + "/common/login");
     		return;
     	}
-
-        // 직전학기(종강) 강의 대상 학기 계산
-        SemesterKey target = calcTargetSemester(ZonedDateTime.now(KST));
-
-        // 수정 가능 여부(성적 기입 기간 = 1월/7월)
-        boolean isEditable = isGradeInputPeriod(ZonedDateTime.now(KST));
-        
-        // 성적 기간 테스트
+    	
+    	// 성적 기입 기간 테스트
     	// 1월, 7월만 성적 기입 가능 / 나머지 달은 성적 기입 불가능
 //        ZonedDateTime now = ZonedDateTime.of(2026, 3, 1, 10, 0, 0, 0, KST); // 두번째 값 만 변경
-//        SemesterKey target = calcTargetSemester(now);
-//        boolean isEditable = isGradeInputPeriod(now);
+    	ZonedDateTime now = ZonedDateTime.now(KST);
+        // 직전학기(종강) 강의 대상 학기 계산
+        SemesterKey target = calcTargetSemester(now);
+        // 수정 가능 여부(성적 기입 기간 = 1월/7월)
+        boolean isEditable = gradeService.isGradeInputPeriod(now);
         
         // 교수의 직전학기 종강 강의 목록
         List<LectureDTO> lectureList =
@@ -188,8 +185,8 @@ public class ProfessorGradeController extends HttpServlet {
 
     /**
      *   직전학기(종강) 대상 학기 계산 규칙
-     * - 1월(성적기입), 2월(학생조회): 전년도 2학기
-     * - 7월(성적기입), 8월(학생조회): 해당년도 1학기
+     * - 1월(성적기입) : 전년도 2학기 성적 기입
+     * - 7월(성적기입) : 해당년도 1학기 성적 기입
      * - 그 외(3~6, 9~12): 직전학기 기준으로는
      *   3~6이면 전년도 2학기,
      *   9~12이면 해당년도 1학기
@@ -198,20 +195,12 @@ public class ProfessorGradeController extends HttpServlet {
     private SemesterKey calcTargetSemester(ZonedDateTime now) {
         int year = now.getYear();
         int month = now.getMonthValue();
-
         // 7~12: 해당년도 1학기(직전 종강 = 1학기)
         if (month >= 7 && month <= 12) {
             return new SemesterKey(year, 1);
         }
-
         // 1~6: 전년도 2학기(직전 종강 = 2학기)
         return new SemesterKey(year - 1, 2);
-    }
-    
-    // 성적 입력 기간인지
-    private boolean isGradeInputPeriod(ZonedDateTime now) {
-        int m = now.getMonthValue();
-        return (m == 1 || m == 7);
     }
     
     // int 변환 아니면 NULL 반환

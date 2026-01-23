@@ -286,12 +286,12 @@
 	
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="<c:url value='/resources/js/updateStudentInfo.js'/>"></script>
-  <script>
+  <!-- <script>
 	  // 저장 결과 알림 4초 후 자동 숨김
 	  const resultAlert = document.getElementById("resultAlert");
 	  if (resultAlert) {
 	    setTimeout(() => resultAlert.classList.add("d-none"), 4000);
 	  }
-	</script>
+	</script> -->
 </body>
 </html>

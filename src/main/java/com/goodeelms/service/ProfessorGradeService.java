@@ -43,7 +43,8 @@ public class ProfessorGradeService {
         if (lectureId <= 0) return List.of();
         if (page < 1) page = 1;
         if (pageSize < 1) pageSize = 10;
-        return gradeDAO.listStudents(lectureId, keyword, page, pageSize);
+        int offset = (page - 1) * pageSize;
+        return gradeDAO.listStudents(lectureId, keyword, offset, pageSize);
     }
 
     /**
@@ -126,7 +127,7 @@ public class ProfessorGradeService {
     
     
     // 성적 기입 기간인지 여부 (1월/7월)
-    private boolean isGradeInputPeriod(ZonedDateTime now) {
+    public boolean isGradeInputPeriod(ZonedDateTime now) {
         int m = now.getMonthValue();
         return (m == 1 || m == 7);
     }

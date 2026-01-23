@@ -58,7 +58,7 @@ public class ProfessorGradeDAO {
         return list;
     }
     
-    // 페이징을 위한 특정 강의의 수강생 수 조회 (검색 포함)
+    // 페이징을 위한 특정 강의의 수강생 수 (검색 포함)
     public int countStudents(int lectureId, String keyword) {
         int count = 0;
         boolean hasKeyword = (keyword != null && !keyword.isBlank());
@@ -86,11 +86,9 @@ public class ProfessorGradeDAO {
     }
     
     // 특정 강의의 수강생 목록 페이지 조회 (학생명 검색 + 페이징)
-    public List<LectureHistoryDTO> listStudents(int lectureId, String keyword, int page, int pageSize) {
+    public List<LectureHistoryDTO> listStudents(int lectureId, String keyword, int offset, int pageSize) {
         List<LectureHistoryDTO> list = new ArrayList<>();
-
         boolean hasKeyword = (keyword != null && !keyword.isBlank());
-        int offset = (page - 1) * pageSize;
 
         String sql =
             "SELECT " +
