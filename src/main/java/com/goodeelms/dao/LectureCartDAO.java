@@ -108,7 +108,7 @@ public class LectureCartDAO {
 	}
 	
 	public int clearCart(String studentId, Set<Integer> lectureIds) throws NullPointerException{
-		String sql ="DELETE FROM pre_enrollment WHERE student_id = ? AND pre_enrollment_status = progress";
+		String sql ="DELETE FROM pre_enrollment WHERE student_id = ? AND pre_enrollment_status = 'progress' ";
 		if(lectureIds.size() > 0) {
 			sql += "AND lecture_id IN(" + lectureIds.stream().map(id -> "?").collect(Collectors.joining(",")) + ")";
 		}
@@ -175,6 +175,24 @@ public class LectureCartDAO {
 			return result;
 		}
 		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	public int updatePreEnrollmentStateOne(Connection conn, String status, String lectureId, String studentId) {
+		String sql = "UPDATE pre_enrollment SET pre_enrollment_status = ? WHERE lecture_id = ? AND student_id = ?";
+		
+		try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+			int index = 1; 
+			pstmt.setString(index++, status);
+			pstmt.setString(index++, lectureId);
+			pstmt.setString(index++, studentId);
+			
+			int result = pstmt.executeUpdate();
+			return result;
+		}
+		catch(SQLException e) {
 			e.printStackTrace();
 		}
 		return 0;

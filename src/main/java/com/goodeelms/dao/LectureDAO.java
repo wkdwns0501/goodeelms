@@ -4,6 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -457,4 +461,75 @@ public class LectureDAO {
 	    return 0;
 	}
 	
+	// 강의 상태 예정 -> 개강 변경
+	public int updateLectureStatusToNext(Connection conn,int year, int semester, String beforeStatus, String afterStatus) {
+		String sql = "UPDATE lecture SET lecture_status = ? WHERE lecture_status = ? "
+				+ "AND lecture_year = ? AND lecture_semester = ? ";
+		
+		try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+			
+			pstmt.setString(1, afterStatus);
+			pstmt.setString(2, beforeStatus);
+			pstmt.setInt(3, year);
+			pstmt.setInt(4, semester);
+			
+			return pstmt.executeUpdate();
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	public Set<Integer> getLectureIdsBeforeUpdate(Connection conn, int year, int semester, String status){
+		String sql = "SELECT lecture_id FROM lecture WHERE lecture_year = ? "
+				+ "AND lecture_semester = ? AND lecture_status = ?";
+		
+		try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+
+				pstmt.setInt(1, year);
+				pstmt.setInt(2, semester);
+				pstmt.setString(3, status);
+				
+				try(ResultSet rs = pstmt.executeQuery()){
+					Set<Integer> list = new HashSet<Integer>();
+					while(rs.next()) {
+						int id = rs.getInt("lecture_id");
+						
+						list.add(id);
+					}
+					return list;
+				}
+			}
+			catch(SQLException e) {
+				e.printStackTrace();
+			}
+		return null;
+	}
+	
+	// 개강 업데이트 검증 확인 조회
+	public boolean selectLecutreStatusBeforeSchedule(int year, int semester, String status) {
+		String sql = "SELECT COUNT(*) as cnt FROM lecture WHERE lecture_status = ? "
+				+ "AND lecture_year = ? AND lecture_semester = ? ";
+		
+		try(Connection conn = DBUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)){
+
+			pstmt.setString(1, status);
+			pstmt.setInt(2, year);
+			pstmt.setInt(3, semester);
+			
+			try(ResultSet rs = pstmt.executeQuery()){
+				if(rs.next()) {
+					int result = rs.getInt("cnt");
+					if(result > 0) return true;
+				}
+			}
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
 }

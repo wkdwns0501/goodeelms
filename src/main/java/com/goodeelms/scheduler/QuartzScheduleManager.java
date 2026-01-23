@@ -1,0 +1,113 @@
+package com.goodeelms.scheduler;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+
+import org.quartz.Job;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
+import org.quartz.impl.StdSchedulerFactory;
+
+public class QuartzScheduleManager {
+	private static Scheduler scheduler;
+	
+	
+	public static void init() throws SchedulerException {
+		if(scheduler == null || scheduler.isShutdown()) {
+			scheduler = new StdSchedulerFactory().getScheduler();
+			scheduler.start();
+		}
+	}
+	
+	// 어디서든 이 메서드를 통해 새로운 작업을 등록하거나 변경함
+    public static void addJob(Class<? extends Job> jobClass, String jobName, ZonedDateTime startTime) throws SchedulerException {
+        JobDetail job = JobBuilder.newJob(jobClass)
+                .withIdentity(jobName, "group1")
+                .build();
+
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity(jobName + "Trigger", "group1")
+                .startAt(startTime.toInstant())
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule().withMisfireHandlingInstructionFireNow())
+                .build();
+
+        // 동일한 이름의 Job이 있다면 삭제 후 재등록 (안전장치)
+        if (scheduler.checkExists(job.getKey())) {
+            scheduler.deleteJob(job.getKey());
+        }
+        scheduler.scheduleJob(job, trigger);
+    }
+    
+    // 어디서든 이 메서드를 통해 새로운 작업을 등록하거나 변경함
+    public static void addJobWithTimeSemester(Class<? extends Job> jobClass, String jobName, int year, int semester, ZonedDateTime startTime) throws SchedulerException {
+        JobDetail job = JobBuilder.newJob(jobClass)
+                .withIdentity(jobName, "group1")
+                .usingJobData("year", year)
+                .usingJobData("semester", semester)
+                .build();
+
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity(jobName + "Trigger", "group1")
+                .startAt(startTime.toInstant())
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule().withMisfireHandlingInstructionFireNow())
+                .build();
+        
+        // 동일한 이름의 Job이 있다면 삭제 후 재등록 (안전장치)
+        if (scheduler.checkExists(job.getKey())) {
+            scheduler.deleteJob(job.getKey());
+        }
+        scheduler.scheduleJob(job, trigger);
+    }
+
+    // 시간 변경 (Reschedule)
+    public static void updateJobTime(String jobName, ZonedDateTime resetTime) throws SchedulerException {
+        TriggerKey triggerKey = TriggerKey.triggerKey(jobName + "Trigger", "group1");
+        Trigger newTrigger = TriggerBuilder.newTrigger()
+                .withIdentity(triggerKey)
+                .startAt(resetTime.toInstant())
+                .build();
+        
+        scheduler.rescheduleJob(triggerKey, newTrigger);
+    }
+	
+	public static void shutdown() throws SchedulerException {
+        if (scheduler != null && !scheduler.isShutdown()) {
+            // true를 주면 현재 실행 중인 작업이 끝날 때까지 기다린 후 종료합니다.
+            scheduler.shutdown(true);
+        }
+    }
+	
+	public static void printSchedulerStatus() throws SchedulerException {
+        System.out.println("\n========== [Quartz Job Status Check] ==========");
+        
+        // 현재 스케줄러에 등록된 모든 Job 그룹 이름을 가져옴
+        for (String groupName : scheduler.getJobGroupNames()) {
+            for (org.quartz.JobKey jobKey : scheduler.getJobKeys(org.quartz.impl.matchers.GroupMatcher.jobGroupEquals(groupName))) {
+                
+                String jobName = jobKey.getName();
+                List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
+                
+                for (Trigger trigger : triggers) {
+                    Trigger.TriggerState state = scheduler.getTriggerState(trigger.getKey());
+                    ZonedDateTime nextFireTime = trigger.getNextFireTime() != null ? 
+                        trigger.getNextFireTime().toInstant().atZone(java.time.ZoneId.systemDefault()) : null;
+                    ZonedDateTime previousFireTime = trigger.getPreviousFireTime() != null ? 
+                        trigger.getPreviousFireTime().toInstant().atZone(java.time.ZoneId.systemDefault()) : null;
+
+                    System.out.println("Job Name      : " + jobName);
+                    System.out.println("Trigger State : " + state); // NORMAL, PAUSED, COMPLETE, ERROR 등
+                    System.out.println("Next Fire     : " + (nextFireTime != null ? nextFireTime : "None (Past/Finished)"));
+                    System.out.println("Prev Fire     : " + (previousFireTime != null ? previousFireTime : "Never Executed"));
+                    System.out.println("-----------------------------------------------");
+                }
+            }
+        }
+        System.out.println("===============================================\n");
+    }
+}

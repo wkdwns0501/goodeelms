@@ -1,6 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<style>
+/* 강의 코드 */
+ .badge-soft-lime{
+  background-color: #d1f7c4; /* 연한 연두 */
+  color: #1f4d2b;            /* 글자 진초록 */
+  border: 1px solid #b7efaa; /* 살짝 테두리 */
+}
+</style>
 <div class="card shadow-sm">
 	<div class="card-header d-flex align-items-center justify-content-between">
 	  <span class="fw-semibold">강의 리스트</span>
@@ -24,7 +32,7 @@
 	      <c:forEach var="lec" items="${lectureList}">
 	        <tr>
 	          <td>
-	            <span class="badge text-bg-secondary">${lec.lectureCode}</span>
+	            <span class="badge badge-soft-lime rounded-pill">${lec.lectureCode}</span>
 	          </td>
 	          <td>
 	            <div class="fw-semibold">${lec.lectureName}</div>
@@ -41,7 +49,7 @@
 	          <td class="text-center">
             	<!-- 수강신청 : POST 권장 -->
 	            <button type="submit" class="btn btn-sm btn-outline-success add-cart fw-bold fs-6"  
-	            	data-lec="${lec.lectureId}" data-stu ="${sessionScope.student_id}">
+	            	data-lec="${lec.lectureId}" data-stu ="${sessionScope.student_id}" data-credit="${lec.lectureCredit}">
 	              수강 신청
 	            </button>
 	          </td>
@@ -77,7 +85,7 @@
             </li>
             <!-- 페이지 번호 -->
             <c:forEach var="p" begin="1" end="${pageNums}">
-              <li class="page-item ${p == page ? 'active' : ''} ">
+              <li class="page-item ${p == viewPage ? 'active' : ''} ">
                 <a class="page-link lectureCart-list"
                    href="<c:url value=''>
                    <c:param name='viewPage' value='${p}'/>
