@@ -54,8 +54,7 @@ public class LMSScheduleListener implements ServletContextListener {
     		return;
     	}
     	// year 년도 학사일정 조회해서 이름이랑 시간 매핑
-    	Map<String, ZonedDateTime> eventTimeMap = list.stream().collect(Collectors.toMap(AcademicCalendarDTO::getAcademicEventName, AcademicCalendarDTO::getEventZoneDateTime));
-    	
+    	eventTimeMap = list.stream().collect(Collectors.toMap(AcademicCalendarDTO::getAcademicEventName, AcademicCalendarDTO::getEventZoneDateTime));
     	// 서버 시작 시 실행
         try {
             System.out.println("--- 스케줄러 초기화 시작 ---");

@@ -11,8 +11,10 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Map;
 
 import com.goodeelms.listener.LMSScheduleListener;
+import com.goodeelms.util.StaticUtils;
 
 /**
  * Servlet implementation class StudentURLForwardServlet
@@ -32,18 +34,26 @@ public class StudentURLForwardController extends HttpServlet {
 		
 		System.out.println(command);
 		RequestDispatcher rd = null;
+		// 시간 설정
 		ZoneId timeZone = LMSScheduleListener.getZONE_ID();
+		Map<String, ZonedDateTime> timeMap = LMSScheduleListener.getEventTimeMap();
 		switch(command) {
+			// 장바구니
 			case "/cart":
-				// 목표 시간 설정
-				ZonedDateTime startCartTime = LMSScheduleListener.getEventTimeMap().get("student_first_lecture_cart_start");
-				ZonedDateTime endCartTime = LMSScheduleListener.getEventTimeMap().get("student_first_lecture_cart_end");
-				
 				// 현재 시간 로드
 				ZonedDateTime nowCartTime = ZonedDateTime.now(timeZone);
 				
+				// 마감 시간 변수 선언
+				ZonedDateTime endCartTime;
+				
 				// 장바구니 기간 외에 접속 시도 시 메인페이지로
-				if(nowCartTime.isBefore(startCartTime) || nowCartTime.isAfter(endCartTime)) {
+				if(StaticUtils.isBetweenTime(nowCartTime, timeMap.get("student_first_lecture_cart_start"), timeMap.get("student_first_lecture_cart_end"))) {
+					endCartTime = timeMap.get("student_first_lecture_cart_end");
+				}
+				else if(StaticUtils.isBetweenTime(nowCartTime, timeMap.get("student_second_lecture_cart_start"), timeMap.get("student_second_lecture_cart_end"))) {
+					endCartTime = timeMap.get("student_second_lecture_cart_end");
+				}
+				else {
 					response.sendRedirect("/main.jsp?error=NoAccessEnrollTime");
 					return;
 				}
@@ -56,16 +66,22 @@ public class StudentURLForwardController extends HttpServlet {
 				rd.forward(request, response);
 				break;
 				
+			// 수강신청
 			case "/competition":
 				// 목표 시간 설정
-				ZonedDateTime startComTime = LMSScheduleListener.getEventTimeMap().get("student_first_lecture_cart_start");
-				ZonedDateTime endComTime = LMSScheduleListener.getEventTimeMap().get("student_first_lecture_cart_end");
+				ZonedDateTime endComTime;
 				
 				// 현재 시간 로드
 				ZonedDateTime nowComTime = ZonedDateTime.now(timeZone);
 				
 				// 수강신청 기간 외에 접속 시도 시 메인페이지로
-				if(nowComTime.isBefore(startComTime) || nowComTime.isAfter(endComTime)) {
+				if(StaticUtils.isBetweenTime(nowComTime, timeMap.get("student_first_enrollment_start"), timeMap.get("student_first_enrollment_end"))) {
+					endComTime = timeMap.get("student_first_enrollment_end");
+				}
+				else if(StaticUtils.isBetweenTime(nowComTime, timeMap.get("student_second_enrollment_start"), timeMap.get("student_second_enrollment_end"))) {
+					endComTime = timeMap.get("student_second_enrollment_end");
+				}
+				else {
 					response.sendRedirect("/main.jsp?error=NoAccessEnrollTime");
 					return;
 				}

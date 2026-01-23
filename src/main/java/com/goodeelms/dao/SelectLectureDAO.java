@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +14,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.goodeelms.dto.LectureDTO;
+import com.goodeelms.listener.LMSScheduleListener;
 import com.goodeelms.util.DBUtil;
+import com.goodeelms.util.StaticUtils;
 
 public class SelectLectureDAO {
 	
@@ -168,20 +171,22 @@ public class SelectLectureDAO {
 	public PreparedStatement getPrepareStatement(String sql, String searchWord, String cat, Set<Integer> lectureCodeSet, Set<Integer> professorIdSet, int ...majorIds) throws SQLException{
 		queryIndex = 1;
 		// 날짜
-		LocalDateTime dateTime = LocalDateTime.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		String date = dateTime.format(formatter);
-		String[] rawSemester = date.split("-");
-		// 학기
+		ZonedDateTime zoneTime = ZonedDateTime.now(LMSScheduleListener.getZONE_ID());
+		
+		// 학기 계산
 		int semester = 0;
-		if(Integer.parseInt(rawSemester[1]) < 9) semester += 1;
-		else semester += 2;
+		if(StaticUtils.isBetweenTime(zoneTime,
+			LMSScheduleListener.getEventTimeMap().get("student_first_lecture_cart_start"),
+			LMSScheduleListener.getEventTimeMap().get("student_first_enrollment_end"))) semester = 1;
+		else if(StaticUtils.isBetweenTime(zoneTime,
+				LMSScheduleListener.getEventTimeMap().get("student_second_lecture_cart_start"),
+				LMSScheduleListener.getEventTimeMap().get("student_second_enrollment_end"))) semester = 2;
 		
 		Connection conn = DBUtil.getConnection();
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		
 		pstmt.setInt(queryIndex++, semester);
-		pstmt.setString(queryIndex++, rawSemester[0]);
+		pstmt.setString(queryIndex++, zoneTime.getYear()+"");
 		if(!"all".equals(cat)) {
 			if(!"liberal".equals(cat)) pstmt.setString(queryIndex, "전공");
 			else pstmt.setString(queryIndex, "교양");
