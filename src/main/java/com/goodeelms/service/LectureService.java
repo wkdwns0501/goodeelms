@@ -1,13 +1,17 @@
 package com.goodeelms.service;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.tags.shaded.org.apache.regexp.recompile;
 
+import com.goodeelms.dao.LectureCartDAO;
 import com.goodeelms.dao.LectureDAO;
 import com.goodeelms.dto.LectureDTO;
+import com.goodeelms.util.DBUtil;
 
 public class LectureService {
 	private LectureDAO lectureDAO = LectureDAO.getInstance();
@@ -200,21 +204,59 @@ public class LectureService {
     }
     
     // 수강신청 기간 종료 시 강의 시작
-    public void updateLectureStatusToOpen(int year, int semester) {
+    public boolean updateLectureStatusToOpen(int year, int semester) {
     	// 개강 될 시기의 강의이면서 예정 상태인 강의가 없으면 스킵
     	String beforeStatus = "예정";
-    	if(!lectureDAO.selectLecutreStatusBeforeSchedule(year, semester, beforeStatus)) return;
+    	if(!lectureDAO.selectLecutreStatusBeforeSchedule(year, semester, beforeStatus)) return true;
     	String afterStatus = "개강";
-    	lectureDAO.updateLectureStatusToNext(year, semester, beforeStatus, afterStatus);
+    	Connection conn = DBUtil.getBatchConnection();
+    	try {
+    		conn.setAutoCommit(false);
+    		
+    		// 업데이트 대상 id list 조회
+    		Set<Integer> idSet = lectureDAO.getLectureIdsBeforeUpdate(conn, year, semester, beforeStatus);
+    		// 업데이트 예정 -> 개강
+    		int openResult = lectureDAO.updateLectureStatusToNext(conn, year, semester, beforeStatus, afterStatus);
+    		if(openResult < 1) throw new SQLException("Lecture Status Update Failed");
+    		// 장바구니 상태 변경 -> 개강 강의에 대한 상태 done
+    		int doneResult = LectureCartDAO.getInstance().UpdatePreEnrollmentStatus(conn, idSet, "done");
+    		if(doneResult < 1) throw new SQLException("PreEnrollment Status Update Failed");
+    		conn.commit();
+    		return true;
+    	}
+    	catch(SQLException e) {
+			if(conn != null) {
+				try {
+					conn.rollback();
+					System.err.println("트랜잭션 롤백됨: " + e.getMessage());
+				}
+				catch (SQLException ex) {
+					ex.printStackTrace();
+				}
+				e.printStackTrace();
+			}
+		}
+		finally {
+			if(conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+    	return false;
     }
     
     // 학기 말 종강 전환
-    public void updateLectureStatusToEnd(int year, int semester) {
+    public boolean updateLectureStatusToEnd(int year, int semester) {
     	// 종강 대상 기간의 강의이면서 개강 상태인 강의가 없으면 스킵
     	String beforeStatus = "개강";
-    	if(!lectureDAO.selectLecutreStatusBeforeSchedule(year, semester, beforeStatus)) return;
+    	if(!lectureDAO.selectLecutreStatusBeforeSchedule(year, semester, beforeStatus)) return true;
     	String afterStatus = "종강";
-    	lectureDAO.updateLectureStatusToNext(year, semester, beforeStatus, afterStatus);
-    	
+    	Connection conn = DBUtil.getConnection();
+    	int result = lectureDAO.updateLectureStatusToNext(conn, year, semester, beforeStatus, afterStatus);
+    	if(result < 1) return false;
+    	return true;
     }
 }

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import com.goodeelms.listener.CloseCartListener;
+import com.goodeelms.listener.LMSScheduleListener;
 
 /**
  * Servlet implementation class StudentURLForwardServlet
@@ -32,12 +32,12 @@ public class StudentURLForwardController extends HttpServlet {
 		
 		System.out.println(command);
 		RequestDispatcher rd = null;
-		ZoneId timeZone = CloseCartListener.getZONE_ID();
+		ZoneId timeZone = LMSScheduleListener.getZONE_ID();
 		switch(command) {
 			case "/cart":
 				// 목표 시간 설정
-				ZonedDateTime startCartTime = ZonedDateTime.of(CloseCartListener.getSTART_CART_TIME(), timeZone);
-				ZonedDateTime endCartTime = ZonedDateTime.of(CloseCartListener.getEND_CART_TIME(), timeZone);
+				ZonedDateTime startCartTime = LMSScheduleListener.getStartCartEnrollment();
+				ZonedDateTime endCartTime = LMSScheduleListener.getEndCartEnrollment();
 				
 				// 현재 시간 로드
 				ZonedDateTime nowCartTime = ZonedDateTime.now(timeZone);
@@ -58,8 +58,8 @@ public class StudentURLForwardController extends HttpServlet {
 				
 			case "/competition":
 				// 목표 시간 설정
-				ZonedDateTime startComTime = ZonedDateTime.of(CloseCartListener.getSTART_CART_TIME(), timeZone);
-				ZonedDateTime endComTime = ZonedDateTime.of(CloseCartListener.getEND_CART_TIME(), timeZone);
+				ZonedDateTime startComTime = LMSScheduleListener.getStartCartEnrollment();
+				ZonedDateTime endComTime = LMSScheduleListener.getEndCartEnrollment();
 				
 				// 현재 시간 로드
 				ZonedDateTime nowComTime = ZonedDateTime.now(timeZone);

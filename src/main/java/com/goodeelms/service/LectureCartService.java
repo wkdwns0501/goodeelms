@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import com.goodeelms.dao.LectureCartDAO;
 import com.goodeelms.dao.LectureHistoryDAO;
 import com.goodeelms.dto.PreEnrollmentDTO;
-import com.goodeelms.listener.CloseCartListener;
 import com.goodeelms.util.DBUtil;
 
 public class LectureCartService {
@@ -47,10 +46,10 @@ public class LectureCartService {
 		return dao.getPreEnrollment(studentId, conditions);
 	}
 	
-	public void closeCartStatus() {
+	public boolean closeCartStatus() {
 		// progress가 없으면 실행할 필요 없지. 전부 반영 됐다고 본다.
 		List<PreEnrollmentDTO> list = dao.checkProgressCart();
-		if(list == null || list.size() == 0) return;
+		if(list == null || list.size() == 0) return true;
 		
 		// 자동 신청, 추후 신청 대상 분기 Map, Set
 		// 자동 신청은 lecture 테이블에 값 넣어야함
@@ -121,6 +120,7 @@ public class LectureCartService {
 					e.printStackTrace();
 				}
 			}
-		}	
+		}
+		return false;
 	}
 }
