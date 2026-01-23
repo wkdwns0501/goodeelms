@@ -109,6 +109,7 @@ public class BoardDAO {
 		} return dto;
 	}
 	
+	// 조회수 증가
 	public void updateHit(int boardId) {
 		String sql = "UPDATE board SET board_hit = board_hit + 1 WHERE board_id = ?";
 		try (Connection conn = DBUtil.getConnection();

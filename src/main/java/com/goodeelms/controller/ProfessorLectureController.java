@@ -23,15 +23,15 @@ public class ProfessorLectureController extends HttpServlet {
 	    String path = request.getPathInfo(); // /add /list
 	    if (path == null) path = "/list";
 	    
-	    Integer loginId = (Integer) request.getSession().getAttribute("professor_id");
-        if (loginId == null) {
+	    Integer professorId = (Integer) request.getSession().getAttribute("professor_id");
+        if (professorId == null) {
             response.sendRedirect(request.getContextPath() + "/common/login");
             return;
         }
 	    
 	    if (path.equals("/add")) { // 강의 등록 페이지 조회
 	    	request.setAttribute("buildingList", buildingService.getAll());
-	        request.getRequestDispatcher("/WEB-INF/views/lecture/insert.jsp")
+	        request.getRequestDispatcher("/WEB-INF/views/professor/lectureInsert.jsp")
 	               .forward(request, response);
 	        return;
 	    } else if (path.equals("/list")) { // 강의 목록 조회
@@ -54,7 +54,7 @@ public class ProfessorLectureController extends HttpServlet {
 		    page = Math.max(page, 1);
 
 		    // totalCount / totalPage 계산 (0건이면 totalPage=1 보장)
-		    final int totalCount = lectureService.getLectureTotalCount(loginId, keyword);
+		    final int totalCount = lectureService.getLectureTotalCount(professorId, keyword);
 		    final int totalPage = Math.max(1, (int) Math.ceil(totalCount / (double) limit));
 
 		    // page 최대 보정
@@ -69,7 +69,7 @@ public class ProfessorLectureController extends HttpServlet {
 		    final int nextBlockPage = (endPage < totalPage) ? (endPage + 1) : totalPage;
 	        
 	        request.setAttribute("lectures",
-	        		lectureService.getLecturePage(loginId, page, limit, keyword));
+	        		lectureService.getLecturePage(professorId, page, limit, keyword));
 	        
 	        request.setAttribute("page", page);
 	        request.setAttribute("limit", limit);
@@ -83,7 +83,7 @@ public class ProfessorLectureController extends HttpServlet {
 	        request.setAttribute("prevBlockPage", prevBlockPage);
 	        request.setAttribute("nextBlockPage", nextBlockPage);
 
-	        request.getRequestDispatcher("/WEB-INF/views/lecture/list.jsp")
+	        request.getRequestDispatcher("/WEB-INF/views/professor/lectureList.jsp")
 	               .forward(request, response);
 	        return;
 	    } else {
@@ -97,8 +97,8 @@ public class ProfessorLectureController extends HttpServlet {
         if (path == null) path = "";
 
         if (path.equals("/insert")) {// 강의 등록
-        	Integer loginId = (Integer) request.getSession().getAttribute("professor_id");
-            if (loginId == null) {
+        	Integer professorId = (Integer) request.getSession().getAttribute("professor_id");
+            if (professorId == null) {
                 response.sendRedirect(request.getContextPath() + "/common/login");
                 return;
             }
@@ -108,7 +108,7 @@ public class ProfessorLectureController extends HttpServlet {
             lecture.setLectureRoom(request.getParameter("lecture_room"));
             lecture.setLectureType(request.getParameter("lecture_type"));
             lecture.setLectureYear(request.getParameter("lecture_year"));
-            lecture.setProfessorId(loginId);
+            lecture.setProfessorId(professorId);
             
             try {
                 lecture.setLectureCredit(Integer.parseInt(request.getParameter("lecture_credit")));
@@ -126,7 +126,7 @@ public class ProfessorLectureController extends HttpServlet {
 		                        : "강의 등록에 실패했습니다.";
                 request.setAttribute("error", msg);
                 request.setAttribute("form", lecture);
-                request.getRequestDispatcher("/WEB-INF/views/lecture/insert.jsp")
+                request.getRequestDispatcher("/WEB-INF/views/professor/lectureInsert.jsp")
                        .forward(request, response);
                 return;
             }

@@ -52,7 +52,7 @@ public class StudentController extends HttpServlet {
             return;
          }
       }
-
+      
       switch (path) {
 		case "/signup":
 			signup(request, response);
@@ -63,9 +63,9 @@ public class StudentController extends HttpServlet {
 		case "/tuition/pay":
 	        payTuitionOrScholarship(request, response);
 	        break;
-		  case "/lecture":
-	    	  showLectureList(request, response);
-	    	  break;
+		case "/lecture":
+	    	showLectureList(request, response);
+	    	break;
 		case "/grades":
 			showGrade(request, response);
 			break;
@@ -74,6 +74,9 @@ public class StudentController extends HttpServlet {
 			break;
 		case "/history/rewardAndPunishment":
 			showReawrdAndPunishments(request, response);
+			break;
+		case "/myLectures":	
+			showLecture(request, response);
 			break;
 		default:
 			System.out.println("정의되지 않은 경로 요청됨: " + path);
@@ -90,20 +93,20 @@ public class StudentController extends HttpServlet {
       String address = request.getParameter("student_address");
 
       HttpSession session = request.getSession();
-      StudentDTO updateStudent = (StudentDTO) request.getAttribute("studentDTO");
+      StudentDTO updateStudent = (StudentDTO) session.getAttribute("studentDTO");
 
 		if (newPw.equals(originPw)) { // 기존 비밀번호와 동일하면 다시 입력하도록
 			request.setAttribute("errorMessage", "기존 비밀번호와 동일합니다.");
 			request.getRequestDispatcher("/WEB-INF/views/student/studentSignUp.jsp").forward(request, response);
 			return;
 		}
-
+		
 		updateStudent.setStudentPassword(newPw);
 		updateStudent.setStudentEmail(email);
 		updateStudent.setStudentPhone(phone);
 		updateStudent.setStudentBank(bank);
 		updateStudent.setStudentAddress(address);
-
+		
 		boolean isUpdated = studentService.updateStudent(updateStudent);
 
 		if (isUpdated) {
@@ -215,7 +218,7 @@ public class StudentController extends HttpServlet {
 		Map<Integer, LectureDTO> lectures = studentService.getProgressInfoByStudentId(student_id);
 		
 		request.setAttribute("lectures", lectures); 
-		request.getRequestDispatcher("/WEB-INF/views/student/lectures.jsp").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/views/student/myLectures.jsp").forward(request, response);
 		return;
 	}
 	
@@ -243,26 +246,7 @@ public class StudentController extends HttpServlet {
       request.getRequestDispatcher("/WEB-INF/views/student/tuition.jsp").forward(request, response);
       return;
    }
-
-   protected void showStatusHistory(HttpServletRequest request, HttpServletResponse response)
-         throws ServletException, IOException {
-      HttpSession session = request.getSession();
-      int studentId = (Integer) session.getAttribute("student_id");
-      
-//      List<StudentStatusHistoryDTO> list = new StudentStatusService().getStatusHistory(studentId);
-
-//      request.setAttribute("statusList", list);
-      request.getRequestDispatcher("/WEB-INF/views/student/statusHistory.jsp").forward(request, response);
-      return;
-   }
-
-   protected void showStudentMajor(HttpServletRequest request, HttpServletResponse response)
-         throws ServletException, IOException {
-      HttpSession session = request.getSession();
-      int studentId = (Integer) session.getAttribute("studentId");
-      
-      
-   }
+  
    
    // 학생 강의 목록
    private void showLectureList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

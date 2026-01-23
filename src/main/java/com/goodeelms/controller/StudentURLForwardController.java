@@ -36,8 +36,8 @@ public class StudentURLForwardController extends HttpServlet {
 		switch(command) {
 			case "/cart":
 				// 목표 시간 설정
-				ZonedDateTime startCartTime = LMSScheduleListener.getStartCartEnrollment();
-				ZonedDateTime endCartTime = LMSScheduleListener.getEndCartEnrollment();
+				ZonedDateTime startCartTime = LMSScheduleListener.getEventTimeMap().get("student_first_lecture_cart_start");
+				ZonedDateTime endCartTime = LMSScheduleListener.getEventTimeMap().get("student_first_lecture_cart_end");
 				
 				// 현재 시간 로드
 				ZonedDateTime nowCartTime = ZonedDateTime.now(timeZone);
@@ -58,8 +58,8 @@ public class StudentURLForwardController extends HttpServlet {
 				
 			case "/competition":
 				// 목표 시간 설정
-				ZonedDateTime startComTime = LMSScheduleListener.getStartCartEnrollment();
-				ZonedDateTime endComTime = LMSScheduleListener.getEndCartEnrollment();
+				ZonedDateTime startComTime = LMSScheduleListener.getEventTimeMap().get("student_first_lecture_cart_start");
+				ZonedDateTime endComTime = LMSScheduleListener.getEventTimeMap().get("student_first_lecture_cart_end");
 				
 				// 현재 시간 로드
 				ZonedDateTime nowComTime = ZonedDateTime.now(timeZone);

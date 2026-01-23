@@ -1,6 +1,7 @@
 
 package com.goodeelms.service;
 
+import java.io.File;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,8 @@ public class StudentService {
 	
 	// 학생 일반 정보 수정
 	public void updateStudentProfile(int studentId, String phone, String email,
-	        						 String address, String studentBank, String confirmPw) throws Exception {
+	        						 String address, String studentBank, String confirmPw,
+	        						 String photoFile, String photoUUID) throws Exception {
 		if (address == null || address.trim().isEmpty() || address.trim().length() > 255) {
 		        throw new IllegalArgumentException("ADDR_RULE");
 		}
@@ -82,7 +84,7 @@ public class StudentService {
 	    	if (!EncryptUtil.isPasswordMatch(confirmPw, dbPwHash)) {
 	    	    throw new IllegalArgumentException("PROFILE_PW_MISMATCH");
 	    	}
-	        studentDAO.updateProfile(conn, studentId, phone, email, address, studentBank);
+	        studentDAO.updateProfile(conn, studentId, phone, email, address, studentBank, photoFile, photoUUID);
 	    }
 	}
 	
@@ -115,8 +117,7 @@ public class StudentService {
 	    }
 	}
 	
-	
-	public Map<Integer, LectureDTO> getProgressInfoByStudentId(int studentId){ // 0120 임욱(추가) / 수강 중인 강의 정보 정회
+	public Map<Integer, LectureDTO> getProgressInfoByStudentId(int studentId){ // 0123 임욱(수정) / 해당 학기에 수강중인 강의를 조회
 		return LectureHistoryDAO.getInstance().getProgressInfoByStudentId(studentId);
 	}
 	
@@ -143,6 +144,26 @@ public class StudentService {
 			return null;
 		} else {
 			return student;
+		}
+	}
+
+	public void deleteLastFile(String lastPhotoUUID) {
+		if(lastPhotoUUID == null || lastPhotoUUID.isEmpty() || "default.jsp".equals(lastPhotoUUID)) {
+			return;
+		}
+		String uploadPath = "D:/goodeelmsFile";
+		File file = new File(uploadPath, lastPhotoUUID);
+		
+		try {
+			if(file.exists()) {
+				if (file.delete()) {
+					System.out.println("파일 삭제 성공, UUID: " + lastPhotoUUID);
+				} else {
+					System.out.println("파일 삭제 실패");
+				}
+			}
+		}	catch (Exception e) {
+			System.out.println("파일 삭제 도중 오류 발생: " + e);
 		}
 	}
 	

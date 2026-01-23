@@ -98,6 +98,7 @@ function checkForm(form) {
                             <option value="휴직" ${s.professorStatus == '휴직' ? 'selected' : ''}>휴직</option>
                             <option value="계약" ${s.professorStatus == '계약' ? 'selected' : ''}>계약</option>
                             <option value="위촉" ${s.professorStatus == '위촉' ? 'selected' : ''}>위촉</option>
+                            <option value="퇴직" ${s.professorStatus == '퇴직' ? 'selected' : ''}>퇴직</option>
                           </select>
                          
                           <button type="submit" class="btn btn-sm btn-outline-primary flex-shrink-0" style="width: 100px"

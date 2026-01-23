@@ -20,7 +20,8 @@
 <body>
 	<%@ include file="/header.jsp"%>
 	<%@ include file="/sideNavbar.jsp"%>
-
+	<script src="${pageContext.request.contextPath}/resources/js/modal.js"></script>
+	
 	<main class="content">
 		<div class="container-fluid">
 			<div class="page-shell">
@@ -32,8 +33,7 @@
 				</c:if>
 
 				<c:if test="${not empty msg}">
-					<div class="alert alert-success alert-dismissible fade show mb-4"
-						role="alert">
+					<div  id="resultAlert" class="alert alert-success alert-dismissible fade show" role="alert">
 						${msg}
 						<button type="button" class="btn-close" data-bs-dismiss="alert"
 							aria-label="Close"></button>
@@ -106,7 +106,7 @@
 											<div class="input-group">
 												<span class="input-group-text bg-white">₩</span> <input
 													type="number" name="payment" id="paymentInput"
-													class="form-control" placeholder="납부할 금액을 입력하세요" min="100000"
+													class="form-control" placeholder="납부할 금액을 입력하세요"
 													max="${4500000 - tuition.paymentAmount}" required
 													oninput="formatDisplay(this)">
 											</div>
@@ -193,7 +193,7 @@
 								<tbody>
 									<c:forEach var="scholarshipDTO" items="${scholarship}">
 										<tr class="text-center">
-											<td>${scholarshipDTO.scholarshipSemester}</td>
+											<td>${scholarshipDTO.formattedSemester}</td>
 											<td class="text-muted small">교내 장학금(성적우수)</td>
 											<td class="text-end pe-5 fw-bold text-success">+ <fmt:formatNumber
 													value="${scholarshipDTO.scholarshipAmount}" type="number" />원
@@ -220,7 +220,6 @@
 
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 	<script>
 		function formatDisplay(input) {
 			const display = document.getElementById('amountDisplay');
@@ -233,6 +232,12 @@
 			} else {
 				display.innerText = "";
 			}
+		}
+		
+		// 저장 결과 알림 4초 후 자동 숨김
+		const resultAlert = document.getElementById("resultAlert");
+		if (resultAlert) {
+		    setTimeout(() => resultAlert.classList.add("d-none"), 4000);
 		}
 	</script>
 

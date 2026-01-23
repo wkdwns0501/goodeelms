@@ -23,7 +23,7 @@
 					<div class="col-md-6 col-lg-4">
 						<div class="card shadow-sm border-0 mt-5">
 							<div class="card-body p-4">
-								<h5 class="card-title mb-4 text-center fw-bold">로그인</h5>
+								<h5 class="card-title mb-4 text-center fw-bold ">로그인</h5>
 
 								<c:if test="${not empty errorMessage}">
 									<div class="alert alert-danger alert-dismissible fade show"
@@ -51,7 +51,7 @@
 									</div>
 
 									<div class="d-grid gap-2 mt-4">
-										<button type="submit" class="btn btn-primary">로그인</button>
+										<button type="submit" class="btn btn-success fw-bold text-white">로그인</button>
 									</div>
 								</form>
 								

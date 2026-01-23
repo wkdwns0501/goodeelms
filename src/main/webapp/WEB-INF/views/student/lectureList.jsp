@@ -135,7 +135,7 @@
 			                  	</span>
 			                  </td>
 			                  
-												<td class="text-start">
+												<td class="text-center">
 												  <a class="fw-semibold text-decoration-none truncate d-block lecture-detail-link"
 													   href="#"
 													     data-name="<c:out value='${lec.lectureName}'/>"

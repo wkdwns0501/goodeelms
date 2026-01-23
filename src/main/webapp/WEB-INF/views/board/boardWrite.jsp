@@ -14,7 +14,7 @@
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.js"></script>
 
 <style>
-  .write-container { max-width: 900px; margin: 0 auto; }
+  .write-container { max-width: 1200px; margin: 0 auto; }
   /* 에디터 내부 글꼴 설정 */
   .note-editable { background-color: white; font-size: 1rem; }
   .card-header { font-weight: bold; }
@@ -81,8 +81,8 @@
         $('#summernote').summernote({
           placeholder: '공지내용을 상세히 작성해 주세요. (이미지 첨부 가능)',
           tabsize: 2,
-          height: 400, // 에디터 높이
-          lang: 'ko-KR', // 한국어 설정
+          height: 400,
+          lang: 'ko-KR',
           toolbar: [
             // [툴바 구성: 글체, 크기, 색상 등]
             ['style', ['style']],
