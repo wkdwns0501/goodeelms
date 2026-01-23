@@ -103,7 +103,7 @@ public class LectureHistoryDAO {
 	}
 	
 	public List<LectureDTO> getProbationByStudentId(int studentId){ // 0121 임욱(추가) / 평균점수 2.0 이하 학생 조회
-		String sql = "SELECT lh.student_id, l.lecture_year, l.lecture_semester, AVG(lh.lecture_score) AS '평균점수' "
+		String sql = "SELECT lh.student_id, l.lecture_year, l.lecture_semester, ROUND(AVG(lh.lecture_score), 1) AS '평균점수' "
 				+ "FROM lecture_history lh "
 				+ "JOIN lecture l ON lh.lecture_id = l.lecture_id "
 				+ "WHERE lh.student_id = ? "
@@ -119,7 +119,7 @@ public class LectureHistoryDAO {
 				while(rs.next()) {
 					LectureDTO dto = new LectureDTO();
 	                dto.setLectureYear(rs.getString("lecture_year"));
-	                dto.setLectureSemester(rs.getInt("lecture_year"));
+	                dto.setLectureSemester(rs.getInt("lecture_semester"));
 	                dto.setScore(rs.getDouble("평균점수"));
 	                
 	                list.add(dto);

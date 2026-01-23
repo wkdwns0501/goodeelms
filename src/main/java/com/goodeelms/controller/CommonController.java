@@ -50,6 +50,9 @@ public class CommonController extends HttpServlet {
 			case "/signup":
 				signup(request, response);
 				break;
+			case "/extendSession":
+				extendSession(request, response);
+				break;
 		}
 	}
 
@@ -88,10 +91,10 @@ public class CommonController extends HttpServlet {
 
 		if (obj instanceof StudentDTO studentDTO) {
 			session.setAttribute("user_role", "STUDENT");
-			session.setAttribute("user_name", studentDTO.getStudentName());
 			session.setAttribute("student_id", studentDTO.getStudentId());
-
+			session.setAttribute("user_name", studentDTO.getStudentName());
 			String identityNum = studentDTO.getStudentIdentityNumber();
+			
 			if (identityNum != null && identityNum.length() >= 7) { // 초기 로그인 여부 확인 (입력 비밀번호 == 주민번호 뒷자리)
 				String initialPassword = identityNum.substring(identityNum.length() - 7);
 
@@ -101,6 +104,7 @@ public class CommonController extends HttpServlet {
 					return;
 				}
 			}
+			
 		} else if (obj instanceof ProfessorDTO professorDTO) {
 			session.setAttribute("user_role", "PROFESSOR");
 			session.setAttribute("user_name", professorDTO.getProfessorName());
@@ -162,6 +166,17 @@ public class CommonController extends HttpServlet {
 			request.getRequestDispatcher("/WEB-INF/views/common/professorSignUp.jsp").forward(request, response);
 			return;
 		} 
+	}
+	
+	private void extendSession(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		
+		if (session != null) session.setMaxInactiveInterval(60*30); 
+		else response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		
+		response.setContentType("text/plain");
+		response.getWriter().write("success");
+		return;
 	}
 	
 }

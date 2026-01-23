@@ -117,8 +117,7 @@ public class StudentService {
 	    }
 	}
 	
-	
-	public Map<Integer, LectureDTO> getProgressInfoByStudentId(int studentId){ // 0120 임욱(추가) / 수강 중인 강의 정보 정회
+	public Map<Integer, LectureDTO> getProgressInfoByStudentId(int studentId){ // 0123 임욱(수정) / 해당 학기에 수강중인 강의를 조회
 		return LectureHistoryDAO.getInstance().getProgressInfoByStudentId(studentId);
 	}
 	
