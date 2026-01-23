@@ -27,11 +27,17 @@
 							<strong>${user_name}</strong>
 						</c:when>
 					</c:choose> 님 <span
-					class="badge ${user_role eq 'PROFESSOR' ? 'bg-light text-dark' : ('ADMIN' ? 'bg-danger' : 'bg-primary') } ms-1">${user_role}</span>
+					class="badge ${user_role eq 'STUDENT' ? 'bg-primary' : (user_role eq 'PROFESSOR' ? 'bg-light text-dark' : 'bg-danger') } ms-1">${user_role}</span>
 				</span>
 
+
+				<div id="timerContainer" class="btn btn-sm btn-light" data-is-login="true" data-context-path="${pageContext.request.contextPath}">
+					접속 유지시간: <span id="timer">30:00</span>
+				</div>	
+				
 				<%-- 학생 전용 버튼 --%>
 				<c:if test="${user_role eq 'STUDENT'}">
+					
 					<a class="btn btn-sm btn-outline-light"
 						href="<c:url value='/student/mypage'/>">마이페이지</a>
 				</c:if>
@@ -90,6 +96,7 @@
   });
 })();
 </script>
+<script src="<c:url value='/resources/js/updateSession.js' />"></script>
 
 <style>
 /* 헤더 브랜드 링크: 파란색/밑줄 제거 + 크기 업 */

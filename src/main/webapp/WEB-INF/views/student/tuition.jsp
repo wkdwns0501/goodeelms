@@ -20,7 +20,8 @@
 <body>
 	<%@ include file="/header.jsp"%>
 	<%@ include file="/sideNavbar.jsp"%>
-
+	<script src="${pageContext.request.contextPath}/resources/js/modal.js"></script>
+	
 	<main class="content">
 		<div class="container-fluid">
 			<div class="page-shell">
@@ -219,7 +220,6 @@
 
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 	<script>
 		function formatDisplay(input) {
 			const display = document.getElementById('amountDisplay');

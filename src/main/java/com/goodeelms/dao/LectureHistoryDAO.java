@@ -118,7 +118,6 @@ public class LectureHistoryDAO {
 			try (ResultSet rs = pstmt.executeQuery()) {
 				while(rs.next()) {
 					LectureDTO dto = new LectureDTO();
-					String formattedScore = String.format("%.1f", rs.getDouble("평균점수"));
 	                dto.setLectureYear(rs.getString("lecture_year"));
 	                dto.setLectureSemester(rs.getInt("lecture_semester"));
 	                dto.setScore(rs.getDouble("평균점수"));
