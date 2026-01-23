@@ -35,6 +35,7 @@ public class LectureEvaluationController extends HttpServlet {
 			LectureEvaluationService lec = new LectureEvaluationService();
 			if (!lec.isAccessPeriod()) {
 				AlertUtil.alertAndRedirect(response, "강의 평가 기간이 아닙니다.", contextPath + "/main.jsp");
+				return;
 			}
 			
 			// 타겟 학기 정보 한 번에 받아오기
@@ -44,7 +45,8 @@ public class LectureEvaluationController extends HttpServlet {
 		    }
 		    String targetYear = term[0];
 		    int targetSemester = Integer.parseInt(term[1]);
-		    
+		    System.out.println(term[0]);
+		    System.out.println(term[1]);
 		    
 			ArrayList<LectureDTO> lectureList = lec.getLectureList(studentId, targetYear, targetSemester);
 			
@@ -60,9 +62,12 @@ public class LectureEvaluationController extends HttpServlet {
 
 			if (targetLecture == null && !lectureList.isEmpty()) {
 			    // [추가] 모든 과목 평가 완료 시 처리
-				AlertUtil.alertAndRedirect(response, "강의 평가를 이미 완료했습니다.", contextPath + "/main.jsp"); 
+				AlertUtil.alertAndRedirect(response, "강의 평가를 완료했습니다.", contextPath + "/main.jsp"); 
+				return;
+				// target 기간에 해당하는 과목이 없을 때
 			} else if (lectureList.isEmpty()) {
 				AlertUtil.alertAndRedirect(response, "지난 학기 수강 과목이 없습니다.", contextPath + "/main.jsp");
+				return;
 			}
 
 			// targetLecture가 있을 때만 아래로 내려가서 JSP 실행

@@ -90,7 +90,7 @@ public class StudentController extends HttpServlet {
       String address = request.getParameter("student_address");
 
       HttpSession session = request.getSession();
-      StudentDTO updateStudent = (StudentDTO) request.getAttribute("studentDTO");
+      StudentDTO updateStudent = (StudentDTO) session.getAttribute("studentDTO");
 
 		if (newPw.equals(originPw)) { // 기존 비밀번호와 동일하면 다시 입력하도록
 			request.setAttribute("errorMessage", "기존 비밀번호와 동일합니다.");

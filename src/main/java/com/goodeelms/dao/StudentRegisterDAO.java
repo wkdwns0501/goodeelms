@@ -99,16 +99,15 @@ public class StudentRegisterDAO {
 		String sql = "INSERT INTO student (student_name, student_password, student_phone, student_gender, student_identity_number, student_no) "
 					+"VALUES (?, ?, ?, ?, ?, ?)";
 			
-			String identityNumber = studentDTO.getStudentIdentityNumber();
-			String password = identityNumber.substring(identityNumber.length() - 7);
 		try(Connection conn = DBUtil.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, studentDTO.getStudentName());
-			pstmt.setString(2, password);
+			pstmt.setString(2, studentDTO.getStudentPassword());
 			pstmt.setString(3, studentDTO.getStudentPhone());
 			pstmt.setString(4, studentDTO.getStudentGender());
 			pstmt.setString(5, studentDTO.getStudentIdentityNumber());
 			pstmt.setString(6, studentDTO.getStudentNo());
+			System.out.println(studentDTO.getStudentPassword());
 			return pstmt.executeUpdate();
 		} catch (Exception e) {
 			System.out.println("studentRegister() 예외 발생: " + e);
