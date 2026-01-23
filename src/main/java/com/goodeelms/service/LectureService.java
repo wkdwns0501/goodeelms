@@ -209,43 +209,9 @@ public class LectureService {
     	String beforeStatus = "예정";
     	if(!lectureDAO.selectLecutreStatusBeforeSchedule(year, semester, beforeStatus)) return true;
     	String afterStatus = "개강";
-    	Connection conn = DBUtil.getBatchConnection();
-    	try {
-    		conn.setAutoCommit(false);
-    		
-    		// 업데이트 대상 id list 조회
-    		Set<Integer> idSet = lectureDAO.getLectureIdsBeforeUpdate(conn, year, semester, beforeStatus);
-    		// 업데이트 예정 -> 개강
-    		int openResult = lectureDAO.updateLectureStatusToNext(conn, year, semester, beforeStatus, afterStatus);
-    		if(openResult < 1) throw new SQLException("Lecture Status Update Failed");
-    		// 장바구니 상태 변경 -> 개강 강의에 대한 상태 done
-    		int doneResult = LectureCartDAO.getInstance().UpdatePreEnrollmentStatus(conn, idSet, "done");
-    		if(doneResult < 1) throw new SQLException("PreEnrollment Status Update Failed");
-    		conn.commit();
-    		return true;
-    	}
-    	catch(SQLException e) {
-			if(conn != null) {
-				try {
-					conn.rollback();
-					System.err.println("트랜잭션 롤백됨: " + e.getMessage());
-				}
-				catch (SQLException ex) {
-					ex.printStackTrace();
-				}
-				e.printStackTrace();
-			}
-		}
-		finally {
-			if(conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-    	return false;
+		// 업데이트 예정 -> 개강
+		int result = lectureDAO.updateLectureStatusToNext(year, semester, beforeStatus, afterStatus);
+		return result > 0 ? true : false;
     }
     
     // 학기 말 종강 전환
@@ -254,9 +220,7 @@ public class LectureService {
     	String beforeStatus = "개강";
     	if(!lectureDAO.selectLecutreStatusBeforeSchedule(year, semester, beforeStatus)) return true;
     	String afterStatus = "종강";
-    	Connection conn = DBUtil.getConnection();
-    	int result = lectureDAO.updateLectureStatusToNext(conn, year, semester, beforeStatus, afterStatus);
-    	if(result < 1) return false;
-    	return true;
+    	int result = lectureDAO.updateLectureStatusToNext(year, semester, beforeStatus, afterStatus);
+    	return result > 0 ? true : false;
     }
 }

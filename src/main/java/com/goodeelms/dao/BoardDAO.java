@@ -1,15 +1,12 @@
 package com.goodeelms.dao;
 
-import java.awt.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.goodeelms.dto.BoardDTO;
 import com.goodeelms.util.DBUtil;
-import com.mysql.cj.protocol.Resultset;
 
 public class BoardDAO {
 	private static final BoardDAO instance = new BoardDAO();

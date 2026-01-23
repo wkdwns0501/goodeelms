@@ -1,13 +1,8 @@
 package com.goodeelms.listener;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +15,8 @@ import com.goodeelms.scheduler.EndCartJobScheduler;
 import com.goodeelms.scheduler.EndEnrollmentJobScheduler;
 import com.goodeelms.scheduler.EndSemesterScheduler;
 import com.goodeelms.scheduler.QuartzScheduleManager;
+import com.goodeelms.scheduler.StartLectureJobScheduler;
 import com.goodeelms.service.AcademicCalendarService;
-import com.goodeelms.util.DBUtil;
 
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -61,43 +56,6 @@ public class LMSScheduleListener implements ServletContextListener {
     	// year 년도 학사일정 조회해서 이름이랑 시간 매핑
     	Map<String, ZonedDateTime> eventTimeMap = list.stream().collect(Collectors.toMap(AcademicCalendarDTO::getAcademicEventName, AcademicCalendarDTO::getEventZoneDateTime));
     	
-//    	firstGradeInsertStart = eventTimeMap.get("ac_first_grade_insert_start");
-//    	firstGradeInsertEnd = eventTimeMap.get("ac_first_grade_insert_end");
-//    	
-//    	firstLectureEvaluationStart = eventTimeMap.get("ac_first_lecture_evaluation_start");
-//    	firstLectureEvaluationEnd = eventTimeMap.get("ac_first_lecture_evaluation_end");
-//    	
-//    	firstScholarshipSelectStart = eventTimeMap.get("ac_first_scholarship_select_start");
-//    	firstScholarshipSelectEnd = eventTimeMap.get("ac_first_scholarship_select_end");
-//    	
-//    	studentFirstLectureCartStart = eventTimeMap.get("student_first_lecture_cart_start");
-//    	studentFirstLectureCartEnd = eventTimeMap.get("student_first_lecture_cart_end");
-//    	
-//    	studentFirstEnrollmentStart = eventTimeMap.get("student_first_enrollment_start");
-//    	studentFirstEnrollmentEnd = eventTimeMap.get("student_first_enrollment_end");
-//    	
-//    	openFirstSemester = eventTimeMap.get("ac_open_first_semester");
-//    	closeFirstSemester = eventTimeMap.get("ac_close_first_semester");
-//    	
-//    	firstGradeInsertStart = eventTimeMap.get("ac_first_grade_insert_start");
-//    	firstGradeInsertEnd = eventTimeMap.get("ac_first_grade_insert_end");
-//    	
-//    	firstLectureEvaluationStart = eventTimeMap.get("ac_first_lecture_evaluation_start");
-//    	firstLectureEvaluationEnd = eventTimeMap.get("ac_first_lecture_evaluation_end");
-//    	
-//    	firstScholarshipSelectStart = eventTimeMap.get("ac_first_scholarship_select_start");
-//    	firstScholarshipSelectEnd = eventTimeMap.get("ac_first_scholarship_select_end");
-//    	
-//    	studentFirstLectureCartStart = eventTimeMap.get("student_first_lecture_cart_start");
-//    	studentFirstLectureCartEnd = eventTimeMap.get("student_first_lecture_cart_end");
-//    	
-//    	studentFirstEnrollmentStart = eventTimeMap.get("student_first_enrollment_start");
-//    	studentFirstEnrollmentEnd = eventTimeMap.get("student_first_enrollment_end");
-//    	
-//    	openFirstSemester = eventTimeMap.get("ac_open_first_semester");
-//    	closeSecondSemester = eventTimeMap.get("ac_close_second_semester");
-    	
-    	
     	// 서버 시작 시 실행
         try {
             System.out.println("--- 스케줄러 초기화 시작 ---");
@@ -105,15 +63,27 @@ public class LMSScheduleListener implements ServletContextListener {
             
             // 객체가 아닌, 클래스를 전달해야함
             // 1학기 장바구니 종료 시 작업
-            QuartzScheduleManager.addJobWithTimeSemester(EndCartJobScheduler.class, "CartCommitEvent", year, 1, eventTimeMap.get("student_first_lecture_cart_end"));
+            QuartzScheduleManager.addJob(EndCartJobScheduler.class, "FirstSemesterCartCommitEvent", eventTimeMap.get("student_first_lecture_cart_end"));
             
-            // 수강신청 기간 종료 시 작업
-            QuartzScheduleManager.addJobWithTimeSemester(EndEnrollmentJobScheduler.class, "EnrollmentCommitEvent", year, 1, eventTimeMap.get("student_first_enrollment_end"));  
+            // 1학기 수강신청 기간 종료 시 작업
+            QuartzScheduleManager.addJob(EndEnrollmentJobScheduler.class, "FirstEnrollmentCommitEvent", eventTimeMap.get("student_first_enrollment_end"));  
             
-            // 1학기 종강
+            // 1학기 개강 작업
+            QuartzScheduleManager.addJobWithTimeSemester(StartLectureJobScheduler.class, "FirstSemesterStart", year, 1, eventTimeMap.get("ac_open_first_semester"));
+            
+            // 1학기 종강 작업
             QuartzScheduleManager.addJobWithTimeSemester(EndSemesterScheduler.class, "FirstSemesterEnd", year, 1, eventTimeMap.get("ac_close_first_semester"));
             
-            // 2학기 종강
+            // 2학기 장바구니 종료 시 작업
+            QuartzScheduleManager.addJob(EndCartJobScheduler.class, "SecondSemesterCartCommitEvent", eventTimeMap.get("student_second_lecture_cart_end"));
+            
+            // 2학기 수강신청 기간 종료 시 작업
+            QuartzScheduleManager.addJob(EndEnrollmentJobScheduler.class, "SecondEnrollmentCommitEvent", eventTimeMap.get("student_second_enrollment_end"));  
+            
+            // 2학기 개강 작업
+            QuartzScheduleManager.addJobWithTimeSemester(StartLectureJobScheduler.class, "SecondSemesterStart", year, 2, eventTimeMap.get("ac_open_second_semester"));
+            
+            // 2학기 종강 작업
             QuartzScheduleManager.addJobWithTimeSemester(EndSemesterScheduler.class, "SecondSemesterEnd", year, 2, eventTimeMap.get("ac_close_second_semester"));
             
             QuartzScheduleManager.printSchedulerStatus();

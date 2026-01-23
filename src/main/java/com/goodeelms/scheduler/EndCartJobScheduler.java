@@ -5,7 +5,6 @@ import java.time.ZoneId;
 
 import org.quartz.DateBuilder;
 import org.quartz.Job;
-import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.SchedulerException;
@@ -13,7 +12,6 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
 import com.goodeelms.service.LectureCartService;
-import com.goodeelms.service.LectureService;
 
 public class EndCartJobScheduler implements Job {
 
@@ -21,11 +19,6 @@ public class EndCartJobScheduler implements Job {
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		System.out.println("장바구니 마감 작업 실행 시간: " + LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul")));
 		
-		// 데이터 전달받기
-        JobDataMap dataMap = context.getJobDetail().getJobDataMap();
-        int year = dataMap.getInt("year");
-        int semester = dataMap.getInt("semester");
-        
         try {
             // 로직 수행 (예: DB 상태 업데이트)
             boolean isSuccess = new LectureCartService().closeCartStatus();

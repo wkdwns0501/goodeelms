@@ -1,22 +1,20 @@
 package com.goodeelms.controller;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+
+import com.goodeelms.dto.MajorDTO;
+import com.goodeelms.dto.StudentDTO;
+import com.goodeelms.service.StudentRegisterService;
+import com.goodeelms.util.EncryptUtil;
+
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-
-import com.goodeelms.dto.LectureDTO;
-import com.goodeelms.dto.MajorDTO;
-import com.goodeelms.dto.StudentDTO;
-import com.goodeelms.service.StudentRegisterService;
-import com.goodeelms.util.EncryptUtil;
 
 @WebServlet("/admin/addStudent/*")
 public class AddStudentController extends HttpServlet {

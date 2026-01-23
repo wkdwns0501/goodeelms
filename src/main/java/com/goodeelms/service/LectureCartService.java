@@ -2,10 +2,6 @@ package com.goodeelms.service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -122,5 +118,10 @@ public class LectureCartService {
 			}
 		}
 		return false;
+	}
+	public boolean closeEnrollmentToLectureCartDone() {
+		// done 바꿀 거 있는지 확인
+		if(!dao.checkClosedBeforeClosed()) return true;
+		return dao.updateLectureCartToDone();
 	}
 }

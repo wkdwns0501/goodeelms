@@ -1,3 +1,4 @@
+
 package com.goodeelms.scheduler;
 
 import java.time.LocalDateTime;
@@ -5,23 +6,29 @@ import java.time.ZoneId;
 
 import org.quartz.DateBuilder;
 import org.quartz.Job;
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
-import com.goodeelms.service.LectureCartService;
+import com.goodeelms.service.LectureService;
 
-public class EndEnrollmentJobScheduler implements Job {
+public class StartLectureJobScheduler implements Job {
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		System.out.println("수강신청 마감 작업 실행 시간: " + LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul")));
+		System.out.println("개강 전환 작업 실행 시간: " + LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul")));
 		
+		// 데이터 전달받기
+        JobDataMap dataMap = context.getJobDetail().getJobDataMap();
+        int year = dataMap.getInt("year");
+        int semester = dataMap.getInt("semester");
+
         try {
             // 로직 수행 (예: DB 상태 업데이트)
-            boolean isSuccess = new LectureCartService().closeEnrollmentToLectureCartDone();
+            boolean isSuccess = LectureService.getInstance().updateLectureStatusToOpen(year, semester);
             
             if (!isSuccess) {
                 throw new Exception("비즈니스 로직 실패");

@@ -2,13 +2,10 @@ package com.goodeelms.service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Set;
 
 import com.goodeelms.dao.LectureCartDAO;
 import com.goodeelms.dao.LectureDAO;
 import com.goodeelms.dao.LectureHistoryDAO;
-import com.goodeelms.dto.LectureHistoryDTO;
 import com.goodeelms.util.DBUtil;
 
 public class LectureHistoryService {

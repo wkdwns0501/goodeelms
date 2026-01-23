@@ -1,14 +1,5 @@
 package com.goodeelms.controller;
 
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import jakarta.websocket.Session;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,12 +11,19 @@ import java.util.stream.Collectors;
 
 import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.dto.PreEnrollmentDTO;
-import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.dto.StudentMajorDTO;
 import com.goodeelms.service.LectureCartService;
 import com.goodeelms.service.LectureService;
 import com.goodeelms.service.LoadLectureService;
 import com.goodeelms.service.StudentService;
+
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class AddLectureCartServlet

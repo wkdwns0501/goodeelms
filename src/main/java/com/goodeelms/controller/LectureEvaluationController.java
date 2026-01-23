@@ -1,9 +1,7 @@
 package com.goodeelms.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.dto.LectureEvaluationDTO;
