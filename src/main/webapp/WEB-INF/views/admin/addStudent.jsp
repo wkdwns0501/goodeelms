@@ -13,33 +13,16 @@
 <!-- layout CSS -->
 <link rel="stylesheet" href="<c:url value='/resources/css/layout.css'/>" />
 
-<script>
-function validateStudentForm() {
-  const name = document.querySelector('[name="studentName"]').value;
-  const studentNo = document.querySelector('[name="studentNo"]').value;
 
-  // 이름에 숫자 포함 여부
-  if (/\d/.test(name)) {
-    alert('이름에는 숫자를 입력할 수 없습니다.');
-    return false;
-  }
-
-  // 학번 뒷자리에 문자 포함 여부
-  if (!/^\d+$/.test(studentNo)) {
-    alert('학번은 숫자만 입력 가능합니다.');
-    return false;
-  }
-
-  return true;
+<style>
+.invalid-feedback {
+    font-size: 0.75rem !important; /* 글씨 크기를 작게 (기존보다 약 20% 축소) */
+    color: #dc3545 !important;    /* 부트스트랩 기본 빨간색 유지 또는 더 진하게 */
+    font-weight: 500;             /* 너무 얇지 않게 적당한 굵기 */
+    margin-top: 0.2rem;           /* 입력창과의 간격 미세 조정 */
+    margin-left: 0.1rem;          /* 왼쪽 정렬 맞춤 */
 }
-
-function autoHyphen(target) {
-	  target.value = target.value
-	    .replace(/[^0-9]/g, '') // 숫자가 아닌 문자 제거
-	    .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3") // 그룹화
-	    .replace(/(\-{1,2})$/g, ""); // 마지막에 남는 하이픈 제거
-	}
-</script>
+</style>
 </head>
 <body>
 	<%@ include file="/header.jsp" %>
@@ -56,24 +39,26 @@ function autoHyphen(target) {
 		          </div>
 		          <div class="card-body">
 		            <form action="<c:url value='/admin/addStudent/register'/>" method="post" id="studentForm" 
-		            onsubmit="return validateStudentForm()">
+		            onsubmit="return validateStudentForm()" novalidate>
 
 					  <!-- 1열: 이름 / 성별 -->
 					  <div class="row mb-2">
 					    <div class="col-md-6">
 					      <label class="form-label">이름</label>
 					      <input type="text" name="studentName"
-					             class="form-control form-control-sm" required>
+					             class="form-control form-control-sm" >
+					      <div class="invalid-feedback">이름을 입력해주세요. </div>
 					    </div>
 					
 					    <div class="col-md-6">
 					      <label class="form-label">성별</label>
 					      <select name="studentGender"
-					              class="form-select form-select-sm" required>
+					              class="form-select form-select-sm" >
 					        <option value="">선택</option>
 					        <option value="남">남</option>
 					        <option value="여">여</option>
 					      </select>
+					      <div class="invalid-feedback">성별을 선택해주세요.</div>
 					    </div>
 					  </div>
 					  
@@ -81,12 +66,13 @@ function autoHyphen(target) {
 					  <div class="row mb-2">
 					    <div class="col-md-12">
 					      <label class="form-label">학과</label>
-							<select name="majorId" class="form-select form-select-sm" required>
+							<select name="majorId" class="form-select form-select-sm" >
 						      <option value="" selected disabled>-- 학과 선택 --</option>
 							      <c:forEach var="m" items="${majorList}">
 							        <option value="${m.majorId}">${m.majorName}</option>
 							      </c:forEach>
 						    </select>
+						    <div class="invalid-feedback">학과를 선택해주세요.</div>
 					    </div>
 					  </div>
 					  
@@ -96,13 +82,15 @@ function autoHyphen(target) {
 					      <label class="form-label">주민등록번호 앞자리</label>
 					      <input type="text" name="identityFront"
 					             class="form-control form-control-sm"
-					             maxlength="6" pattern="[0-9]{6}" required>
+					             maxlength="6" pattern="[0-9]{6}" >
+					      <div class="invalid-feedback">주민번호 앞 6자리를 입력해주세요.</div>
 					    </div>
 					    <div class="col-md-6">
 					      <label class="form-label">주민등록번호 뒷자리</label>
 					      <input type="text" name="identityBack" 
 					             class="form-control form-control-sm"
-					             maxlength="7" pattern="[0-9]{7}" required>
+					             maxlength="7" pattern="[0-9]{7}" >
+					      <div class="invalid-feedback">해당란을 입력해주세요.</div>
 					    </div>
 					  </div>
 					
@@ -112,7 +100,8 @@ function autoHyphen(target) {
 					      <label class="form-label">학번</label>
 					      <input type="text" name="studentNo"
 					             class="form-control form-control-sm"
-					             required>
+					             >
+					      <div class="invalid-feedback">학번을 입력해주세요.</div>
 					    </div>
 					    <div class="col-md-6">
 						  <label class="form-label">핸드폰 번호</label>
@@ -123,7 +112,8 @@ function autoHyphen(target) {
 						         pattern="010-[0-9]{3,4}-[0-9]{4}" 
 						         title="010-0000-0000 형식으로 입력해주세요."
 						         oninput="autoHyphen(this)"
-						         required>
+						         >
+						  <div class="invalid-feedback">연락처를 입력해주세요.</div>
 						</div>
 					  </div>
 					
@@ -223,6 +213,7 @@ function autoHyphen(target) {
 		</main>
 	<%@ include file="/footer.jsp" %>
 	
+	<script src="<c:url value='/resources/js/studentRegister.js'/>"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 	<script type="text/javascript" src="/resources/js/loadLectures.js"></script>
 </body>

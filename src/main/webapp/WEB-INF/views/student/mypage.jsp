@@ -57,8 +57,25 @@
 			
 					<div class="card shadow-sm">
 					    <div class="card-body">
-					
+						 <div class="row align-items-start mb-4">
+						    <div class="col-md-3 text-center">
+				                <c:choose>
+				                    <%-- UUID가 기본값이면 resources 폴더의 기본 이미지 출력 --%>
+				                    <c:when test="${fn:trim(student.photoUUID) == 'default.jsp'}">
+				                        <img src="<c:url value='/resources/images/defaultUserProfile.jpg'/>" 
+				                             class="img-thumbnail shadow-sm" 
+				                             style="width: 200px; height: 240px; object-fit: cover;">
+				                    </c:when>
+				                    <%-- UUID가 실제 파일명이면 업로드 폴더에서 출력 --%>
+				                    <c:otherwise>
+				                        <img src="<c:url value='/student/mypage/display?fileName='/>${student.photoUUID}" 
+				                             class="img-thumbnail shadow-sm" 
+				                             style="width: 200px; height: 240px; object-fit: cover;">
+				                    </c:otherwise>
+				                </c:choose>
+				            </div>
 					        <!-- 학생 기본 정보 -->
+					       <div class="col-md-9">
 					        <table class="table table-bordered align-middle mb-4">
 					            <tbody>
 					                <tr>
@@ -92,7 +109,8 @@
 					                </tr>
 					            </tbody>
 					        </table>
-					
+						  </div>
+						</div>
 					        <!-- 수정 버튼 -->
 					        <div class="d-flex justify-content-end gap-2 mt-3">
 				            <button class="btn btn-outline-success"
@@ -109,15 +127,42 @@
 					        </div>
 					
 					        <!-- 수정 폼 -->
-					        <div class="collapse mt-4" id="editForm">
-					            <div class="card card-body border">
-					            
+					        <div class="collapse mt-4" id="editForm">		        	
+					           <div class="card card-body border">			            
 				            		<h5 class="fw-bold mt-2">개인정보 수정</h5>
 												<hr class="my-3">
 					
 					                <form method="post" id="profileForm"
-					                      action="<c:url value='/student/mypage/update'/>" novalidate>
-					
+					                      action="<c:url value='/student/mypage/update'/>" 
+					                      enctype="multipart/form-data" novalidate>
+					                      <!-- 현재 되어있는 사진 정보 hidden -->
+								        	<input type="hidden" name="nowPhotoFile" value="${student.photoFile}">
+			    							<input type="hidden" name="nowPhotoUUID" value="${student.photoUUID}">
+										<div class="row g-3">
+							                <div class="col-md-3 text-center border-end">
+							                    <div class="mb-3">
+							                        <label class="form-label d-block fw-bold">프로필 사진</label>
+							                        <%-- 미리보기용 이미지 id="previewImg"** --%>
+							                        <c:choose>
+							                            <c:when test="${fn:trim(student.photoUUID) == 'default.jsp'}">
+							                                <img id="previewImg" src="<c:url value='/resources/images/defaultUserProfile.jpg'/>" 
+							                                     class="img-thumbnail" style="width: 160px; height: 200px; object-fit: cover;">
+							                            </c:when>
+							                            <c:otherwise>
+							                                <img id="previewImg" src="<c:url value='/student/mypage/display?fileName='/>${student.photoUUID}" 
+							                                     class="img-thumbnail" style="width: 160px; height: 200px; object-fit: cover;">
+							                            </c:otherwise>
+							                        </c:choose>
+							                    </div>
+							                    <%-- 파일 선택 input (name="profileFile" 등 백엔드와 맞출 이름) --%>
+												<div class="input-group">
+											        <input type="file" name="uploadFile" id="profileFileInput" 
+											               class="form-control form-control-sm" accept="image/*">
+											    </div> 
+							                    <div class="form-text mt-2">새 사진을 선택하면 <br> 미리보기가 바뀝니다.</div>
+							                </div>
+								
+													  <div class="col-md-9">
 														<div class="row mb-3">
 														  <!-- 전화번호 -->
 														  <div class="col-md-6">
@@ -222,7 +267,8 @@
 															         placeholder="현재 비밀번호를 입력하세요">
 															  <div id="confirmPwError" class="invalid-feedback d-none"></div>
 															</div>
-															
+														  </div>
+														 </div>
 					                    <div class="text-end">
 				                        <button type="submit" class="btn btn-success">
 				                            저장
@@ -283,10 +329,36 @@
 	</main>
   
 	<%@ include file="/footer.jsp" %>
-	
+		<script>
+	// 화면 미리 보기 함수
+	const fileInput = document.getElementById('profileFileInput');
+	const previewImg = document.getElementById('previewImg');
+
+	if(fileInput) {
+	    fileInput.addEventListener('change', function(e) {
+	        const file = e.target.files[0];
+	        
+	        if (file) {
+	            // 1. 이미지 파일인지 간단히 체크
+	            if (!file.type.startsWith('image/')) {
+	                alert('이미지 파일만 선택 가능합니다.');
+	                this.value = '';
+	                return;
+	            }
+
+	            // 2. 파일을 읽어서 미리보기 이미지 소스 변경
+	            const reader = new FileReader();
+	            reader.onload = function(e) {
+	                previewImg.src = e.target.result;
+	            };
+	            reader.readAsDataURL(file);
+	        }
+	    });
+	}
+	</script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="<c:url value='/resources/js/updateStudentInfo.js'/>"></script>
-  <script>
+    <script>
 	  // 저장 결과 알림 4초 후 자동 숨김
 	  const resultAlert = document.getElementById("resultAlert");
 	  if (resultAlert) {

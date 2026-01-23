@@ -214,6 +214,7 @@ public class StudentDAO {
         String sql =
             "SELECT student_id, student_no, student_name, student_phone, " +
             "       student_gender, student_address, student_status, student_email, student_bank, " +
+            " 		student_photofile, student_photoUUID " +	
             "FROM student WHERE student_id = ?";
         
         try (PreparedStatement pstmt = conn.prepareStatement(sql)){
@@ -230,6 +231,8 @@ public class StudentDAO {
 				student.setStudentStatus(rs.getString("student_status"));
 				student.setStudentEmail(rs.getString("student_email"));
 				student.setStudentBank(rs.getString("student_bank"));
+				student.setPhotoFile(rs.getString("student_photofile"));
+				student.setPhotoUUID(rs.getString("student_photoUUID"));
 				return student;
 			}
 		}
@@ -237,10 +240,10 @@ public class StudentDAO {
 	
 	// 학생 일반 정보 수정
 	public void updateProfile(Connection conn, int studentId, String phone, 
-							  String email, String address, String studentBank) throws SQLException {
+							  String email, String address, String studentBank, String photoFile, String photoUUID) throws SQLException {
 		String sql = "UPDATE student " +
 			         "SET student_phone = ?, student_email = ?, " +
-			         "    student_address = ?, student_bank = ? " +
+			         "    student_address = ?, student_bank = ?, student_photofile = ?, student_photoUUID = ? " +
 			         "WHERE student_id = ?";
 		
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -248,7 +251,9 @@ public class StudentDAO {
 	        pstmt.setString(2, email);
 	        pstmt.setString(3, address);
 	        pstmt.setString(4, studentBank);
-	        pstmt.setInt(5, studentId);
+	        pstmt.setString(5, photoFile);
+	        pstmt.setString(6, photoUUID);
+	        pstmt.setInt(7, studentId);
 	        pstmt.executeUpdate();
 	    }
 	}

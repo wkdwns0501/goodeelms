@@ -16,18 +16,18 @@
   const emailIdEl = document.getElementById("emailId");
   const emailDomainEl = document.getElementById("emailDomain");
   const emailHiddenEl = document.getElementById("studentEmailHidden");
-	const accountEl = document.getElementById("accountNumber");
-	const addressEl = document.getElementById("studentAddress");
-	const confirmPwEl = document.getElementById("confirmPassword");
+  const accountEl = document.getElementById("accountNumber");
+  const addressEl = document.getElementById("studentAddress");
+  const confirmPwEl = document.getElementById("confirmPassword");
 
 	const accountRegex = /^\d{3}-\d{7}$/;
 
   // 에러 요소들
   const phoneErr = document.getElementById("phoneError");
   const emailErr = document.getElementById("emailError");
-	const addressErr = document.getElementById("addressError");
-	const accountErr = document.getElementById("accountError");
-	const confirmPwErr = document.getElementById("confirmPwError");
+  const addressErr = document.getElementById("addressError");
+  const accountErr = document.getElementById("accountError");
+  const confirmPwErr = document.getElementById("confirmPwError");
 
   // 에러 표시/숨김
   function showInvalid(el, errEl) {
@@ -212,4 +212,5 @@
 	});
 
 })();
+
 

@@ -1,17 +1,27 @@
 package com.goodeelms.controller;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.UUID;
 
 import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.service.StudentService;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 
 @WebServlet("/student/mypage/*")
+@MultipartConfig(
+		fileSizeThreshold = 1024 * 1024 * 1, 
+		maxFileSize = 1024 * 1024 * 10, 
+		maxRequestSize = 1024 * 1024 * 50
+)
 public class UpdateStudentInfoController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private StudentService studentService = new StudentService();
@@ -21,6 +31,13 @@ public class UpdateStudentInfoController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String pathInfo = request.getPathInfo();
         // "" 나 "/" 만 허용
+        
+        // 사진 조회 요청
+        if("/display".equals(pathInfo)) {
+        	handleDisplayFile(request, response);
+        	return;
+        }
+        
         if (pathInfo == null || "/".equals(pathInfo)) { // 마이페이지 조회
             handleMypageView(request, response);
             return;
@@ -29,20 +46,33 @@ public class UpdateStudentInfoController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/student/mypage");
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String pathInfo = request.getPathInfo();
-        if ("/update".equals(pathInfo)) { // 일반 정보 수정
-            handleUpdateProfile(request, response);
-            return;
-        }
-        if ("/password".equals(pathInfo)) { // 비밀번호 수정
-            handleUpdatePassword(request, response);
-            return;
-        }
-        // 그 외는 마이페이지로 리다이렉트
-        response.sendRedirect(request.getContextPath() + "/student/mypage");
-    }
+    private void handleDisplayFile(HttpServletRequest request, HttpServletResponse response) {
+		String fileName = request.getParameter("fileName");
+		String uploadPath = "D:/goodeelmsfile";
+		
+		File file = new File(uploadPath, fileName);
+		
+		if (fileName == null || fileName.isEmpty() || !file.exists()) {
+	        // 기본 이미지 쏴주기
+	        String defaultPath = request.getServletContext().getRealPath("/resources/images/defaultUserProfile.jpg");
+	        file = new File(defaultPath);
+	    }
+		
+		// 파일 형식 라벨링 to 브라우저
+		String mimeType = getServletContext().getMimeType(file.getName());
+	    if (mimeType == null) {
+	        mimeType = "application/octet-stream";
+	    }
+	    response.setContentType(mimeType);
+
+	    // 파일을 읽어서 출력 스트림으로 복사
+	    try {
+			Files.copy(file.toPath(), response.getOutputStream());
+			response.getOutputStream().flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
     
     // 마이페이지 학생 정보 조회
     private void handleMypageView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -111,6 +141,23 @@ public class UpdateStudentInfoController extends HttpServlet {
         }
     }
     
+	@Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String pathInfo = request.getPathInfo();
+        if ("/update".equals(pathInfo)) { // 일반 정보 수정
+            handleUpdateProfile(request, response);
+            return;
+        }
+        if ("/password".equals(pathInfo)) { // 비밀번호 수정
+            handleUpdatePassword(request, response);
+            return;
+        }
+        // 그 외는 마이페이지로 리다이렉트
+        response.sendRedirect(request.getContextPath() + "/student/mypage");
+    }
+    
+
+    
     // 마이페이지 학생 정보 수정
     private void handleUpdateProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Integer loginId = (Integer) request.getSession().getAttribute("student_id");
@@ -118,7 +165,37 @@ public class UpdateStudentInfoController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/common/login");
             return;
         }
-
+        // 사진 저장
+        Part filePart = request.getPart("uploadFile");
+        String photoFile = ""; // 원본 파일명
+        String photoUUID = ""; // 저장될 UUID 파일명
+        boolean newFileUploaded = false;
+        String lastPhotoUUID = ""; // 기존 사용하던 사진의 UUID
+        
+        if(filePart != null && filePart.getSize() > 0) {
+        	//원본 파일명 추출
+        	photoFile = filePart.getSubmittedFileName();
+        	
+        	//UUID 생성 및 저장용 파일명 만들기
+        	String ext = photoFile.substring(photoFile.lastIndexOf("."));
+        	photoUUID = UUID.randomUUID().toString() + ext;
+        	
+        	// 저장 경로 설정 (폴더 없다면 생성까지)
+        	String uploadPath = "D:/goodeelmsfile";
+        	File uploadDir = new File(uploadPath);
+        	if (!uploadDir.exists()) uploadDir.mkdirs();
+        	
+        	// 실제 파일 UUID 이름으로 저장
+        	filePart.write(uploadPath + File.separator + photoUUID);
+        	
+        	newFileUploaded = true; // 기존 파일 삭제를 위한 플래그
+        	// 기존 사진의 uuid (삭제 목적)
+        	lastPhotoUUID = request.getParameter("nowPhotoUUID");
+        } 	else { // 파일을 선택하지 않았을 경우
+        	photoFile = request.getParameter("nowPhotoFile");
+        	photoUUID = request.getParameter("nowPhotoUUID");
+        }
+        
         String phone = request.getParameter("studentPhone");
         if (phone != null) phone = phone.trim();
         String email = request.getParameter("studentEmail");
@@ -140,7 +217,10 @@ public class UpdateStudentInfoController extends HttpServlet {
         String studentBank = bankName + " " + accountNo;
 
         try {
-            studentService.updateStudentProfile(loginId, phone, email, address, studentBank, confirmPw);
+            studentService.updateStudentProfile(loginId, phone, email, address, studentBank, confirmPw, photoFile, photoUUID);        
+            if(newFileUploaded) {
+            	studentService.deleteLastFile(lastPhotoUUID);
+            }
             response.sendRedirect(request.getContextPath() + "/student/mypage?msg=profile_ok");
             return;
         } catch (IllegalArgumentException e) {
