@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>강의 관리</title>
+<title>강의 목록</title>
 
 <!-- Bootstrap 5 -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
@@ -135,7 +135,7 @@
 			                  	</span>
 			                  </td>
 			                  
-												<td class="text-start">
+												<td class="text-center">
 												  <a class="fw-semibold text-decoration-none truncate d-block lecture-detail-link"
 													   href="#"
 													     data-name="<c:out value='${lec.lectureName}'/>"

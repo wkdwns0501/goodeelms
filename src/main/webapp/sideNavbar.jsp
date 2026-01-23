@@ -4,11 +4,10 @@
 <aside class="sidebar py-2">
   <div class="px-3 pt-2 pb-1 small text-uppercase text-muted">메뉴</div>
   <nav class="nav flex-column">
-  			<a class="nav-link" href="<c:url value='/common/dashboard'/>"><span class="nav-label">대시보드</span></a>
-    	    <a class="nav-link" href="<c:url value='/common/board/list'/>"><span class="nav-label">공지사항</span></a> 
-    	    <hr class="my-2 mx-3" /> 
+		<a class="nav-link" href="<c:url value='/common/dashboard'/>"><span class="nav-label">대시보드</span></a>
+    <a class="nav-link" href="<c:url value='/common/board/list'/>"><span class="nav-label">공지사항</span></a> 
+    <hr class="my-2 mx-3" /> 
   	<c:choose>
-
 	  	<c:when test="${sessionScope.user_role == 'STUDENT'}">
 		    <a class="nav-link" href="<c:url value='/student/enrollment/cart'/>"><span class="nav-label">수강신청 장바구니</span></a>
 		    <a class="nav-link" href="<c:url value='/student/enrollment/competition'/>"><span class="nav-label">수강신청</span></a>
@@ -20,7 +19,7 @@
 		    <a class="nav-link" href="<c:url value='/student/evaluation/list'/>"><span class="nav-label">강의평가</span></a>
 		    <a class="nav-link" href="<c:url value='/student/tuition'/>"><span class="nav-label">등록금 납부 이력 </span></a>
 		    <a class="nav-link" href="<c:url value='/student/history/majorAndStatus'/>"><span class="nav-label">전공/학과변경/학적변동</span></a>
-    			<a class="nav-link" href="<c:url value='/student/history/rewardAndPunishment'/>"><span class="nav-label">학사경고/우등 이력 조회</span></a>
+   			<a class="nav-link" href="<c:url value='/student/history/rewardAndPunishment'/>"><span class="nav-label">학사경고/우등 이력 조회</span></a>
 	    </c:when>	
     	<c:when test="${sessionScope.user_role == 'ADMIN'}">
 	    	<a class="nav-link" href="<c:url value='/admin/studentStatus/page'/>"><span class="nav-label">학사관리</span></a>
@@ -29,10 +28,10 @@
 	    	<a class="nav-link" href="<c:url value='/admin/confirmScholarship/list'/>"><span class="nav-label">장학관리</span></a>
 	    </c:when>
 	  	<c:when test="${sessionScope.user_role == 'PROFESSOR'}">     
-			<a class="nav-link" href="<c:url value='/professor/lecture/add'/>"><span class="nav-label">강의 등록</span></a>
-			<a class="nav-link" href="<c:url value='/professor/lecture/list'/>"><span class="nav-label">강의 목록</span></a>		
-		</c:when>
-	</c:choose>
+				<a class="nav-link" href="<c:url value='/professor/lecture/list'/>"><span class="nav-label">강의관리</span></a>		
+				<a class="nav-link" href="<c:url value='/professor/grade/list'/>"><span class="nav-label">성적관리</span></a>
+			</c:when>
+		</c:choose>
   </nav>
   <div class="sidebar-handle" id="sidebarHandle" title="메뉴 열기/닫기"></div>
 </aside>

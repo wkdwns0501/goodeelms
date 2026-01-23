@@ -15,4 +15,10 @@ public class StudentGradeDTO {
 	private String lectureYear;
 	private int lectureSemester;
 	private Double lectureScore;
+	private String professorName;
+	
+	// 강의 코드 출력용
+	public String getLectureCodeDisplay() {
+	    return String.format("%07d", lectureCode);
+	}
 }
