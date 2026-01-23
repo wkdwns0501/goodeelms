@@ -1,7 +1,3 @@
-/**
- * 
- * 
- */
 const listArea = document.querySelector("#lectureListArea");
 const cartArea = document.querySelector("#lectureCartArea");
 const historyArea = document.querySelector("#lectureCompletedArea");
@@ -105,10 +101,10 @@ async function loadHistory(){
 	
 	console.log(res.status);
 	// 장바구니 html에서 요소 얻기	
-	//const creditArea = historyArea.querySelector("#creditInfo");
-	//totalCartCredit = creditArea.dataset.total;
-	//limitCartCredit = creditArea.dataset.limit;
-	
+	const creditArea = historyArea.querySelector("#creditInfo");
+	totalCartCredit = creditArea.dataset.total;
+	limitCartCredit = creditArea.dataset.limit;
+	loadCart();
 	loadLectures(currentCat, currentWord, currentPage);
 }
 
@@ -122,7 +118,9 @@ async function executeAddLecture(lecId, stuId, credit){
 		return;
 	}
 	
-	confirm("한번 신청하면 취소할 수 없습니다. 신청하시겠습니까?");
+	if(!confirm("한번 신청하면 취소할 수 없습니다. 신청하시겠습니까?")){
+		return;
+	}
 	
 	const url = new URL(window.location.origin + "/student/addlecture");
 	
@@ -190,12 +188,23 @@ listArea.addEventListener('click', async(e) =>{
 	
 });
 
+cartArea.addEventListener('click', async(e) => {
+	const btn = e.target.closest("button.re-apply");
+	
+	if(!btn) return;
+	e.preventDefault();
+	// 2. 비구조화 할당을 활용한 가독성 향상 (선택 사항)
+  const { lecId, lecStu, lecCredit } = btn.dataset;
+	
+	await executeAddLecture(lecId, lecStu, lecCredit);
+	
+})
+
 searchForm.addEventListener('submit', async (e) => {
 	e.preventDefault();
 	const word = document.querySelector("#lectureKeyword").value;
 	
 	await loadLectures(currentCat, word, 1);
 })
-
 loadCart();
 loadHistory();

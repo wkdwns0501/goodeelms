@@ -66,18 +66,17 @@
 			
 			  <div class="row g-3">
 			    <!-- 좌측: 강의 리스트 -->
-			    <div class="col-12 col-lg-8" id="lectureListArea">
+			    <div class="col-12 col-lg-8" id="lectureListArea" >
 			    </div>
 			    <!-- 우측: 장바구니, 수강신청 -->
 					<div class="col-12 col-lg-4">
-		        <div class="d-flex flex-column shadow-sm" style="height: calc(100vh - 40px); position: sticky; top: 20px;">
+		        <div class="d-flex flex-column" style="height: calc(100vh - 40px); position: sticky; top: 20px;">
 	            <!-- 우측: 장바구니 -->
-	            <div id="lectureCartArea" class="p-3 border-bottom" style="flex: 1; overflow-y: auto;">
-                <h5>장바구니</h5>
-              </div>
-							<!-- 우측: 수강신청 현황 -->
-	            <div id="lectureCompletedArea" class="p-3" style="flex: 1; overflow-y: auto;">
-              </div>
+	            <div id="lectureCartArea" class="p-0" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+					    </div>
+	            <!-- 우측: 수강신청 현황 -->
+							<div id="lectureCompletedArea" class="py-1" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+					    </div>
 		        </div>
 			    </div>
 			  </div>

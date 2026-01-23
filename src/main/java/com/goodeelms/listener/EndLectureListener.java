@@ -20,33 +20,22 @@ import jakarta.servlet.annotation.WebListener;
 import lombok.Getter;
 
 @WebListener
-public class CloseCartListener implements ServletContextListener {
+public class EndLectureListener implements ServletContextListener {
 
 	// 스케줄러 설정
 	private ScheduledExecutorService scheduler;
-	private ScheduledFuture<?> closeCartFuture; 
-	private ScheduledFuture<?> closeEnrollFuture; 
+	private ScheduledFuture<?> endFirstSemesterFuture; 
+	private ScheduledFuture<?> secondFirstSemesterFuture; 
 	
-	// 시간 설정
+	// 연도 호출
+	private static final int CURRENT_YEAR = LocalDateTime.now().getYear();
+	// 스케줄 시간 설정
 	@Getter
-	private static final ZoneId ZONE_ID = ZoneId.of("Asia/Seoul");
+	private static final LocalDateTime END_FIRST_SEMESTER = LocalDateTime.of(CURRENT_YEAR, 6, 30, 0, 0);
 	@Getter
-	private static final long DURATION_AND_GAP = 7;
-	@Getter
-	private static final LocalDateTime START_CART_TIME = LocalDateTime.of(2025, 12, 21, 0, 0);
-	@Getter
-	private static final LocalDateTime END_CART_TIME = START_CART_TIME.plusDays(DURATION_AND_GAP);
-	@Getter
-	private static final LocalDateTime START_COM_TIME = END_CART_TIME.plusDays(DURATION_AND_GAP);
-	@Getter
-	private static final LocalDateTime END_COM_TIME = START_COM_TIME.plusDays(DURATION_AND_GAP);
+	private static final LocalDateTime END_SECOND_SEMESTER = LocalDateTime.of(CURRENT_YEAR, 12, 31, 0, 0);
 	
-	// 개강으로 전환할 대상 조건
-	private static final int YEAR = START_COM_TIME.getYear();
-	private static final int MONTH = START_COM_TIME.getMonth().getValue();
-	private static final int SEMESTER = MONTH < 7 ? 1  : 2;
-	
-    public CloseCartListener() {
+    public EndLectureListener() {
     }
 
     public void contextInitialized(ServletContextEvent sce)  { 
@@ -59,27 +48,27 @@ public class CloseCartListener implements ServletContextListener {
     		return t;
     	});
     	
-    	// 장바구니 기간 종료 시 확정
-    	scheduleIfNeeded(END_CART_TIME,
-    			() -> new LectureCartService().closeCartStatus(),
-    			f -> closeCartFuture = f);
+    	// 6월 말 1학기 강의 종강
+    	scheduleIfNeeded(END_FIRST_SEMESTER,
+    			() -> LectureService.getInstance().updateLectureStatusToEnd(CURRENT_YEAR, 1),
+    			f -> endFirstSemesterFuture = f);
     	
-    	// 수강신청 기간 종료 시 강의 시작
-    	scheduleIfNeeded(END_COM_TIME,
-    			() -> LectureService.getInstance().updateLectureStatusToOpen(YEAR, SEMESTER),
-    			f -> closeEnrollFuture = f);
+    	// 12월 말 2학기 강의 종강
+    	scheduleIfNeeded(END_SECOND_SEMESTER,
+    			() -> LectureService.getInstance().updateLectureStatusToEnd(CURRENT_YEAR, 2),
+    			f -> secondFirstSemesterFuture = f);
     }
 
     public void contextDestroyed(ServletContextEvent sce)  {
-    	if (closeCartFuture != null) closeCartFuture.cancel(false);
-    	if (closeEnrollFuture != null) closeEnrollFuture.cancel(false);
+    	if (endFirstSemesterFuture != null) endFirstSemesterFuture.cancel(false);
+    	if (secondFirstSemesterFuture != null) secondFirstSemesterFuture.cancel(false);
         if (scheduler != null) scheduler.shutdownNow();
     }
     
     private void scheduleIfNeeded(LocalDateTime targetTime, Runnable task, Consumer<ScheduledFuture<?>> futureConsumer) {
     
     	Instant now = Instant.now();
-    	Instant target = targetTime.atZone(ZONE_ID).toInstant();
+    	Instant target = targetTime.atZone(CloseCartListener.getZONE_ID()).toInstant();
     	
     	long delayMs = ChronoUnit.MILLIS.between(now, target);
     	// 이미 지났으면 확정 로직 즉시 실행

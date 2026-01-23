@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.tags.shaded.org.apache.regexp.recompile;
+
 import com.goodeelms.dao.LectureDAO;
 import com.goodeelms.dto.LectureDTO;
 
@@ -195,5 +197,24 @@ public class LectureService {
     
     public Set<Integer> getLectureCodeWithLectureId(Set<Integer> lectureIds){
     	return lectureDAO.getLectureCodeWithLectureId(lectureIds);
+    }
+    
+    // 수강신청 기간 종료 시 강의 시작
+    public void updateLectureStatusToOpen(int year, int semester) {
+    	// 개강 될 시기의 강의이면서 예정 상태인 강의가 없으면 스킵
+    	String beforeStatus = "예정";
+    	if(!lectureDAO.selectLecutreStatusBeforeSchedule(year, semester, beforeStatus)) return;
+    	String afterStatus = "개강";
+    	lectureDAO.updateLectureStatusToNext(year, semester, beforeStatus, afterStatus);
+    }
+    
+    // 학기 말 종강 전환
+    public void updateLectureStatusToEnd(int year, int semester) {
+    	// 종강 대상 기간의 강의이면서 개강 상태인 강의가 없으면 스킵
+    	String beforeStatus = "개강";
+    	if(!lectureDAO.selectLecutreStatusBeforeSchedule(year, semester, beforeStatus)) return;
+    	String afterStatus = "종강";
+    	lectureDAO.updateLectureStatusToNext(year, semester, beforeStatus, afterStatus);
+    	
     }
 }

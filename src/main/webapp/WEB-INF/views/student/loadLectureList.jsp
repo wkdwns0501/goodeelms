@@ -1,6 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<style>
+/* 강의 코드 */
+ .badge-soft-lime{
+  background-color: #d1f7c4; /* 연한 연두 */
+  color: #1f4d2b;            /* 글자 진초록 */
+  border: 1px solid #b7efaa; /* 살짝 테두리 */
+}
+</style>
 <div class="card shadow-sm">
 	<div class="card-header d-flex align-items-center justify-content-between">
 	  <span class="fw-semibold">강의 리스트</span>
@@ -24,18 +32,18 @@
 	      <c:forEach var="lec" items="${lectureList}">
 	        <tr>
 	          <td>
-	            <span class="badge text-bg-secondary">${lec.lectureCode}</span>
+	            <span class="badge badge-soft-lime rounded-pill">${lec.lectureCode}</span>
 	          </td>
 	          <td>
 	            <div class="fw-semibold">${lec.lectureName}</div>
 	            <div class="text-muted small">
-	              ${lec.majorName} · ${lec.lectureRoom} · ${lec.lectureType}
+	              ${lec.majorName} · ${lec.lectureType}
 	            </div>
 	          </td>
 	          <td>${lec.professorName}</td>
 	          <td class="text-center">${lec.lectureCredit}</td>
 	          <td class="text-center">
-	            <span class="fw-semibold">${lec.lectureCapacity}</span>
+	            <span class="fw-semibold">${lec.lectureCapacity}명</span>
 	          </td>
 	          <td class="text-center">
             	<!-- 장바구니 담기: POST 권장 -->
@@ -76,7 +84,7 @@
             </li>
             <!-- 페이지 번호 -->
             <c:forEach var="p" begin="1" end="${pageNums}">
-              <li class="page-item ${p == page ? 'active' : ''} ">
+              <li class="page-item ${p == viewPage ? 'active' : ''} ">
                 <a class="page-link lectureCart-list"
                    href="<c:url value=''>
                    <c:param name='viewPage' value='${p}'/>

@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -56,8 +57,8 @@ public class StudentLectureController extends HttpServlet {
 			List<LectureDTO> list = LectureService.getInstance().getLectureOfStudentId(requestId);
 			
 			if(list == null || list.size() == 0) {
-				System.out.println("/nowEnroll에서 list 오류남");
-				return;
+				System.out.println("/nowEnroll에서 list 의도적으로 비어있는지 확인");
+				list = new ArrayList<LectureDTO>();
 			}
 			
 			// for문 돌 때 강의 code 저장할 set 추가 -> 강의 조회 시 중복 없애기
@@ -82,9 +83,8 @@ public class StudentLectureController extends HttpServlet {
 				majorMap = new LoadLectureService().getMajorNames(majorIds);
 			}
 			if(professorIds.size() > 0) {
-				professorMap = new LoadLectureService().getprofessorNames(majorIds);
+				professorMap = new LoadLectureService().getprofessorNames(professorIds);
 			}
-			
 			// 부여하기 => 강의 id, code, name, credit, type, major, professor
 			for(LectureDTO dto : list) {
 				dto.setMajorName(majorMap.getOrDefault(dto.getMajorId(),"미지정"));
@@ -155,10 +155,12 @@ public class StudentLectureController extends HttpServlet {
 		
 		// 수강신청 등록(수용인원 확인 포함)
 		int insertResult = service.insertNewLecutreToHistory(requestId, lectureId);
+		System.out.println(insertResult);
 		if(insertResult < 1) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			return;
 		}
+		
 	}
 
 }
