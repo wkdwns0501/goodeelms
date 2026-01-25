@@ -59,7 +59,7 @@ public class LMSScheduleListener implements ServletContextListener {
     		return;
     	}
     	// year 년도 학사일정 조회해서 이름이랑 시간 매핑
-    	Map<String, ZonedDateTime> eventTimeMap = list.stream().collect(Collectors.toMap(AcademicCalendarDTO::getAcademicEventName, AcademicCalendarDTO::getEventZoneDateTime));
+    	eventTimeMap = list.stream().collect(Collectors.toMap(AcademicCalendarDTO::getAcademicEventName, AcademicCalendarDTO::getEventZoneDateTime));
     	
 //    	firstGradeInsertStart = eventTimeMap.get("ac_first_grade_insert_start");
 //    	firstGradeInsertEnd = eventTimeMap.get("ac_first_grade_insert_end");
