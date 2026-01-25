@@ -1,11 +1,12 @@
 package com.goodeelms.controller;
 
 import java.io.IOException;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
 import com.goodeelms.dto.StudentGradeDTO;
+import com.goodeelms.listener.LMSScheduleListener;
 import com.goodeelms.service.StudentGradeService;
 
 import jakarta.servlet.ServletException;
@@ -18,7 +19,6 @@ import jakarta.servlet.http.HttpServletResponse;
 public class StudentGradeController extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final int PAGE_SIZE = 10;
-    private static final ZoneId KST = ZoneId.of("Asia/Seoul");
     private final StudentGradeService gradeService = StudentGradeService.getInstance();
 
     private String getPath(HttpServletRequest request) {
@@ -48,9 +48,9 @@ public class StudentGradeController extends HttpServlet {
         String tab = request.getParameter("tab");
         if (tab == null || tab.isBlank()) tab = "recent"; // 기본: 직전학기
         
+        ZonedDateTime now = ZonedDateTime.now(LMSScheduleListener.getZONE_ID());
         // 성적 조회 기간 테스트
-//        ZonedDateTime now = ZonedDateTime.of(2026, 8, 1, 10, 0, 0, 0, KST); // 두번째 값 만 변경
-        ZonedDateTime now = ZonedDateTime.now(KST);
+//        ZonedDateTime now = ZonedDateTime.of(2026, 8, 1, 10, 0, 0, 0, LMSScheduleListener.getZONE_ID()); // 두번째 값 만 변경
         // 직전학기 계산
         SemesterKey target = calcTargetSemester(now);
         // 평가 기간 여부(2월/8월)
@@ -128,25 +128,38 @@ public class StudentGradeController extends HttpServlet {
     }
     
     /**
-     * 학생용 직전학기 계산 규칙
-     * - 2~7월  : 전년도 2학기 (예: 2026-02~08 => 2025-2)
-     * - 8~12월 : 해당년도 1학기 (예: 2026-09~12 => 2026-1)
-     * - 1월    : 전년도 1학기 (예: 2027-01 => 2026-1)
+     * 학생용 직전학기(종강) 대상 학기 계산 규칙
+     * - 1~6월  : 전년도 2학기 (전년도 12월 종강이 직전학기)
+     * - 7~12월 : 해당년도 1학기 (해당년도 6월 종강이 직전학기)
      */
     private SemesterKey calcTargetSemester(ZonedDateTime now) {
+        Map<String, ZonedDateTime> map = LMSScheduleListener.getEventTimeMap();
+
+        ZonedDateTime closeFirst = map.get("ac_close_first_semester");   // 1학기 종강
+        ZonedDateTime closeSecond = map.get("ac_close_second_semester"); // 2학기 종강
+
+        if (closeFirst == null || closeSecond == null) {
+            throw new IllegalStateException("학사 일정(종강일) 설정이 누락되었습니다. 관리자에게 문의하세요.");
+        }
+
         int year = now.getYear();
-        int month = now.getMonthValue();
-        // 8~12월: 해당년도 1학기
-        if (month >= 8 && month <= 12) {
+
+        // 2학기 종강 이후(=겨울방학~다음해 1월 포함): 직전학기 = 해당년도 2학기
+        if (!now.isBefore(closeSecond)) {
+            return new SemesterKey(year, 2);
+        }
+
+        // 1학기 종강 이후 ~ 2학기 종강 이전(=여름방학~2학기 중): 직전학기 = 해당년도 1학기
+        if (!now.isBefore(closeFirst)) {
             return new SemesterKey(year, 1);
         }
-        // 1월: 전년도 1학기
-        if (month == 1) {
-            return new SemesterKey(year - 1, 1);
-        }
-        // 2~8월: 전년도 2학기
+
+        // 1학기 종강 전(=1학기 진행 중): 직전학기 = 전년도 2학기
         return new SemesterKey(year - 1, 2);
     }
+
+
+
 
     // int 변환 아니면 기본값 반환
     private int parseIntOrDefault(String s, int def) {

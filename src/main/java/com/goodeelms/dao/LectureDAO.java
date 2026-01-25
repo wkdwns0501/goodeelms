@@ -4,10 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -283,7 +279,7 @@ public class LectureDAO {
 	    return null;
 	}
 	
-	// 수강신청 적용 시 count ++
+	// 수강신청 적용 시 count++
 	public int updateLectureCurrentPeople(Connection conn, String lectureId) {
 		String sql = "UPDATE lecture " +
 	             "SET lecture_current_people = lecture_current_people + 1 " +
@@ -532,4 +528,49 @@ public class LectureDAO {
 		
 		return false;
 	}
+	
+	// 강의실 중복 존재 여부 체크
+	public boolean existsLectureRoom(int buildingId, String room, String year, int semester) {
+	    String sql ="SELECT COUNT(*) FROM lecture WHERE building_id = ? " +
+			        " AND lecture_room = ? AND lecture_year = ? AND lecture_semester = ?";
+
+	    try (Connection conn = DBUtil.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setInt(1, buildingId);
+	        pstmt.setString(2, room);
+	        pstmt.setString(3, year);
+	        pstmt.setInt(4, semester);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getInt(1) > 0;
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return false;
+	}
+	
+	// 점유된 강의실 목록 조회
+	public List<String> findOccupiedRooms(int buildingId, String year, int semester) {
+	    String sql ="SELECT lecture_room FROM lecture WHERE building_id = ? " +
+	    			" AND lecture_year = ? AND lecture_semester = ?";
+
+	    List<String> list = new ArrayList<>();
+	    try (Connection conn = DBUtil.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setInt(1, buildingId);
+	        pstmt.setString(2, year);
+	        pstmt.setInt(3, semester);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            while (rs.next()) {
+	                list.add(rs.getString("lecture_room"));
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
+	
 }

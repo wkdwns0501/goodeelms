@@ -29,14 +29,12 @@
 				  <a class="btn btn-outline-secondary btn-sm" href="<c:url value='/professor/lecture/list'/>">목록</a>
 				</div>
 				
-				<!-- 에러 메시지 영역 (컨트롤러에서 request.setAttribute("error", "...") 했을 때) -->
 				<c:if test="${not empty error}">
 				  <div id="errorAlert" class="alert alert-danger mb-3 py-2" role="alert">
 				    <c:out value="${error}"/>
 				  </div>
 				</c:if>
 
-				
 				<div class="card shadow-sm border-0">
 				  <div class="card-body">
 				
@@ -96,9 +94,9 @@
 				        <div class="col-md-3">
 				          <label class="form-label">학기 <span class="text-danger">*</span></label>
 				          <select class="form-select" name="lecture_semester" id="lecture_semester" required>
-				            <option value="">-- 선택 --</option>
-									  <option value="1" <c:if test="${form.lectureSemester == 1}">selected</c:if>>1학기</option>
-									  <option value="2" <c:if test="${form.lectureSemester == 2}">selected</c:if>>2학기</option>
+				             <option value="">-- 선택 --</option>
+							 <option value="1" <c:if test="${form.lectureSemester == 1}">selected</c:if>>1학기</option>
+							 <option value="2" <c:if test="${form.lectureSemester == 2}">selected</c:if>>2학기</option>
 				          </select>
 				          <small id="semesterError" class="text-danger d-none">학기를 선택하세요</small>
 				        </div>
@@ -106,36 +104,69 @@
 				        <!-- 분반 -->
 				        <div class="col-md-3">
 				          <label class="form-label">분반</label>
-								  <div class="form-control bg-light text-muted">
-								    자동 배정 (최대 2개)
-								  </div>
+						  <div class="form-control bg-light text-muted">
+						    자동 배정 (최대 2개)
+						  </div>
 				        </div>
 								
-								<!-- 건물명 -->
-								<div class="col-md-6">
-								  <label class="form-label">건물 <span class="text-danger">*</span></label>
-								  <select class="form-select" name="building_id" id="building_id" required>
-								    <option value="">-- 건물 선택 --</option>
-								    <c:forEach var="b" items="${buildingList}">
-							        <option value="${b.buildingId}"
-									      <c:if test="${form.buildingId == b.buildingId}">selected</c:if>>
-									      <c:out value="${b.buildingName}"/>
-									    </option>
-								    </c:forEach>
-								  </select>
-								  <small id="buildingError" class="text-danger d-none">건물을 선택하세요</small>
-								</div>
+						<!-- 건물명 -->
+						<div class="col-md-6">
+						  <label class="form-label">건물 <span class="text-danger">*</span></label>
+						  <select class="form-select" name="building_id" id="building_id" required>
+						    <option value="">-- 건물 선택 --</option>
+						    <c:forEach var="b" items="${buildingList}">
+					        <option value="${b.buildingId}"
+							      <c:if test="${form.buildingId == b.buildingId}">selected</c:if>>
+							      <c:out value="${b.buildingName}"/>
+							    </option>
+						    </c:forEach>
+						  </select>
+						  <small id="buildingError" class="text-danger d-none">건물을 선택하세요</small>
+						</div>
 								
 				        <!-- 강의실 -->
 				        <div class="col-md-3">
-				          <label class="form-label">강의실 <span class="text-danger">*</span></label>
-				          <input type="text" class="form-control"
-				                 name="lecture_room"
-				                 id="lecture_room" 
-				                 placeholder="예: 101" 
-				                 value="<c:out value='${form.lectureRoom}'/>" 
-				                 required/>
-				        </div>
+						  <label class="form-label">
+						    강의실 <span class="text-danger">*</span>
+						  </label>
+						
+						<select class="form-select"
+						        name="lecture_room"
+						        id="lecture_room"
+						        disabled>
+						  <option value="">-- 강의실 선택 --</option>
+						
+						  <c:forEach var="floor" begin="1" end="5">
+						    <c:forEach var="num" begin="1" end="5">
+						      <c:set var="roomStr" value="${floor}${num < 10 ? '0' : ''}${num}" />
+						
+						      <c:choose>
+						        <c:when test="${occupiedRooms != null && occupiedRooms.contains(roomStr)}">
+						          <option value="${roomStr}" disabled>
+						            ${roomStr} (등록됨)
+						          </option>
+						        </c:when>
+						        <c:otherwise>
+						          <option value="${roomStr}"
+						            <c:if test="${form.lectureRoom == roomStr}">selected</c:if>>
+						            ${roomStr}
+						          </option>
+						        </c:otherwise>
+						      </c:choose>
+						
+						    </c:forEach>
+						  </c:forEach>
+						</select>
+
+							
+						  <!-- 안내 문구 -->
+						  <small id="roomGuide" class="text-muted">
+						    연도, 학기, 건물을 모두 선택해야 호수 선택이 가능합니다.
+						  </small>
+						  <small id="roomError" class="text-danger d-none">
+							강의실을 선택하세요.
+						  </small>
+						</div>
 				
 				        <!-- 정원 -->
 				        <div class="col-md-3">
@@ -160,9 +191,9 @@
 				                    maxlength="1000" 
 				                    placeholder="최대 1000자까지 작성 가능합니다."><c:out value="${form.lectureDescription}"/></textarea>
 				          <div class="d-flex justify-content-between">
-								    <small id="descError" class="text-danger d-none">최대 1000자까지만 작성 가능합니다</small>
-								    <small class="text-muted"><span id="descCount">0</span>/1000</small>
-								  </div>
+						    <small id="descError" class="text-danger d-none">최대 1000자까지만 작성 가능합니다</small>
+						    <small class="text-muted"><span id="descCount">0</span>/1000</small>
+						  </div>
 				        </div>
 				
 				      </div>

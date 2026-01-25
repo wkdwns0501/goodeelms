@@ -2,15 +2,16 @@ package com.goodeelms.service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-
-import org.eclipse.tags.shaded.org.apache.regexp.recompile;
 
 import com.goodeelms.dao.LectureCartDAO;
 import com.goodeelms.dao.LectureDAO;
 import com.goodeelms.dto.LectureDTO;
+import com.goodeelms.listener.LMSScheduleListener;
 import com.goodeelms.util.DBUtil;
 
 public class LectureService {
@@ -32,7 +33,8 @@ public class LectureService {
 	public int insertLecture(LectureDTO lecture) {
 
 	    validateForInsert(lecture);
-
+	    validateLectureInsertPeriod(lecture);
+	    
 	    // 교수 학과 조회
 	    int majorId = lectureDAO.findMajorIdByProfessorId(lecture.getProfessorId());
 	    if (majorId <= 0) {
@@ -70,6 +72,17 @@ public class LectureService {
     	} else {
     	    throw new IllegalArgumentException("분반은 최대 2개(01, 02)까지만 개설할 수 있습니다.");
     	}
+    	
+    	// 같은 학기/건물/호수 중복 체크
+    	boolean occupied = lectureDAO.existsLectureRoom(
+    	        lecture.getBuildingId(),
+    	        lecture.getLectureRoom().trim(),
+    	        lecture.getLectureYear(),
+    	        lecture.getLectureSemester()
+    	    );
+	    if (occupied) {
+	        throw new IllegalArgumentException("이미 사용 중인 강의실입니다.");
+	    }
 	    
 	    try {
 	        return lectureDAO.insertLecture(lecture);
@@ -107,13 +120,90 @@ public class LectureService {
         if (l.getLectureType() == null || l.getLectureType().trim().isEmpty()) {
             throw new IllegalArgumentException("강의 유형은 필수입니다.");
         }
-        if (l.getLectureRoom() != null && l.getLectureRoom().trim().length() > 50) {
+        if (l.getLectureRoom() == null || l.getLectureRoom().trim().isEmpty()) {
+            throw new IllegalArgumentException("강의실은 필수입니다.");
+        }
+        if (l.getLectureRoom().trim().length() > 50) {
             throw new IllegalArgumentException("강의실은 최대 50자까지 가능합니다.");
         }
         if (l.getBuildingId() <= 0) {
             throw new IllegalArgumentException("건물을 선택하세요.");
         }
 	}
+    
+    // 강의 등록 기간 체크
+    private void validateLectureInsertPeriod(LectureDTO lecture) {
+        ZonedDateTime now = ZonedDateTime.now(LMSScheduleListener.getZONE_ID());
+
+        Map<String, ZonedDateTime> map = LMSScheduleListener.getEventTimeMap();
+
+        ZonedDateTime firstStart = map.get("ac_first_lecture_insert_start");
+        ZonedDateTime firstEnd   = map.get("ac_first_lecture_insert_end");
+        ZonedDateTime secondStart = map.get("ac_second_lecture_insert_start");
+        ZonedDateTime secondEnd   = map.get("ac_second_lecture_insert_end");
+
+        // 이벤트 누락/키 불일치 방어
+        if (firstStart == null || firstEnd == null || secondStart == null || secondEnd == null) {
+            throw new IllegalStateException("학사 일정(강의 등록 기간) 설정이 누락되었습니다. 관리자에게 문의하세요.");
+        }
+
+        boolean inFirst = !now.isBefore(firstStart) && !now.isAfter(firstEnd);
+        boolean inSecond = !now.isBefore(secondStart) && !now.isAfter(secondEnd);
+
+        if (!inFirst && !inSecond) {
+            throw new IllegalArgumentException("강의 등록 기간이 아닙니다.");
+        }
+
+        int nowYear = now.getYear();
+        int semesterAllowed = inFirst ? 1 : 2;
+
+        // 1월 기간이면 1학기만, 7월 기간이면 2학기만 허용
+        if (lecture.getLectureSemester() != semesterAllowed) {
+            throw new IllegalArgumentException(
+                (semesterAllowed == 1)
+                    ? "현재는 1학기 강의 등록 기간입니다. (1학기만 등록 가능)"
+                    : "현재는 2학기 강의 등록 기간입니다. (2학기만 등록 가능)"
+            );
+        }
+
+        // 연도는 현재 연도만 허용
+        if (!String.valueOf(nowYear).equals(lecture.getLectureYear())) {
+            throw new IllegalArgumentException("강의 연도는 " + nowYear + "년만 등록할 수 있습니다.");
+        }
+    }
+    
+    // 점유 강의실 목록
+    public List<String> getOccupiedRooms(int buildingId, String year, int semester) {
+        if (buildingId <= 0) throw new IllegalArgumentException("건물 정보가 올바르지 않습니다.");
+        if (year == null || !year.matches("\\d{4}")) throw new IllegalArgumentException("연도 형식이 올바르지 않습니다.");
+        if (semester != 1 && semester != 2) throw new IllegalArgumentException("학기 정보가 올바르지 않습니다.");
+        return lectureDAO.findOccupiedRooms(buildingId, year, semester);
+    }
+    
+    // 강의 등록 기간 여부 판단
+    public boolean isLectureInsertPeriod() {
+        ZonedDateTime now = ZonedDateTime.now(LMSScheduleListener.getZONE_ID());
+    	// 테스트용
+//    	ZonedDateTime now = ZonedDateTime.of(2026, 3, 1, 10, 0, 0, 0, LMSScheduleListener.getZONE_ID());
+
+        Map<String, ZonedDateTime> map = LMSScheduleListener.getEventTimeMap();
+        if (map == null || map.isEmpty()) return false;
+
+        ZonedDateTime firstStart = map.get("ac_first_lecture_insert_start");
+        ZonedDateTime firstEnd   = map.get("ac_first_lecture_insert_end");
+        ZonedDateTime secondStart = map.get("ac_second_lecture_insert_start");
+        ZonedDateTime secondEnd   = map.get("ac_second_lecture_insert_end");
+
+        if (firstStart == null || firstEnd == null || secondStart == null || secondEnd == null) {
+            return false;
+        }
+
+        boolean inFirst = !now.isBefore(firstStart) && !now.isAfter(firstEnd);
+        boolean inSecond = !now.isBefore(secondStart) && !now.isAfter(secondEnd);
+
+        return inFirst || inSecond;
+    }
+
     
 	/**
      * lecture_code 규칙: 학과코드(4) + 과목일련(3)

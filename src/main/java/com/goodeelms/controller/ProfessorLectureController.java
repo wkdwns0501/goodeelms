@@ -1,6 +1,7 @@
 package com.goodeelms.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.service.BuildingService;
@@ -30,11 +31,36 @@ public class ProfessorLectureController extends HttpServlet {
         }
 	    
 	    if (path.equals("/add")) { // 강의 등록 페이지 조회
+	    	if (!lectureService.isLectureInsertPeriod()) {
+	            response.sendRedirect(request.getContextPath() 
+	                + "/professor/lecture/list?error=NoLectureInsertPeriod");
+	            return;
+	        }
 	    	request.setAttribute("buildingList", buildingService.getAll());
+	    	
+	        String year = request.getParameter("lecture_year");
+	        String semesterParam = request.getParameter("lecture_semester");
+	        String buildingParam = request.getParameter("building_id");
+	        
+	        if (year != null && semesterParam != null && buildingParam != null) {
+	            try {
+	                int semester = Integer.parseInt(semesterParam);
+	                int buildingId = Integer.parseInt(buildingParam);
+	                // 같은 학기 + 같은 건물에서 이미 사용 중인 강의실 목록
+	                List<String> occupiedRooms =
+	                        lectureService.getOccupiedRooms(buildingId, year, semester);
+	                request.setAttribute("occupiedRooms", occupiedRooms);
+	            } catch (NumberFormatException e) {
+	                // 파라미터 이상하면 그냥 강의실 전체 활성화
+	            }
+	        }
 	        request.getRequestDispatcher("/WEB-INF/views/professor/lectureInsert.jsp")
 	               .forward(request, response);
 	        return;
 	    } else if (path.equals("/list")) { // 강의 목록 조회
+	    	boolean isLectureInsertPeriod = lectureService.isLectureInsertPeriod(); 
+	    	request.setAttribute("isLectureInsertPeriod", isLectureInsertPeriod);
+	    	
 	    	String keyword = request.getParameter("keyword");
 	        String pageParam = request.getParameter("page");
 	        int page = 1;
@@ -102,6 +128,7 @@ public class ProfessorLectureController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/common/login");
                 return;
             }
+            
             LectureDTO lecture = new LectureDTO();
             lecture.setLectureName(request.getParameter("lecture_name"));
             lecture.setLectureDescription(request.getParameter("lecture_description"));
@@ -116,7 +143,7 @@ public class ProfessorLectureController extends HttpServlet {
                 lecture.setLectureCapacity(Integer.parseInt(request.getParameter("lecture_capacity")));
                 lecture.setBuildingId(Integer.parseInt(request.getParameter("building_id")));
                 lectureService.insertLecture(lecture);
-                response.sendRedirect(request.getContextPath() + "/lecture/list?msg=insert_ok");
+                response.sendRedirect(request.getContextPath() + "/professor/lecture/list?msg=insert_ok");
                 return;
             } catch (Exception e) {
                 System.out.println("강의 등록 실패: " + e);

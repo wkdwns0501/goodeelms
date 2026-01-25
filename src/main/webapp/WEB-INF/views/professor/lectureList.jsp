@@ -31,6 +31,12 @@
 	.td-room {
 	  max-width: clamp(9rem, 14vw, 14rem); /* 화면에 따라 9~14rem 사이 */
 	}
+	
+	.table td {
+	    padding-top: 15px !important;    /* 위쪽 여백 */
+	    padding-bottom: 15px !important; /* 아래쪽 여백 */
+	    vertical-align: middle;          /* 내용이 세로 가운데 오도록 설정 */
+	}
   
   /* 강의 코드 */
   .badge-soft-lime{
@@ -76,7 +82,16 @@
           </div>
 
           <c:if test="${not empty sessionScope.professor_id}">
-            <a class="btn btn-success btn-sm" href="<c:url value='/professor/lecture/add'/>">+ 강의 등록</a>
+              <c:choose>
+			    <c:when test="${isLectureInsertPeriod}">
+			      <a class="btn btn-success btn-sm" href="<c:url value='/professor/lecture/add'/>">+ 강의 등록</a>
+			    </c:when>
+			    <c:otherwise>
+			      <a class="btn btn-success btn-sm"
+			         href="<c:url value='/professor/lecture/list'/>"
+			         onclick="alert('현재 등록기간이 아닙니다.'); return false;">+ 강의 등록</a>
+			    </c:otherwise>
+			  </c:choose>
           </c:if>
         </div>
 
@@ -135,53 +150,49 @@
 			                  	</span>
 			                  </td>
 			                  
-												<td class="text-center">
-												  <a class="fw-semibold text-decoration-none truncate d-block lecture-detail-link"
-													   href="#"
-													     data-name="<c:out value='${lec.lectureName}'/>"
-														   data-code="<c:out value='${lec.lectureCodeDisplay}'/>"
-														   data-prof="<c:out value='${lec.professorName}'/>"
-														   data-type="<c:out value='${lec.lectureType}'/>"
-														   data-credit="<c:out value='${lec.lectureCredit}'/>"
-														   data-year="<c:out value='${lec.lectureYear}'/>"
-														   data-sem="<c:out value='${lec.lectureSemester}'/>"
-														   data-section="<c:out value='${lec.lectureSection}'/>"
-														   data-building="<c:out value='${lec.buildingName}'/>"
-														   data-room="<c:out value='${lec.lectureRoom}'/>"
-														   data-current="<c:out value='${lec.lectureCurrentPeople}'/>"
-														   data-capacity="<c:out value='${lec.lectureCapacity}'/>"
-														   data-desc="<c:out value='${lec.lectureDescription}'/>"
-														   title="<c:out value='${lec.lectureName}'/>">
-														  <c:out value="${lec.lectureName}"/>
-													</a>
-												  <div class="text-muted truncate subline"
-												       title="<c:out value='${lec.buildingName} ${lec.lectureRoom}호 · ${lec.professorName}'/>">
-												    <c:out value="${lec.buildingName}" /> <c:out value="${lec.lectureRoom}" />호 · <c:out value="${lec.professorName}"/>
-												  </div>
-												</td>
+							<td class="text-center">
+							  <a class="fw-semibold text-decoration-none truncate d-block lecture-detail-link"
+								   href="#"
+								     data-name="<c:out value='${lec.lectureName}'/>"
+									   data-code="<c:out value='${lec.lectureCodeDisplay}'/>"
+									   data-prof="<c:out value='${lec.professorName}'/>"
+									   data-type="<c:out value='${lec.lectureType}'/>"
+									   data-credit="<c:out value='${lec.lectureCredit}'/>"
+									   data-year="<c:out value='${lec.lectureYear}'/>"
+									   data-sem="<c:out value='${lec.lectureSemester}'/>"
+									   data-section="<c:out value='${lec.lectureSection}'/>"
+									   data-building="<c:out value='${lec.buildingName}'/>"
+									   data-room="<c:out value='${lec.lectureRoom}'/>"
+									   data-current="<c:out value='${lec.lectureCurrentPeople}'/>"
+									   data-capacity="<c:out value='${lec.lectureCapacity}'/>"
+									   data-desc="<c:out value='${lec.lectureDescription}'/>"
+									   title="<c:out value='${lec.lectureName}'/>">
+									  <c:out value="${lec.lectureName}"/>
+								</a>
+							</td>
 
 			                  <td>${lec.professorName}</td>
 			                  <td>
-												  <span class="badge rounded-pill
-												    ${lec.lectureType eq '전공' ? 'badge-major' : 'badge-general'}">
-												    <c:out value="${lec.lectureType}"/>
-												  </span>
-												</td>
+								  <span class="badge rounded-pill
+								    ${lec.lectureType eq '전공' ? 'badge-major' : 'badge-general'}">
+								    <c:out value="${lec.lectureType}"/>
+								  </span>
+								</td>
 			                  <td>${lec.lectureCredit}</td>
 			                  <td>${lec.lectureYear} - ${lec.lectureSemester}</td>
 			                  <td>${lec.lectureSection}</td>
 			                  <td class="text-center td-room">
-												  <span class="truncate"
-												        title="<c:out value='${lec.buildingName} ${lec.lectureRoom}호'/>">
-												    <c:out value="${lec.buildingName}" /> <c:out value="${lec.lectureRoom}" />호
-												  </span>
-												</td>
+								  <span class="truncate"
+								        title="<c:out value='${lec.buildingName} ${lec.lectureRoom}호'/>">
+								    <c:out value="${lec.buildingName}" /> <c:out value="${lec.lectureRoom}" />호
+								  </span>
+								</td>
 			                  <td>
-												  <c:set var="filled" value="${lec.lectureCurrentPeople >= lec.lectureCapacity}" />
-												  <span class="badge rounded-pill ${filled ? 'text-bg-danger' : 'text-bg-secondary'}">
-												    ${lec.lectureCurrentPeople} / ${lec.lectureCapacity}
-												  </span>
-												</td>
+								  <c:set var="filled" value="${lec.lectureCurrentPeople >= lec.lectureCapacity}" />
+								  <span class="badge rounded-pill ${filled ? 'text-bg-danger' : 'text-bg-secondary'}">
+								    ${lec.lectureCurrentPeople} / ${lec.lectureCapacity}
+								  </span>
+								</td>
 			                </tr>
 			              </c:forEach>
 			            </c:otherwise>

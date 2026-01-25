@@ -2,9 +2,11 @@ package com.goodeelms.service;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
 import com.goodeelms.dao.StudentGradeDAO;
 import com.goodeelms.dto.StudentGradeDTO;
+import com.goodeelms.listener.LMSScheduleListener;
 
 public class StudentGradeService {
 	private static final StudentGradeService instance = new StudentGradeService();
@@ -42,10 +44,25 @@ public class StudentGradeService {
                 					   keyword, offset, safeSize);
 	}
 	
-	// 강의 평가 기간인지 여부 (2월/8월)
+	// 강의 평가 기간인지 여부
 	public boolean isEvaluationPeriod(ZonedDateTime now) {
-        int month = now.getMonthValue();
-        return (month == 2 || month == 8);
-    }
+	    Map<String, ZonedDateTime> map = LMSScheduleListener.getEventTimeMap();
+
+	    ZonedDateTime firstStart = map.get("ac_first_lecture_evaluation_start");
+	    ZonedDateTime firstEnd   = map.get("ac_first_lecture_evaluation_end");
+	    ZonedDateTime secondStart = map.get("ac_second_lecture_evaluation_start");
+	    ZonedDateTime secondEnd   = map.get("ac_second_lecture_evaluation_end");
+
+	    // 이벤트 누락 방어
+	    if (firstStart == null || firstEnd == null || secondStart == null || secondEnd == null) {
+	        throw new IllegalStateException("학사 일정(강의 평가 기간) 설정이 누락되었습니다. 관리자에게 문의하세요.");
+	    }
+
+	    boolean inFirst  = !now.isBefore(firstStart)  && !now.isAfter(firstEnd);
+	    boolean inSecond = !now.isBefore(secondStart) && !now.isAfter(secondEnd);
+
+	    return inFirst || inSecond;
+	}
+
 
 }
