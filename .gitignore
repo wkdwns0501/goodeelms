@@ -26,3 +26,4 @@ Servers/
 /target/
 
 DBUtil.java
+/.apt_generated/
