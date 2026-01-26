@@ -74,48 +74,48 @@
 						<i class="bi bi-clock-history me-2 text-secondary"></i>강의목록
 					</h5>
 					<div class="table-responsive">
-						<table table class="table table-hover align-middle mb-0 text-center lecture-table">
+						<table table
+							class="table table-hover align-middle mb-0 text-center lecture-table">
 							<thead class="table-light">
 								<tr>
+									<th style="width: 10%;">강의코드</th>
 									<th style="width: 20%;">강의명</th>
-					        <th style="width: 15%;">교수명</th>
-					        <th style="width: 10%;">유형</th>
-					        <th style="width: 10%;">학점</th>
-					        <th style="width: 10%;">분반</th>
-					        <th style="width: 10%;">강의실</th>
+									<th style="width: 15%;">교수명</th>
+									<th style="width: 10%;">유형</th>
+									<th style="width: 10%;">학점</th>
+									<th style="width: 10%;">분반</th>
+									<th style="width: 10%;">강의실</th>
 								</tr>
 							</thead>
+							
 							<tbody>
-								<c:forEach var="entry" items="${lectures}">
-									<c:set var="lectureDTO" value="${entry.value}" />
-									<c:choose>
-										<c:when test="${not empty lectureDTO}">
+								<c:choose>
+									<c:when test="${not empty lectures}">
+										<c:forEach var="entry" items="${lectures}">
+											<c:set var="lectureDTO" value="${entry.value}" />
 											<tr>
-												<td class="text-center fw-bold text-dark">${lectureDTO.lectureName} </td>
+												<td><span class="badge badge-soft-lime rounded-pill">${lectureDTO.lectureCode}</span></td>
+												<td class="text-center fw-bold text-dark">${lectureDTO.lectureName}</td>
 												<td><strong>${lectureDTO.professorName}</strong></td>
-												<td><span
-													class="badge rounded-pill
-												    ${lectureDTO.lectureType eq '전공' ? 'badge-major' : 'badge-general'}">
-														<c:out value="${lectureDTO.lectureType}" />
-												</span></td>
+												<td><span	class="badge rounded-pill ${lectureDTO.lectureType eq '전공' ? 'badge-major' : 'badge-general'}">
+														<c:out value="${lectureDTO.lectureType}" /></span>
+												</td>
 												<td>${lectureDTO.lectureCredit}</td>
 												<td>${lectureDTO.lectureSection}</td>
-												<td>${lectureDTO.buildingName}
-													${lectureDTO.lectureRoom}호</td>
+												<td>${lectureDTO.buildingName} ${lectureDTO.lectureRoom}호</td>
 											</tr>
-										</c:when>
-										<c:otherwise>
-											<tr>
-												<td colspan="8" class="text-center text-muted">강의에 대한
-													정보가 없습니다.</td>
-											</tr>
-										</c:otherwise>
-									</c:choose>
-								</c:forEach>
+										</c:forEach>
+									</c:when>
+
+									<c:otherwise>
+										<tr>
+											<td colspan="6" class="text-center py-5 text-muted"><i class="bi bi-exclamation-circle d-block mb-2 fs-2"></i> 현재
+												수강 중인 강의가 없습니다.</td>
+										</tr>
+									</c:otherwise>
+								</c:choose>
 							</tbody>
 						</table>
-
-
 					</div>
 				</div>
 
