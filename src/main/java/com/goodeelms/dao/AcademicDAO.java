@@ -43,6 +43,7 @@ public class AcademicDAO {
 											Integer.parseInt(times[0]), Integer.parseInt(times[1])),
     										LMSScheduleListener.getZONE_ID());    				
     				dto.setEventZoneDateTime(zoneTime);
+//    				System.out.println("Academic Data: " + dto.getAcademicEventName() + ", " + dto.getEventZoneDateTime());
     				
     				list.add(dto);
     			}

@@ -1,18 +1,14 @@
 package com.goodeelms.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.dto.LectureEvaluationDTO;
-import com.goodeelms.listener.LMSScheduleListener;
 import com.goodeelms.service.AccessPeriodService;
 import com.goodeelms.service.LectureEvaluationService;
 import com.goodeelms.util.AlertUtil;
-import com.goodeelms.util.StaticUtils;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;

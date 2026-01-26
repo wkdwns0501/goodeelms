@@ -29,13 +29,13 @@ public class CalendarController extends HttpServlet {
 		String command = requestURI.substring(contextPath.length());
 		
 		if(command.equals("/admin/setCalendar")) {
-		    Map<String, ZonedDateTime> eventTimeMap = LMSScheduleListener.getEventTimeMap();
+		    Map<String, ZonedDateTime> map = LMSScheduleListener.getEventTimeMap();
 		    Map<String, String> formattedMap = new HashMap<>();
 		    
-		    if (eventTimeMap != null && !eventTimeMap.isEmpty()) {
+		    if (map != null && !map.isEmpty()) {
 		        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		        
-		        eventTimeMap.forEach((key, value) -> {
+		        map.forEach((key, value) -> {
 		            if (value != null) {
 		                String displayDate;
 		                
@@ -53,7 +53,7 @@ public class CalendarController extends HttpServlet {
 		            }
 		        });
 		    } else {
-		        System.out.println("DEBUG: eventTimeMap이 null이거나 비어있습니다!");
+		        System.out.println("DEBUG: map이 null이거나 비어있습니다!");
 		    }
 
 		    request.setAttribute("schedule", formattedMap);

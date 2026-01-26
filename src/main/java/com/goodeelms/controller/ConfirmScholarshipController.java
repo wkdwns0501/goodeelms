@@ -1,13 +1,10 @@
 package com.goodeelms.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 import com.goodeelms.dto.LectureHistoryDTO;
-import com.goodeelms.listener.LMSScheduleListener;
 import com.goodeelms.service.AccessPeriodService;
 import com.goodeelms.service.ConfirmScholarshipService;
 import com.goodeelms.util.AlertUtil;

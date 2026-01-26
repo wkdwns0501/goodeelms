@@ -470,11 +470,12 @@ public class LectureDAO {
 	}
 	
 	// 강의 상태 예정 -> 개강 변경
-	public int updateLectureStatusToNext(Connection conn,int year, int semester, String beforeStatus, String afterStatus) {
+	public int updateLectureStatusToNext(int year, int semester, String beforeStatus, String afterStatus) {
 		String sql = "UPDATE lecture SET lecture_status = ? WHERE lecture_status = ? "
 				+ "AND lecture_year = ? AND lecture_semester = ? ";
 		
-		try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+		try(Connection conn = DBUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)){
 			
 			pstmt.setString(1, afterStatus);
 			pstmt.setString(2, beforeStatus);

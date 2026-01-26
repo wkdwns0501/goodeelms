@@ -226,6 +226,42 @@ public class LectureCartDAO {
 		return 0;
 	}
 	
+	// done 변경 검증
+	public boolean checkClosedBeforeClosed() {
+		String sql = "SELECT COUNT(*) as cnt FROM pre_enrollment "
+				+ "WHERE pre_enrollment_status IN('completed', 're_apply') ";
+		
+		try(PreparedStatement pstmt = getPrepare(sql)){
+			
+			try(ResultSet rs = pstmt.executeQuery()){
+				if(rs.next()) {
+					int count = rs.getInt("cnt");
+					if(count > 0) return true;
+				}
+				return false;
+			}
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+	
+	// 수강신청 기간 종료되면 done으로 변경
+	public boolean updateLectureCartToDone() {
+		String sql = "UPDATE pre_enrollment SET pre_enrollment_status = 'done' "
+				+ "WHERE pre_enrollment_status IN ('completed','re_apply') ";
+		
+		try(PreparedStatement pstmt = getPrepare(sql)){
+			
+			return pstmt.executeUpdate() > 0 ? true : false;
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 	private PreparedStatement getPrepare(String sql) throws SQLException {
 		Connection conn = DBUtil.getConnection();
 		PreparedStatement pstmt = conn.prepareStatement(sql);

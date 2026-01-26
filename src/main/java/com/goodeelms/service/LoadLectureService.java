@@ -129,4 +129,8 @@ public class LoadLectureService {
 		}
 		return true;
 	}
+	public Set<Integer> getNotAbleReEnrollmentCodes(int studentId){
+		SelectLectureDAO dao = new SelectLectureDAO();
+		return dao.getNotAbleEnrollmentCodes(studentId);
+	}
 }

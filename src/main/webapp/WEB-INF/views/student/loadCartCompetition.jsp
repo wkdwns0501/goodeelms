@@ -38,7 +38,7 @@
 				        <c:when test="${lec.preEnrollmentStatus eq 're_apply'}">
 				        	<button class="btn btn-sm btn-danger fw-bold fs-6 re-apply"
 				        	data-lec-id="${lec.lectureId}" data-lec-stu="${sessionScope.student_id}" data-lec-credit="${lec.lectureCredit}">
-				        	수강 신청 실패
+				        	수강 신청
 				        	</button>
 				        </c:when>
 					    </c:choose>

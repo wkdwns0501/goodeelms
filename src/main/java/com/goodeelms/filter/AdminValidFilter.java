@@ -1,5 +1,7 @@
 package com.goodeelms.filter;
 
+import java.io.IOException;
+
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -11,13 +13,6 @@ import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
-import com.goodeelms.dto.AdminDTO;
-import com.goodeelms.dto.StudentDTO;
 
 /**
  * Servlet Filter implementation class StudentValidFilter
