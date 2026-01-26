@@ -170,7 +170,11 @@
 				alert("새 비밀번호는 기존 비밀번호와 다르게 설정해야 합니다.");
 				return false;
 			}
-
+			if(originPw == null || newPw == null){
+				alert("비밀번호는 필수입니다.");
+				return false;
+			}
+			
 			// 2. 연락처 조합 (010-1234-5678)
 			if (!/^\d{3,4}$/.test(p2) || !/^\d{4}$/.test(p3)) {
 				alert("연락처를 올바르게 입력해주세요.");

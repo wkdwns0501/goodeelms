@@ -40,8 +40,8 @@ public class AcademicCalendarService {
 	    int targetYear = year;
 	    int targetSemester;
 
-	    LocalDate firstCart = events.get("student_first_lecture_cart_start");   
-	    LocalDate secondCart= events.get("student_second_lecture_cart_start"); 
+	    LocalDate firstCart = events.get("student_first_enrollment_start");   
+	    LocalDate secondCart= events.get("student_second_enrollment_start"); 
 
 	    if (firstCart != null && now.isBefore(firstCart)) { // 작년 ~ 1학기 수강 장바구니 이전( 이전 년도 2학기 장학금 선정 이후 ) 
 	        targetYear = year - 1;

@@ -93,10 +93,11 @@ public class ScholarshipDAO {
 	
 	
 	public List<ScholarshipDTO> getSemesterAndAmountByStudentId(int studentId){
-		String sql = "SELECT scholarship_semester, scholarship_amount "
+		String sql = "SELECT SH.scholarship_semester, SH.scholarship_amount "
 				+ "FROM scholarship_history SH "
 				+ "JOIN student S ON S.student_id = SH.student_id "
-				+ "WHERE sh.student_id = ?";
+				+ "WHERE sh.student_id = ?  "
+				+ "ORDER BY SH.scholarship_semester DESC ";
 
 		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, studentId);

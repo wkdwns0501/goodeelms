@@ -29,7 +29,7 @@ public class LectureHistoryDAO {
 				+ "L.lecture_year, L.lecture_semester, LH.lecture_score "
 				+ "FROM lecture_history LH "
 				+ "JOIN lecture L ON L.lecture_id = LH.lecture_id "
-				+ "WHERE LH.student_id = ?";
+				+ "WHERE LH.student_id = ? ";
 
 		Map<Integer, LectureDTO> map = new LinkedHashMap<>();
 		
@@ -109,7 +109,8 @@ public class LectureHistoryDAO {
 				+ "JOIN lecture l ON lh.lecture_id = l.lecture_id "
 				+ "WHERE lh.student_id = ? "
 				+ "GROUP BY l.lecture_year, l.lecture_semester, lh.student_id "
-				+ "HAVING AVG(lh.lecture_score) <= 2.0"; 
+				+ "HAVING AVG(lh.lecture_score) <= 2.0 "
+				+ "ORDER BY l.lecture_year DESC, l.lecture_semester DESC"; 
 		
 		List<LectureDTO> list = new ArrayList<LectureDTO>();
 		

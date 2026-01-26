@@ -44,7 +44,7 @@ if (extendBtn) {
                 updateTimerDisplay();
             } else if (data === "expired") {
                 alert("세션이 이미 만료되었습니다.");
-                location.reload(); 
+                location.href = contextPath + "/common/login"; 
             }
         })
         .catch(error => {
