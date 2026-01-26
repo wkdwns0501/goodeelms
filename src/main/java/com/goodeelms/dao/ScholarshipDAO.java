@@ -122,6 +122,20 @@ public class ScholarshipDAO {
 		}
 		return null;
 	}
+
+	public int cancelScholarship(String studentId, int yearSemesterInt) {
+		String sql = "DELETE FROM scholarship_history WHERE student_id = ? AND scholarship_semester = ? ";
+		
+		try(Connection conn = DBUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setInt(1, Integer.parseInt(studentId));
+			pstmt.setInt(2, yearSemesterInt);
+			
+			return pstmt.executeUpdate();
+		} catch (Exception e) {
+			System.out.println("cancelScholarship() 예외 발생: " + e);
+		}	return 0;
+	}
 	
 	
 }

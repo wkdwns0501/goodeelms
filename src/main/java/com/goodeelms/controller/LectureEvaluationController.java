@@ -2,13 +2,17 @@ package com.goodeelms.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.dto.LectureEvaluationDTO;
+import com.goodeelms.listener.LMSScheduleListener;
+import com.goodeelms.service.AccessPeriodService;
 import com.goodeelms.service.LectureEvaluationService;
 import com.goodeelms.util.AlertUtil;
+import com.goodeelms.util.StaticUtils;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -33,7 +37,11 @@ public class LectureEvaluationController extends HttpServlet {
 		if(command.equals("/student/evaluation/list")) {
 			int studentId = (Integer)session.getAttribute("student_id");
 			LectureEvaluationService lec = new LectureEvaluationService();
-			if (!lec.isAccessPeriod()) {
+			
+			AccessPeriodService aps = new AccessPeriodService();	
+			ZonedDateTime now = ZonedDateTime.now();
+//			ZonedDateTime now = ZonedDateTime.of(2026, 1, 20, 10, 0, 0, 0, LMSScheduleListener.getZONE_ID());
+			if (!aps.isAccessPeriod(now)) {
 				AlertUtil.alertAndRedirect(response, "강의 평가 기간이 아닙니다.", contextPath + "/main.jsp");
 				return;
 			}
