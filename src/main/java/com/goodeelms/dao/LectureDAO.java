@@ -4,10 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -161,20 +157,24 @@ public class LectureDAO {
 	    return null;
 	}
 	
-	// 교수가 속한 학과의 강의 리스트 조회 (검색, 페이징 포함)
-	public ArrayList<LectureDTO> findPageByMajor(int majorId, int page, int limit, String keyword) {
+	// (교수) 학과(major_id)별 강의 리스트 조회 (검색, 페이징, 상태필터 포함)
+	public ArrayList<LectureDTO> findPageByMajor(int majorId, int page, int limit, String keyword, String statusFilter) {
 	    int offset = (page - 1) * limit;
 
 	    String sql =
-	    	    "SELECT l.lecture_id, l.lecture_code, l.lecture_name, l.lecture_room, " +
-	    	    "       l.lecture_credit, l.lecture_year, l.lecture_semester, l.lecture_section, " +
-	    	    "       l.lecture_type, l.lecture_current_people, l.lecture_capacity, " +
-	    	    "       l.lecture_description, l.professor_id, l.major_id, p.professor_name, " +
-	    	    "       b.building_name " +
-	    	    "FROM lecture l " +
-	    	    "JOIN professor p ON l.professor_id = p.professor_id " +
-	    	    "JOIN building b ON l.building_id = b.building_id " +
-	    	    "WHERE l.major_id = ? ";
+	        "SELECT l.lecture_id, l.lecture_code, l.lecture_name, l.lecture_room, " +
+	        "       l.lecture_credit, l.lecture_year, l.lecture_semester, l.lecture_section, " +
+	        "       l.lecture_type, l.lecture_current_people, l.lecture_capacity, l.lecture_status, " +
+	        "       l.lecture_description, l.professor_id, l.major_id, p.professor_name, " +
+	        "       b.building_name " +
+	        "FROM lecture l " +
+	        "JOIN professor p ON l.professor_id = p.professor_id " +
+	        "JOIN building b ON l.building_id = b.building_id " +
+	        "WHERE l.major_id = ? ";
+
+	    if ("ACTIVE".equals(statusFilter)) {
+	        sql += "AND l.lecture_status IN ('예정', '개강') ";
+	    }
 
 	    if (keyword != null && !keyword.isBlank()) {
 	        sql += "AND (l.lecture_name LIKE ? OR p.professor_name LIKE ? OR b.building_name LIKE ?) ";
@@ -209,6 +209,7 @@ public class LectureDAO {
 	                lecture.setLectureType(rs.getString("lecture_type"));
 	                lecture.setLectureCurrentPeople(rs.getInt("lecture_current_people"));
 	                lecture.setLectureCapacity(rs.getInt("lecture_capacity"));
+	                lecture.setLectureStatus(rs.getString("lecture_status"));
 	                lecture.setLectureDescription(rs.getString("lecture_description"));
 	                lecture.setProfessorId(rs.getInt("professor_id"));
 	                lecture.setMajorId(rs.getInt("major_id"));
@@ -222,15 +223,20 @@ public class LectureDAO {
 	    }
 	    return list;
 	}
-	
-	// (교수) 페이징용 학과별 총 강의 개수 
-	public int countByMajor(int majorId, String keyword) {
+
+
+	// (교수) 페이징용 학과별 총 강의 개수
+	public int countByMajor(int majorId, String keyword, String statusFilter) {
 	    String sql =
 	        "SELECT COUNT(*) " +
 	        "FROM lecture l " +
 	        "JOIN professor p ON l.professor_id = p.professor_id " +
 	        "JOIN building b ON l.building_id = b.building_id " +
 	        "WHERE l.major_id = ? ";
+
+	    if ("ACTIVE".equals(statusFilter)) {
+	        sql += "AND l.lecture_status IN ('예정', '개강') ";
+	    }
 
 	    if (keyword != null && !keyword.isBlank()) {
 	        sql += "AND (l.lecture_name LIKE ? OR p.professor_name LIKE ? OR b.building_name LIKE ?) ";
@@ -254,6 +260,7 @@ public class LectureDAO {
 	    }
 	    return 0;
 	}
+
 	
 	// 강의 코드가 존재하는지 판별하기 위한 강의 조회
 	public Integer findLectureCode(int majorId, String lectureName, int lectureCredit, String lectureType) {
@@ -283,7 +290,7 @@ public class LectureDAO {
 	    return null;
 	}
 	
-	// 수강신청 적용 시 count ++
+	// 수강신청 적용 시 count++
 	public int updateLectureCurrentPeople(Connection conn, String lectureId) {
 		String sql = "UPDATE lecture " +
 	             "SET lecture_current_people = lecture_current_people + 1 " +
@@ -383,7 +390,7 @@ public class LectureDAO {
 	        "FROM lecture l " +
 	        "JOIN professor p ON l.professor_id = p.professor_id " +
 	        "JOIN building b ON l.building_id = b.building_id " +
-	        "WHERE 1=1 ";
+	        "WHERE l.lecture_status IN ('예정', '개강') ";
 
 	    if (keyword != null && !keyword.isBlank()) {
 	        sql += "AND (l.lecture_name LIKE ? OR p.professor_name LIKE ? OR b.building_name LIKE ?) ";
@@ -434,10 +441,11 @@ public class LectureDAO {
 	// (학생) 페이징용 전체 강의 개수
 	public int countAll(String keyword) {
 	    String sql =
-	        "SELECT COUNT(*) FROM lecture l " +
+	        "SELECT COUNT(*) " +
+	        "FROM lecture l " +
 	        "JOIN professor p ON l.professor_id = p.professor_id " +
 	        "JOIN building b ON l.building_id = b.building_id " +
-	        "WHERE 1=1 ";
+	        "WHERE l.lecture_status IN ('예정', '개강') ";
 
 	    if (keyword != null && !keyword.isBlank()) {
 	        sql += "AND (l.lecture_name LIKE ? OR p.professor_name LIKE ? OR b.building_name LIKE ?) ";
@@ -532,4 +540,49 @@ public class LectureDAO {
 		
 		return false;
 	}
+	
+	// 강의실 중복 존재 여부 체크
+	public boolean existsLectureRoom(int buildingId, String room, String year, int semester) {
+	    String sql ="SELECT COUNT(*) FROM lecture WHERE building_id = ? " +
+			        " AND lecture_room = ? AND lecture_year = ? AND lecture_semester = ?";
+
+	    try (Connection conn = DBUtil.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setInt(1, buildingId);
+	        pstmt.setString(2, room);
+	        pstmt.setString(3, year);
+	        pstmt.setInt(4, semester);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getInt(1) > 0;
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return false;
+	}
+	
+	// 점유된 강의실 목록 조회
+	public List<String> findOccupiedRooms(int buildingId, String year, int semester) {
+	    String sql ="SELECT lecture_room FROM lecture WHERE building_id = ? " +
+	    			" AND lecture_year = ? AND lecture_semester = ?";
+
+	    List<String> list = new ArrayList<>();
+	    try (Connection conn = DBUtil.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setInt(1, buildingId);
+	        pstmt.setString(2, year);
+	        pstmt.setInt(3, semester);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            while (rs.next()) {
+	                list.add(rs.getString("lecture_room"));
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
+	
 }

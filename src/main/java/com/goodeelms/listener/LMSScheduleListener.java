@@ -1,14 +1,9 @@
 package com.goodeelms.listener;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +17,6 @@ import com.goodeelms.scheduler.EndEnrollmentJobScheduler;
 import com.goodeelms.scheduler.EndSemesterScheduler;
 import com.goodeelms.scheduler.QuartzScheduleManager;
 import com.goodeelms.service.AcademicCalendarService;
-import com.goodeelms.util.DBUtil;
 
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -71,6 +65,9 @@ public class LMSScheduleListener implements ServletContextListener {
 //    	firstScholarshipSelectStart = eventTimeMap.get("ac_first_scholarship_select_start");
 //    	firstScholarshipSelectEnd = eventTimeMap.get("ac_first_scholarship_select_end");
 //    	
+//    	firstLectureInsertStart = eventTimeMap.get("ac_first_lecture_insert_start");
+//    	firstLectureInsertEnd = eventTimeMap.get("ac_first_lecture_insert_end");
+//    	
 //    	studentFirstLectureCartStart = eventTimeMap.get("student_first_lecture_cart_start");
 //    	studentFirstLectureCartEnd = eventTimeMap.get("student_first_lecture_cart_end");
 //    	
@@ -88,6 +85,9 @@ public class LMSScheduleListener implements ServletContextListener {
 //    	
 //    	firstScholarshipSelectStart = eventTimeMap.get("ac_first_scholarship_select_start");
 //    	firstScholarshipSelectEnd = eventTimeMap.get("ac_first_scholarship_select_end");
+//    	
+//    	secondLectureInsertStart = eventTimeMap.get("ac_second_lecture_insert_start");
+//    	secondLectureInsertEnd = eventTimeMap.get("ac_second_lecture_insert_end");
 //    	
 //    	studentFirstLectureCartStart = eventTimeMap.get("student_first_lecture_cart_start");
 //    	studentFirstLectureCartEnd = eventTimeMap.get("student_first_lecture_cart_end");

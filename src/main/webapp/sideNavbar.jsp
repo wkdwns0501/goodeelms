@@ -19,18 +19,55 @@
 		    <a class="nav-link" href="<c:url value='/student/history/majorAndStatus'/>"><span class="nav-label">전공/학과변경/학적변동</span></a>
    			<a class="nav-link" href="<c:url value='/student/history/rewardAndPunishment'/>"><span class="nav-label">학사경고/우등 이력 조회</span></a>
 	    </c:when>	
-    	<c:when test="${sessionScope.user_role == 'ADMIN'}">
-	    	<a class="nav-link" href="<c:url value='/admin/studentStatus/page'/>"><span class="nav-label">학사관리</span></a>
-	   		<a class="nav-link" href="<c:url value='/admin/professorManage/page'/>"><span class="nav-label">계정관리</span></a>
-	   		<a class="nav-link" href="<c:url value='/admin/addStudent/list'/>"><span class="nav-label">학생등록</span></a>
-	    	<a class="nav-link" href="<c:url value='/admin/confirmScholarship/list'/>"><span class="nav-label">장학관리</span></a>
-	    	<a class="nav-link" href="<c:url value='/admin/setCalendar'/>"><span class="nav-label">일정관리</span></a>
-	    </c:when>
 	  	<c:when test="${sessionScope.user_role == 'PROFESSOR'}">     
 				<a class="nav-link" href="<c:url value='/professor/lecture/list'/>"><span class="nav-label">강의관리</span></a>		
 				<a class="nav-link" href="<c:url value='/professor/grade/list'/>"><span class="nav-label">성적관리</span></a>
 			</c:when>
+    	<c:when test="${sessionScope.user_role == 'ADMIN'}">
+	   		<a class="nav-link" href="<c:url value='/admin/professorManage/page'/>"><span class="nav-label">계정관리</span></a>
+	   		<a class="nav-link" href="<c:url value='/admin/addStudent/list'/>"><span class="nav-label">학생등록</span></a>
+	    	<a class="nav-link" href="<c:url value='/admin/studentStatus/page'/>"><span class="nav-label">학사관리</span></a>
+	    	<a class="nav-link" href="<c:url value='/admin/confirmScholarship/list'/>"><span class="nav-label">장학관리</span></a>
+	    	<a class="nav-link" href="<c:url value='/admin/setCalendar'/>"><span class="nav-label">일정관리</span></a>
+	    </c:when>
 		</c:choose>
   </nav>
   <div class="sidebar-handle" id="sidebarHandle" title="메뉴 열기/닫기"></div>
+	<style>
+	  /* 기본 상태: 텍스트 색상을 약간 부드럽게 */
+	  .nav-link {
+	    color: #495057;
+	    transition: all 0.2s ease;
+	    border-left: 4px solid transparent; /* 좌측에 투명한 선 미리 확보 */
+	  }
+	
+	  /* 활성화(Active) 상태: 깔끔한 초록색 포인트 */
+	  .nav-link.active {
+	    background-color: #f1f8f4 !important; /* 아주 연한 초록색 배경 */
+	    color: #2c5f3c !important;           /* 헤더와 맞춘 진한 초록색 글씨 */
+	    font-weight: 600 !important;         /* 글자 살짝 두껍게 */
+	    border-left: 4px solid #2c5f3c !important; /* 좌측에 포인트 선 */
+	  }
+	
+	  /* 마우스 올렸을 때도 살짝 반응 */
+	  .nav-link:hover {
+	    background-color: #f8f9fa;
+	    color: #2c5f3c;
+	  }
+	</style>
 </aside>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const currentPath = window.location.pathname; // 현재 접속한 경로 (예: /professor/lecture/list)
+    const navLinks = document.querySelectorAll('.sidebar .nav-link');
+
+    navLinks.forEach(link => {
+      // link.pathname은 <a> 태그의 href에서 경로 부분만 추출합니다.
+      // 현재 경로가 메뉴의 경로를 포함하고 있다면 active 클래스 추가
+      if (currentPath.includes(link.getAttribute('href'))) {
+        link.classList.add('active');
+      }
+    });
+  });
+</script>

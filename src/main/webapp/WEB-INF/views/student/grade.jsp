@@ -25,6 +25,12 @@
     white-space: nowrap;
     text-overflow: ellipsis;
   }
+  
+  .table td {
+	    padding-top: 15px !important;    /* 위쪽 여백 */
+	    padding-bottom: 15px !important; /* 아래쪽 여백 */
+	    vertical-align: middle;          /* 내용이 세로 가운데 오도록 설정 */
+	}
 
   .badge-soft-lime{
     background-color: #d1f7c4;

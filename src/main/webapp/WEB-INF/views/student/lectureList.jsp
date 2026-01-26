@@ -31,6 +31,12 @@
 	.td-room {
 	  max-width: clamp(9rem, 14vw, 14rem);
 	}
+	
+	.table td {
+	    padding-top: 15px !important;    /* 위쪽 여백 */
+	    padding-bottom: 15px !important; /* 아래쪽 여백 */
+	    vertical-align: middle;          /* 내용이 세로 가운데 오도록 설정 */
+	}
   
   /* 강의 코드 */
   .badge-soft-lime{
@@ -154,10 +160,6 @@
 														   title="<c:out value='${lec.lectureName}'/>">
 														  <c:out value="${lec.lectureName}"/>
 													</a>
-												  <div class="text-muted truncate subline"
-												       title="<c:out value='${lec.buildingName} ${lec.lectureRoom}호 · ${lec.professorName}'/>">
-												    <c:out value="${lec.buildingName}" /> <c:out value="${lec.lectureRoom}" />호 · <c:out value="${lec.professorName}"/>
-												  </div>
 												</td>
 
 			                  <td>${lec.professorName}</td>
