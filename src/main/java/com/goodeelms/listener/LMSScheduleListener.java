@@ -62,28 +62,28 @@ public class LMSScheduleListener implements ServletContextListener {
             
             // 객체가 아닌, 클래스를 전달해야함
             // 1학기 장바구니 종료 시 작업
-            QuartzScheduleManager.addJob(EndCartJobScheduler.class, "FirstSemesterCartCommitEvent", eventTimeMap.get("student_first_lecture_cart_end"));
+            QuartzScheduleManager.addJob(EndCartJobScheduler.class, "student_first_lecture_cart_end", eventTimeMap.get("student_first_lecture_cart_end"));
             
             // 1학기 수강신청 기간 종료 시 작업
-            QuartzScheduleManager.addJob(EndEnrollmentJobScheduler.class, "FirstEnrollmentCommitEvent", eventTimeMap.get("student_first_enrollment_end"));  
+            QuartzScheduleManager.addJob(EndEnrollmentJobScheduler.class, "student_first_enrollment_end", eventTimeMap.get("student_first_enrollment_end"));  
             
             // 1학기 개강 작업
-            QuartzScheduleManager.addJobWithTimeSemester(StartLectureJobScheduler.class, "FirstSemesterStart", year, 1, eventTimeMap.get("ac_open_first_semester"));
+            QuartzScheduleManager.addJobWithTimeSemester(StartLectureJobScheduler.class, "ac_first_semester_start", year, 1, eventTimeMap.get("ac_first_semester_start"));
             
             // 1학기 종강 작업
-            QuartzScheduleManager.addJobWithTimeSemester(EndSemesterScheduler.class, "FirstSemesterEnd", year, 1, eventTimeMap.get("ac_close_first_semester"));
+            QuartzScheduleManager.addJobWithTimeSemester(EndSemesterScheduler.class, "ac_first_semester_end", year, 1, eventTimeMap.get("ac_first_semester_end"));
             
             // 2학기 장바구니 종료 시 작업
-            QuartzScheduleManager.addJob(EndCartJobScheduler.class, "SecondSemesterCartCommitEvent", eventTimeMap.get("student_second_lecture_cart_end"));
+            QuartzScheduleManager.addJob(EndCartJobScheduler.class, "student_second_lecture_cart_end", eventTimeMap.get("student_second_lecture_cart_end"));
             
             // 2학기 수강신청 기간 종료 시 작업
-            QuartzScheduleManager.addJob(EndEnrollmentJobScheduler.class, "SecondEnrollmentCommitEvent", eventTimeMap.get("student_second_enrollment_end"));  
+            QuartzScheduleManager.addJob(EndEnrollmentJobScheduler.class, "student_second_enrollment_end", eventTimeMap.get("student_second_enrollment_end"));  
             
             // 2학기 개강 작업
-            QuartzScheduleManager.addJobWithTimeSemester(StartLectureJobScheduler.class, "SecondSemesterStart", year, 2, eventTimeMap.get("ac_open_second_semester"));
+            QuartzScheduleManager.addJobWithTimeSemester(StartLectureJobScheduler.class, "ac_second_semester_start", year, 2, eventTimeMap.get("ac_second_semester_start"));
             
             // 2학기 종강 작업
-            QuartzScheduleManager.addJobWithTimeSemester(EndSemesterScheduler.class, "SecondSemesterEnd", year, 2, eventTimeMap.get("ac_close_second_semester"));
+            QuartzScheduleManager.addJobWithTimeSemester(EndSemesterScheduler.class, "ac_second_semester_end", year, 2, eventTimeMap.get("ac_second_semester_end"));
             
             QuartzScheduleManager.printSchedulerStatus();
         } catch (SchedulerException e) {

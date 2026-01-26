@@ -1,5 +1,14 @@
 package com.goodeelms.controller;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
+import com.goodeelms.dto.LectureDTO;
+import com.goodeelms.dto.StudentMajorDTO;
+import com.goodeelms.service.LoadLectureService;
+import com.goodeelms.service.StudentService;
+
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -7,17 +16,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-
-import com.goodeelms.dto.LectureDTO;
-import com.goodeelms.dto.PreEnrollmentDTO;
-import com.goodeelms.dto.StudentDTO;
-import com.goodeelms.dto.StudentMajorDTO;
-import com.goodeelms.service.LoadLectureService;
-import com.goodeelms.service.StudentService;
 
 /**
  * Servlet implementation class LoadLectureServlet
@@ -49,15 +47,9 @@ public class LoadLectureController extends HttpServlet {
 		if(cat == null || cat.isBlank()) cat = "all";
 		
 		StudentService stuS = new StudentService();
-		String student_id = stuS.getStudentId(reqId);
-		if(student_id == null) {
-			System.out.println("등록되지 않은 학생입니다.");
-			response.sendRedirect("/main.jsp");
-			return;
-		}
 		
 		// 학생의 학과 정보 불러오기
-		List<StudentMajorDTO> majorList = stuS.getMajors(student_id);
+		List<StudentMajorDTO> majorList = stuS.getMajors(reqId);
 		// 학과 정보가 없으면 안됨
 		if(majorList == null || majorList.size() == 0) {
 			System.out.println("알 수 없는 오류");
@@ -87,10 +79,15 @@ public class LoadLectureController extends HttpServlet {
 		
 		// 어떤 단어 검색했는지
 		String searchWord = request.getParameter("search_word");
-		// 장바구니에 등록 된 강의 idSet 가져오기
+		// 장바구니에 등록 된 강의 codeSet 가져오기
 		Set<Integer> inLectureCodeSet = (Set<Integer>)session.getAttribute("lectureCodeSet");
 		// 로드 서비스 생성
 		LoadLectureService loadS = new LoadLectureService();
+		// 3.5점 이상인 강의 code codeSet에 넣기
+		Set<Integer> notAbleReEnrollment = loadS.getNotAbleReEnrollmentCodes(sessionId);
+		inLectureCodeSet.addAll(notAbleReEnrollment);
+		
+		// 카테고리, 검색어 조건으로 전공인지 확인, 이미 장바구니에 있거나 학점 3.5점 이상이면 노출 안되게
 		int total_record = loadS.getLecturesCount(cat, searchWord, inLectureCodeSet, majorIds);
 		int pageNums = (int)Math.ceil((double) total_record / viewLen);
 		if (pageNums == 0) pageNums = 1;

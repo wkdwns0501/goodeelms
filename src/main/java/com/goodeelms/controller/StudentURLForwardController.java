@@ -1,20 +1,19 @@
 package com.goodeelms.controller;
 
+import java.io.IOException;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.util.Map;
+
+import com.goodeelms.listener.LMSScheduleListener;
+import com.goodeelms.util.StaticUtils;
+
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Map;
-
-import com.goodeelms.listener.LMSScheduleListener;
-import com.goodeelms.util.StaticUtils;
 
 /**
  * Servlet implementation class StudentURLForwardServlet
@@ -35,13 +34,12 @@ public class StudentURLForwardController extends HttpServlet {
 		System.out.println(command);
 		RequestDispatcher rd = null;
 		// 시간 설정
-		ZoneId timeZone = LMSScheduleListener.getZONE_ID();
 		Map<String, ZonedDateTime> timeMap = LMSScheduleListener.getEventTimeMap();
 		switch(command) {
 			// 장바구니
 			case "/cart":
 				// 현재 시간 로드
-				ZonedDateTime nowCartTime = ZonedDateTime.now(timeZone);
+				ZonedDateTime nowCartTime = StaticUtils.getSettedTime();
 				
 				// 마감 시간 변수 선언
 				ZonedDateTime endCartTime;
@@ -60,7 +58,6 @@ public class StudentURLForwardController extends HttpServlet {
 				
 				Instant endCartInstant = endCartTime.toInstant();
 				long endCartTimeMS = endCartInstant.toEpochMilli();
-				System.out.println("설정 된 시간: " + endCartTime);
 				request.setAttribute("endTime", endCartTimeMS);
 				rd = request.getRequestDispatcher("/WEB-INF/views/student/enrollmentCart.jsp");
 				rd.forward(request, response);
@@ -72,7 +69,7 @@ public class StudentURLForwardController extends HttpServlet {
 				ZonedDateTime endComTime;
 				
 				// 현재 시간 로드
-				ZonedDateTime nowComTime = ZonedDateTime.now(timeZone);
+				ZonedDateTime nowComTime = StaticUtils.getSettedTime();
 				
 				// 수강신청 기간 외에 접속 시도 시 메인페이지로
 				if(StaticUtils.isBetweenTime(nowComTime, timeMap.get("student_first_enrollment_start"), timeMap.get("student_first_enrollment_end"))) {
@@ -88,7 +85,6 @@ public class StudentURLForwardController extends HttpServlet {
 				
 				Instant endComInstant = endComTime.toInstant();
 				long endComTimeMS = endComInstant.toEpochMilli();
-				System.out.println("설정 된 시간: " + endComTime);
 				request.setAttribute("endTime", endComTimeMS);
 				
 				rd = request.getRequestDispatcher("/WEB-INF/views/student/enrollmentCompetition.jsp");

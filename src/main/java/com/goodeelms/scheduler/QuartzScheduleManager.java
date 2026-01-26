@@ -2,10 +2,12 @@ package com.goodeelms.scheduler;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleScheduleBuilder;
@@ -13,6 +15,8 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
+
+import com.goodeelms.listener.LMSScheduleListener;
 
 public class QuartzScheduleManager {
 	private static Scheduler scheduler;
@@ -75,6 +79,33 @@ public class QuartzScheduleManager {
         
         scheduler.rescheduleJob(triggerKey, newTrigger);
     }
+    
+    public static void catchUpIfNeeded(ZonedDateTime beforeTime, ZonedDateTime afterTime) throws SchedulerException {
+    	if(beforeTime == null || afterTime == null) return;
+    	// 날짜가 앞으로 이동하거나 변동 없으면 미실행(복구가 안될걸?)
+    	if(afterTime.isBefore(beforeTime) || afterTime.equals(beforeTime)) return;
+    	
+    	Map<String, ZonedDateTime> eventMap = LMSScheduleListener.getEventTimeMap();
+    	// 동시성 검증
+    	if (eventMap == null || eventMap.isEmpty()) return;
+    	
+    	System.out.println("시간 점프 트리거 확인");
+    	for(Map.Entry<String, ZonedDateTime> entry : eventMap.entrySet()) {
+    		String jobName = entry.getKey();
+    		ZonedDateTime jobTime = entry.getValue() ;
+    		if(jobTime == null) continue;
+    		
+    		boolean passed = beforeTime.isBefore(jobTime) && !jobTime.isAfter(afterTime);
+    		if(!passed) continue;
+    		
+    		JobKey jobkey = JobKey.jobKey(jobName,"group1");
+    		if(scheduler.checkExists(jobkey)) {
+    			// 로그 기록 권장: "시간 변경으로 인한 누락 작업 강제 실행: [jobName]"
+                System.out.println("[Catch-Up] Triggering missed job: " + jobName);
+                scheduler.triggerJob(jobkey);
+    		}
+    	}
+    }
 	
 	public static void shutdown() throws SchedulerException {
         if (scheduler != null && !scheduler.isShutdown()) {
@@ -96,7 +127,7 @@ public class QuartzScheduleManager {
                 for (Trigger trigger : triggers) {
                     Trigger.TriggerState state = scheduler.getTriggerState(trigger.getKey());
                     ZonedDateTime nextFireTime = trigger.getNextFireTime() != null ? 
-                        trigger.getNextFireTime().toInstant().atZone(java.time.ZoneId.systemDefault()) : null;
+                        trigger.getNextFireTime().toInstant().atZone(LMSScheduleListener.getZONE_ID()) : null;
                     ZonedDateTime previousFireTime = trigger.getPreviousFireTime() != null ? 
                         trigger.getPreviousFireTime().toInstant().atZone(java.time.ZoneId.systemDefault()) : null;
 

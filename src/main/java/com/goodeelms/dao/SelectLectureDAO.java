@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -144,6 +144,31 @@ public class SelectLectureDAO {
 		return null;
 	}
 	
+	public Set<Integer> getNotAbleEnrollmentCodes(int studentId) {
+		String sql = "SELECT lecture_code FROM lecture as l "
+				+ "JOIN lecture_history as lh ON l.lecture_id = lh.lecture_id "
+				+ "WHERE lh.student_id = ? AND lecture_score >= 3.5";
+		
+		try(Connection conn = DBUtil.getBatchConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)){
+			
+			pstmt.setInt(1, studentId);
+			
+			try(ResultSet rs = pstmt.executeQuery()){
+				Set<Integer> set = new HashSet<Integer>();
+				while(rs.next()) {
+					set.add(rs.getInt("lecture_code"));
+				}
+				return set;
+			}
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
 	public String getQueryString(String searchWord, String cat, Set<Integer> lectureCodeSet, Set<Integer> professorIdSet) {
 		// 공통 조건
 		StringBuilder sb = new StringBuilder();
@@ -171,7 +196,8 @@ public class SelectLectureDAO {
 	public PreparedStatement getPrepareStatement(String sql, String searchWord, String cat, Set<Integer> lectureCodeSet, Set<Integer> professorIdSet, int ...majorIds) throws SQLException{
 		queryIndex = 1;
 		// 날짜
-		ZonedDateTime zoneTime = ZonedDateTime.now(LMSScheduleListener.getZONE_ID());
+		ZonedDateTime zoneTime = StaticUtils.getSettedTime();
+//		ZonedDateTime zoneTime = ZonedDateTime.now(LMSScheduleListener.getZONE_ID());
 		
 		// 학기 계산
 		int semester = 0;
