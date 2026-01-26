@@ -59,7 +59,7 @@ public class LMSScheduleListener implements ServletContextListener {
     		return;
     	}
     	// year 년도 학사일정 조회해서 이름이랑 시간 매핑
-    	Map<String, ZonedDateTime> eventTimeMap = list.stream().collect(Collectors.toMap(AcademicCalendarDTO::getAcademicEventName, AcademicCalendarDTO::getEventZoneDateTime));
+    	eventTimeMap = list.stream().collect(Collectors.toMap(AcademicCalendarDTO::getAcademicEventName, AcademicCalendarDTO::getEventZoneDateTime));
     	
 //    	firstGradeInsertStart = eventTimeMap.get("ac_first_grade_insert_start");
 //    	firstGradeInsertEnd = eventTimeMap.get("ac_first_grade_insert_end");
@@ -111,10 +111,10 @@ public class LMSScheduleListener implements ServletContextListener {
             QuartzScheduleManager.addJobWithTimeSemester(EndEnrollmentJobScheduler.class, "EnrollmentCommitEvent", year, 1, eventTimeMap.get("student_first_enrollment_end"));  
             
             // 1학기 종강
-            QuartzScheduleManager.addJobWithTimeSemester(EndSemesterScheduler.class, "FirstSemesterEnd", year, 1, eventTimeMap.get("ac_close_first_semester"));
+            QuartzScheduleManager.addJobWithTimeSemester(EndSemesterScheduler.class, "FirstSemesterEnd", year, 1, eventTimeMap.get("ac_first_semester_end"));
             
             // 2학기 종강
-            QuartzScheduleManager.addJobWithTimeSemester(EndSemesterScheduler.class, "SecondSemesterEnd", year, 2, eventTimeMap.get("ac_close_second_semester"));
+            QuartzScheduleManager.addJobWithTimeSemester(EndSemesterScheduler.class, "SecondSemesterEnd", year, 2, eventTimeMap.get("ac_second_semester_end"));
             
             QuartzScheduleManager.printSchedulerStatus();
         } catch (SchedulerException e) {

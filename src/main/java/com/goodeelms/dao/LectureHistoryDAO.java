@@ -29,7 +29,7 @@ public class LectureHistoryDAO {
 				+ "L.lecture_year, L.lecture_semester, LH.lecture_score "
 				+ "FROM lecture_history LH "
 				+ "JOIN lecture L ON L.lecture_id = LH.lecture_id "
-				+ "WHERE LH.student_id = ?";
+				+ "WHERE LH.student_id = ? ";
 
 		Map<Integer, LectureDTO> map = new LinkedHashMap<>();
 		
@@ -58,27 +58,31 @@ public class LectureHistoryDAO {
 		return map;
 	}
 
-	public Map<Integer, LectureDTO> getProgressInfoByStudentId(int studentId) { // 0121 임욱(추가) / 학생의 수강중인 강의 정보 조회
-		String sql = "SELECT  l.lecture_id, l.lecture_code, l.lecture_name, l.lecture_room, "
-				+ "l.lecture_credit, l.lecture_section, m.major_name, "
-				+ "l.lecture_type, p.professor_name, b.building_name, lh.lecture_score "
-				+ "FROM lecture_history lh "
-				+ "JOIN lecture l ON l.lecture_id = lh.lecture_id "
-				+ "JOIN professor p ON l.professor_id = p.professor_id "
-				+ "JOIN building b ON l.building_id = b.building_id "
-				+ "JOIN major m ON m.major_id = l.major_id "
-				+ "WHERE lh.student_id = ?";
+	public Map<Integer, LectureDTO> getProgressInfoByStudentId(int studentId, int year, int semester) { // 0125 임욱(수정) / 해당 학기에 수강중인 강의 정보 조회
+	    String sql = "SELECT l.lecture_id, l.lecture_code, l.lecture_name, l.lecture_room, "
+	            + "l.lecture_credit, l.lecture_section, m.major_name, "
+	            + "l.lecture_type, p.professor_name, b.building_name, lh.lecture_score "
+	            + "FROM lecture_history lh "
+	            + "JOIN lecture l ON l.lecture_id = lh.lecture_id "
+	            + "JOIN professor p ON l.professor_id = p.professor_id "
+	            + "JOIN building b ON l.building_id = b.building_id "
+	            + "JOIN major m ON m.major_id = l.major_id "
+	            + "WHERE lh.student_id = ? AND l.lecture_year = ? AND l.lecture_semester = ?";
 
-		Map<Integer, LectureDTO> map = new LinkedHashMap<>();
-		
-		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setInt(1, studentId);
-			
-			try (ResultSet rs = pstmt.executeQuery()) {
-				while(rs.next()) {
-					LectureDTO dto = new LectureDTO();
-					int lectureId = rs.getInt("lecture_id");
-					dto.setLectureId(lectureId);
+	    Map<Integer, LectureDTO> map = new LinkedHashMap<>();
+	    
+	    try (Connection conn = DBUtil.getConnection(); 
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        
+	        pstmt.setInt(1, studentId);
+	        pstmt.setInt(2, year);
+	        pstmt.setInt(3, semester);
+	        
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            while(rs.next()) {
+	                LectureDTO dto = new LectureDTO();
+	                int lectureId = rs.getInt("lecture_id");
+	                dto.setLectureId(lectureId);
 	                dto.setLectureName(rs.getString("lecture_name"));
 	                dto.setLectureCode(rs.getInt("lecture_code"));
 	                dto.setLectureRoom(rs.getString("lecture_room"));
@@ -90,16 +94,13 @@ public class LectureHistoryDAO {
 	                dto.setMajorName(rs.getString("major_name"));
 	                
 	                map.put(lectureId, dto);
-				}
-			} catch (Exception e) {
-				System.out.println("getProgressInfoByStudentId 쿼리실행 중 예외발생: " + e.getMessage());
-				e.printStackTrace();
-			}
-		} catch (Exception e) {
-			System.out.println("getProgressInfoByStudentId 예외발생: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return map;
+	            }
+	        }
+	    } catch (Exception e) {
+	        System.out.println("getProgressInfoByStudentId 예외발생: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	    return map;
 	}
 	
 	public List<LectureDTO> getProbationByStudentId(int studentId){ // 0121 임욱(추가) / 평균점수 2.0 이하 학생 조회
@@ -108,7 +109,8 @@ public class LectureHistoryDAO {
 				+ "JOIN lecture l ON lh.lecture_id = l.lecture_id "
 				+ "WHERE lh.student_id = ? "
 				+ "GROUP BY l.lecture_year, l.lecture_semester, lh.student_id "
-				+ "HAVING AVG(lh.lecture_score) <= 2.0"; 
+				+ "HAVING AVG(lh.lecture_score) <= 2.0 "
+				+ "ORDER BY l.lecture_year DESC, l.lecture_semester DESC"; 
 		
 		List<LectureDTO> list = new ArrayList<LectureDTO>();
 		

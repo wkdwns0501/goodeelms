@@ -64,7 +64,7 @@ public class StudentController extends HttpServlet {
 	        payTuitionOrScholarship(request, response);
 	        break;
 		case "/lecture":
-	    	showLectureList(request, response);
+	    		showLectureList(request, response);
 	    	break;
 		case "/grades":
 			showGrade(request, response);

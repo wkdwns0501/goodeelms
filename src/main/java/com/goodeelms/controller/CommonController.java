@@ -169,14 +169,16 @@ public class CommonController extends HttpServlet {
 	}
 	
 	private void extendSession(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
+		HttpSession session = request.getSession(false);
 		
-		if (session != null) session.setMaxInactiveInterval(60*30); 
-		else response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-		
-		response.setContentType("text/plain");
-		response.getWriter().write("success");
-		return;
+		response.setContentType("text/plain; charset=UTF-8");
+	    if (session != null && session.getAttribute("user_role") != null) {
+	        response.setStatus(HttpServletResponse.SC_OK); 
+	        response.getWriter().write("ok");
+	    } else {
+	        response.setStatus(HttpServletResponse.SC_OK);
+	        response.getWriter().write("expired");
+	    }
 	}
 	
 }
