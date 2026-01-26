@@ -50,7 +50,13 @@ public class QuartzScheduleManager {
     
     // 어디서든 이 메서드를 통해 새로운 작업을 등록하거나 변경함
     public static void addJobWithTimeSemester(Class<? extends Job> jobClass, String jobName, int year, int semester, ZonedDateTime startTime) throws SchedulerException {
-        JobDetail job = JobBuilder.newJob(jobClass)
+    	// startTime이 null일 경우에 대한 방어 로직
+        if (startTime == null) {
+            System.err.println("경고: [" + jobName + "]의 startTime이 null입니다. 현재 시간으로 대체합니다.");
+            startTime = ZonedDateTime.now(); // 혹은 return; 을 통해 등록을 취소
+        }
+    	
+    	JobDetail job = JobBuilder.newJob(jobClass)
                 .withIdentity(jobName, "group1")
                 .usingJobData("year", year)
                 .usingJobData("semester", semester)

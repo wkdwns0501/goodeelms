@@ -96,7 +96,6 @@ public class ProfessorGradeDAO {
             "  s.student_no, s.student_name " +
             "FROM lecture_history lh " +
             "JOIN student s ON s.student_id = lh.student_id " +
-            "JOIN lecture l ON l.lecture_id = lh.lecture_id " +
             "WHERE lh.lecture_id = ? " +
             (hasKeyword ? " AND s.student_name LIKE ? " : "") +
             "ORDER BY s.student_name ASC " +
@@ -176,6 +175,5 @@ public class ProfessorGradeDAO {
         }
         return false;
     }
-
 
 }

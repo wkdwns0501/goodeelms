@@ -31,6 +31,12 @@
 	.td-room {
 	  max-width: clamp(9rem, 14vw, 14rem); /* 화면에 따라 9~14rem 사이 */
 	}
+	
+	.table td {
+	    padding-top: 15px !important;    /* 위쪽 여백 */
+	    padding-bottom: 15px !important; /* 아래쪽 여백 */
+	    vertical-align: middle;          /* 내용이 세로 가운데 오도록 설정 */
+	}
   
   /* 강의 코드 */
   .badge-soft-lime{
@@ -58,6 +64,42 @@
 	.subline{
 	  font-size: 0.78rem;
 	}
+	/* 강의 상태 서브 뱃지  */
+	.badge-lecture-status {
+	  font-size: 0.7rem;
+	  padding: 2px 6px;
+	  border-radius: 999px;
+	  margin-left: 6px;
+	  vertical-align: middle;
+	  font-weight: 400;
+	  line-height: 1.2;
+	}
+	
+	/* 상태별 색상 */
+	.badge-status-open {        /* 개강 */
+	  background-color: #e6f4ea;
+	  color: #1e7e34;
+	}
+	
+	.badge-status-ready {       /* 예정 */
+	  background-color: #eef2f6;
+	  color: #5f6f82;
+	}
+	
+	.badge-status-end {         /* 종강 */
+	  background-color: #f1f1f1;
+	  color: #8a8a8a;
+	}
+	
+	/* 종강 강의 행 흐림 처리 */
+	tr.lecture-ended {
+  	opacity: 0.55;
+	}
+	
+	/* 종강 행 안의 링크는 기본 색 유지 */
+	tr.lecture-ended a {
+	  color: inherit;
+	}
 </style>
 
 </head>
@@ -76,7 +118,16 @@
           </div>
 
           <c:if test="${not empty sessionScope.professor_id}">
-            <a class="btn btn-success btn-sm" href="<c:url value='/professor/lecture/add'/>">+ 강의 등록</a>
+              <c:choose>
+			    <c:when test="${isLectureInsertPeriod}">
+			      <a class="btn btn-success btn-sm" href="<c:url value='/professor/lecture/add'/>">+ 강의 등록</a>
+			    </c:when>
+			    <c:otherwise>
+			      <a class="btn btn-success btn-sm"
+			         href="<c:url value='/professor/lecture/list'/>"
+			         onclick="alert('현재 등록기간이 아닙니다.'); return false;">+ 강의 등록</a>
+			    </c:otherwise>
+			  </c:choose>
           </c:if>
         </div>
 
@@ -84,11 +135,20 @@
         <div class="card shadow-sm border-0 mb-3">
           <div class="card-body">
             <form method="get" action="<c:url value='/professor/lecture/list'/>" class="row g-2 align-items-center">
-              <div class="col-md-8">
-                <input type="text" name="keyword" class="form-control"
-                       placeholder="강의명 또는 교수명 또는 건물명 검색"
-                       value="<c:out value='${keyword}'/>">
-              </div>
+            		<input type="hidden" name="page" value="1" />
+                <div class="col-md-2">
+							    <select name="statusFilter" class="form-select"
+        									onchange="this.form.page.value=1; this.form.submit();">
+									  <option value="ACTIVE" ${statusFilter eq 'ACTIVE' ? 'selected' : ''}>진행중 (예정/개강)</option>
+									  <option value="ALL" ${statusFilter eq 'ALL' ? 'selected' : ''}>전체 (예정/개강/종강)</option>
+									</select>
+							  </div>
+							
+							  <div class="col-md-6">
+							    <input type="text" name="keyword" class="form-control"
+							           placeholder="강의명 또는 교수명 또는 건물명 검색"
+							           value="<c:out value='${keyword}'/>">
+							  </div>
               <div class="col-md-4 d-flex gap-2">
                 <button type="submit" class="btn btn-success w-100">검색</button>
                 <a class="btn btn-outline-secondary w-100" href="<c:url value='/professor/lecture/list'/>">초기화</a>
@@ -128,7 +188,7 @@
 			
 			            <c:otherwise>
 			              <c:forEach var="lec" items="${lectures}">
-			                <tr>
+			                <tr class="${lec.lectureStatus eq '종강' ? 'lecture-ended' : ''}">
 			                  <td class="fw-semibold">
 			                  	<span class="badge rounded-pill badge-soft-lime">
 			                  		${lec.lectureCodeDisplay}
@@ -150,14 +210,22 @@
 														   data-room="<c:out value='${lec.lectureRoom}'/>"
 														   data-current="<c:out value='${lec.lectureCurrentPeople}'/>"
 														   data-capacity="<c:out value='${lec.lectureCapacity}'/>"
+														   data-status="<c:out value='${lec.lectureStatus}'/>"
 														   data-desc="<c:out value='${lec.lectureDescription}'/>"
 														   title="<c:out value='${lec.lectureName}'/>">
 														  <c:out value="${lec.lectureName}"/>
+														  <c:choose>
+														    <c:when test="${lec.lectureStatus eq '개강'}">
+														      <span class="badge-lecture-status badge-status-open">개강</span>
+														    </c:when>
+														    <c:when test="${lec.lectureStatus eq '예정'}">
+														      <span class="badge-lecture-status badge-status-ready">예정</span>
+														    </c:when>
+														    <c:when test="${lec.lectureStatus eq '종강'}">
+														      <span class="badge-lecture-status badge-status-end">종강</span>
+														    </c:when>
+														  </c:choose>
 													</a>
-												  <div class="text-muted truncate subline"
-												       title="<c:out value='${lec.buildingName} ${lec.lectureRoom}호 · ${lec.professorName}'/>">
-												    <c:out value="${lec.buildingName}" /> <c:out value="${lec.lectureRoom}" />호 · <c:out value="${lec.professorName}"/>
-												  </div>
 												</td>
 
 			                  <td>${lec.professorName}</td>
@@ -204,6 +272,9 @@
 				                  <c:if test='${not empty keyword}'>
 				                    <c:param name='keyword' value='${keyword}'/>
 				                  </c:if>
+				                  <c:if test='${not empty statusFilter}'>
+				                    <c:param name='statusFilter' value='${statusFilter}'/>
+				                  </c:if>
 				                </c:url>">
 				          &laquo;&laquo;
 				        </a>
@@ -216,6 +287,9 @@
 				                  <c:param name='page' value='${page - 1}'/>
 				                  <c:if test='${not empty keyword}'>
 				                    <c:param name='keyword' value='${keyword}'/>
+				                  </c:if>
+				                  <c:if test='${not empty statusFilter}'>
+				                    <c:param name='statusFilter' value='${statusFilter}'/>
 				                  </c:if>
 				                </c:url>">
 				          &laquo;
@@ -231,6 +305,9 @@
 				                    <c:if test='${not empty keyword}'>
 				                      <c:param name='keyword' value='${keyword}'/>
 				                    </c:if>
+				                    <c:if test='${not empty statusFilter}'>
+				                      <c:param name='statusFilter' value='${statusFilter}'/>
+				                    </c:if>
 				                  </c:url>">
 				            ${p}
 				          </a>
@@ -245,6 +322,9 @@
 				                  <c:if test='${not empty keyword}'>
 				                    <c:param name='keyword' value='${keyword}'/>
 				                  </c:if>
+				                  <c:if test='${not empty statusFilter}'>
+				                    <c:param name='statusFilter' value='${statusFilter}'/>
+				                  </c:if>
 				                </c:url>">
 				          &raquo;
 				        </a>
@@ -257,6 +337,9 @@
 				                  <c:param name='page' value='${nextBlockPage}'/>
 				                  <c:if test='${not empty keyword}'>
 				                    <c:param name='keyword' value='${keyword}'/>
+				                  </c:if>
+				                  <c:if test='${not empty statusFilter}'>
+				                    <c:param name='statusFilter' value='${statusFilter}'/>
 				                  </c:if>
 				                </c:url>">
 				          &raquo;&raquo;
@@ -276,7 +359,7 @@
 	  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"> 
 	  	<div class="modal-content border-0 shadow"> 
 	  		<div class="modal-header bg-dark text-white"> 
-	  			<h5 class="modal-title fw-bold"><span id="mLectureName"></span></h5>
+	  			<h5 class="modal-title fw-bold"><span id="mLectureName"></span><span id="mLectureStatus"></span></h5>
 	      	<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
 	      </div>
 	
@@ -376,6 +459,19 @@
 		
 		    // --- 기본 정보 (텍스트) ---
 		    setText("#mLectureName", d.name);
+		 		// 강의 상태 뱃지
+		    const statusEl = document.querySelector("#mLectureStatus");
+		    statusEl.innerHTML = "";
+		    if (d.status === "개강") {
+		      statusEl.innerHTML =
+		        '<span class="badge-lecture-status badge-status-open ms-2">개강</span>';
+		    } else if (d.status === "예정") {
+		      statusEl.innerHTML =
+		        '<span class="badge-lecture-status badge-status-ready ms-2">예정</span>';
+		    } else if (d.status === "종강") {
+		      statusEl.innerHTML =
+		        '<span class="badge-lecture-status badge-status-end ms-2">종강</span>';
+		    }
 		    setText("#mLectureProf", d.prof);
 		    setText("#mLecturePlace", d.building + " " + d.room + "호");
 		    setText("#mLectureCredit", d.credit + "학점");

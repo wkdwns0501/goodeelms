@@ -34,12 +34,12 @@ public class EndEnrollmentJobScheduler implements Job {
             Trigger retryTrigger = TriggerBuilder.newTrigger()
                 .startAt(DateBuilder.futureDate(10, DateBuilder.IntervalUnit.SECOND))
                 .build();
-            
-            try {
-                context.getScheduler().rescheduleJob(context.getTrigger().getKey(), retryTrigger);
-            } catch (SchedulerException se) {
-                se.printStackTrace();
-            }
+//            
+//            try {
+//                context.getScheduler().rescheduleJob(context.getTrigger().getKey(), retryTrigger);
+//            } catch (SchedulerException se) {
+//                se.printStackTrace();
+//            }
         }
 	}
 

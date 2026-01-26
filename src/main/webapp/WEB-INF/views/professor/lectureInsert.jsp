@@ -17,7 +17,7 @@
 <body>
   <%@ include file="/header.jsp" %>
   <%@ include file="/sideNavbar.jsp" %>
-  
+  <input type="hidden" id="ctx" value="${pageContext.request.contextPath}" />
   <main class="content">
 	  <div class="container-fluid">
 	    <div class="page-shell">
@@ -29,14 +29,12 @@
 				  <a class="btn btn-outline-secondary btn-sm" href="<c:url value='/professor/lecture/list'/>">목록</a>
 				</div>
 				
-				<!-- 에러 메시지 영역 (컨트롤러에서 request.setAttribute("error", "...") 했을 때) -->
 				<c:if test="${not empty error}">
 				  <div id="errorAlert" class="alert alert-danger mb-3 py-2" role="alert">
 				    <c:out value="${error}"/>
 				  </div>
 				</c:if>
 
-				
 				<div class="card shadow-sm border-0">
 				  <div class="card-body">
 				
@@ -96,9 +94,9 @@
 				        <div class="col-md-3">
 				          <label class="form-label">학기 <span class="text-danger">*</span></label>
 				          <select class="form-select" name="lecture_semester" id="lecture_semester" required>
-				            <option value="">-- 선택 --</option>
-									  <option value="1" <c:if test="${form.lectureSemester == 1}">selected</c:if>>1학기</option>
-									  <option value="2" <c:if test="${form.lectureSemester == 2}">selected</c:if>>2학기</option>
+				             <option value="">-- 선택 --</option>
+							 <option value="1" <c:if test="${form.lectureSemester == 1}">selected</c:if>>1학기</option>
+							 <option value="2" <c:if test="${form.lectureSemester == 2}">selected</c:if>>2학기</option>
 				          </select>
 				          <small id="semesterError" class="text-danger d-none">학기를 선택하세요</small>
 				        </div>
@@ -126,16 +124,24 @@
 								  <small id="buildingError" class="text-danger d-none">건물을 선택하세요</small>
 								</div>
 								
-				        <!-- 강의실 -->
-				        <div class="col-md-3">
-				          <label class="form-label">강의실 <span class="text-danger">*</span></label>
-				          <input type="text" class="form-control"
-				                 name="lecture_room"
-				                 id="lecture_room" 
-				                 placeholder="예: 101" 
-				                 value="<c:out value='${form.lectureRoom}'/>" 
-				                 required/>
-				        </div>
+					      <!-- 강의실 -->
+					      <div class="col-md-3">
+								  <label class="form-label">
+								    강의실 <span class="text-danger">*</span>
+								  </label>
+							
+									<select class="form-select" name="lecture_room" id="lecture_room" disabled>
+									  <option value="">-- 강의실 선택 --</option>
+									</select>
+								
+								  <!-- 안내 문구 -->
+								  <small id="roomGuide" class="text-muted">
+								    연도, 학기, 건물을 모두 선택해야 호수 선택이 가능합니다.
+								  </small>
+								  <small id="roomError" class="text-danger d-none">
+									강의실을 선택하세요.
+								  </small>
+								</div>
 				
 				        <!-- 정원 -->
 				        <div class="col-md-3">
@@ -160,9 +166,9 @@
 				                    maxlength="1000" 
 				                    placeholder="최대 1000자까지 작성 가능합니다."><c:out value="${form.lectureDescription}"/></textarea>
 				          <div class="d-flex justify-content-between">
-								    <small id="descError" class="text-danger d-none">최대 1000자까지만 작성 가능합니다</small>
-								    <small class="text-muted"><span id="descCount">0</span>/1000</small>
-								  </div>
+						    <small id="descError" class="text-danger d-none">최대 1000자까지만 작성 가능합니다</small>
+						    <small class="text-muted"><span id="descCount">0</span>/1000</small>
+						  </div>
 				        </div>
 				
 				      </div>
@@ -170,7 +176,7 @@
 				      <hr class="my-4">
 				
 				      <div class="d-flex gap-2 justify-content-end">
-				        <a class="btn btn-light" href="<c:url value='/lecture/list'/>">취소</a>
+				        <a class="btn btn-light" href="<c:url value='/professor/lecture/list'/>">취소</a>
 				        <button type="submit" class="btn btn-success">등록</button>
 				      </div>
 				    </form>
