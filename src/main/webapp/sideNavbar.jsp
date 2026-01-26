@@ -28,6 +28,7 @@
 	   		<a class="nav-link" href="<c:url value='/admin/addStudent/list'/>"><span class="nav-label">학생등록</span></a>
 	    	<a class="nav-link" href="<c:url value='/admin/studentStatus/page'/>"><span class="nav-label">학사관리</span></a>
 	    	<a class="nav-link" href="<c:url value='/admin/confirmScholarship/list'/>"><span class="nav-label">장학관리</span></a>
+	    	<a class="nav-link" href="<c:url value='/admin/setCalendar'/>"><span class="nav-label">일정관리</span></a>
 	    </c:when>
 		</c:choose>
   </nav>

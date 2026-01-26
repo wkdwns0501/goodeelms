@@ -16,12 +16,14 @@
 <!-- layout CSS -->
 <link rel="stylesheet" href="<c:url value='/resources/css/layout.css'/>" />
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </head>
 <body>
 	<%@ include file="/header.jsp"%>
 	<%@ include file="/sideNavbar.jsp"%>
-	<script src="${pageContext.request.contextPath}/resources/js/modal.js"></script>
-	
+
 	<main class="content">
 		<div class="container-fluid">
 			<div class="page-shell">
@@ -33,7 +35,9 @@
 				</c:if>
 
 				<c:if test="${not empty msg}">
-					<div  id="resultAlert" class="alert alert-success alert-dismissible fade show" role="alert">
+					<div id="resultAlert"
+						class="alert alert-success alert-dismissible fade show"
+						role="alert">
 						${msg}
 						<button type="button" class="btn-close" data-bs-dismiss="alert"
 							aria-label="Close"></button>
@@ -99,8 +103,7 @@
 
 							<c:choose>
 								<c:when test="${tuition.paymentStatus != '납부완료'}">
-									<form
-										action="${pageContext.request.contextPath}/student/tuition/pay"
+									<form action="${pageContext.request.contextPath}/student/tuition/pay"
 										method="post" class="row g-3">
 										<div class="col-md-8">
 											<div class="input-group">
@@ -122,11 +125,14 @@
 													입력</a>
 											</small>
 										</div>
+										
 										<div class="col-md-4">
-											<button type="submit" class="btn btn-primary w-100 fw-bold">
+											<button type="button" onclick="generatePayQR()"
+												class="btn btn-primary w-100 fw-bold">
 												<i class="bi bi-credit-card me-1"></i> 납입하기
 											</button>
 										</div>
+										
 									</form>
 								</c:when>
 								<c:otherwise>
@@ -212,19 +218,37 @@
 					</div>
 				</section>
 
+				<form action="${pageContext.request.contextPath}/student/tuition/pay" method="post" id="finalPayForm">
+				    <input type="hidden" name="payment" id="hiddenPayment">
+				    
+				    <div class="modal fade" id="payModal" tabindex="-1" aria-hidden="true">
+				        <div class="modal-dialog modal-dialog-centered" style="width: 320px;">
+				            <div class="modal-content">
+				                <div class="modal-header">
+				                    <h5 class="modal-title">QR 결제 확인</h5>
+				                    <button type="submit" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				                </div>
+				                <div class="modal-body text-center">
+				                    <div id="qrcode" class="d-flex justify-content-center" style="padding: 20px; background: white;"></div>
+				                    <p class="mt-3 mb-0">스캔 후 <b>X 를 눌러주세요.</b></p>
+				                </div>
+				            </div>
+				        </div>
+				    </div>
+				</form>
+				
 			</div>
 		</div>
 	</main>
 
 	<%@ include file="/footer.jsp"%>
 
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 	<script>
 		function formatDisplay(input) {
 			const display = document.getElementById('amountDisplay');
 			const value = input.value;
-
+			
 			if (value) {
 				// 숫자를 3자리마다 콤마 찍기
 				const formatted = Number(value).toLocaleString('ko-KR');
@@ -239,7 +263,35 @@
 		if (resultAlert) {
 		    setTimeout(() => resultAlert.classList.add("d-none"), 4000);
 		}
-	</script>
+
+		
+		// QR 영역
+		function generatePayQR() { 		
+	    const amount = document.getElementById('paymentInput').value;
+	    
+	    if(!amount || amount <= 0) {
+	        alert("납부할 금액을 입력해주세요.");
+	        return;
+	    }
+
+	    document.getElementById('hiddenPayment').value = amount;
+
+	    const qrContainer = document.getElementById("qrcode"); // QR 영역 초기화 (중복 생성 방지)
+	    qrContainer.innerHTML = ""; 
+
+	    // QR 생성
+	    new QRCode(qrContainer, {
+	        text: "http:192.xxx.xx.xxx:8080",
+	        width: 180,
+	        height: 180
+	    });
+
+	    // 모달 띄우기
+	    var myModal = new bootstrap.Modal(document.getElementById('payModal'));
+	    myModal.show();
+	    
+	}
+</script>
 
 </body>
 </html>

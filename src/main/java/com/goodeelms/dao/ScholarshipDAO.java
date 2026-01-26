@@ -93,10 +93,11 @@ public class ScholarshipDAO {
 	
 	
 	public List<ScholarshipDTO> getSemesterAndAmountByStudentId(int studentId){
-		String sql = "SELECT scholarship_semester, scholarship_amount "
+		String sql = "SELECT SH.scholarship_semester, SH.scholarship_amount "
 				+ "FROM scholarship_history SH "
 				+ "JOIN student S ON S.student_id = SH.student_id "
-				+ "WHERE sh.student_id = ?";
+				+ "WHERE sh.student_id = ?  "
+				+ "ORDER BY SH.scholarship_semester DESC ";
 
 		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, studentId);
@@ -120,6 +121,20 @@ public class ScholarshipDAO {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public int cancelScholarship(String studentId, int yearSemesterInt) {
+		String sql = "DELETE FROM scholarship_history WHERE student_id = ? AND scholarship_semester = ? ";
+		
+		try(Connection conn = DBUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setInt(1, Integer.parseInt(studentId));
+			pstmt.setInt(2, yearSemesterInt);
+			
+			return pstmt.executeUpdate();
+		} catch (Exception e) {
+			System.out.println("cancelScholarship() 예외 발생: " + e);
+		}	return 0;
 	}
 	
 	

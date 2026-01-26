@@ -1,5 +1,6 @@
 package com.goodeelms.listener;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -45,9 +46,9 @@ public class LMSScheduleListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce)  { 
     	
     	int year = LocalDateTime.now().getYear();
-    	
+//    	year = 2025;
     	// DB조회
-    	List<AcademicCalendarDTO> list = AcademicCalendarService.getInstance().getCalendarAtYear(year);
+    	List<AcademicCalendarDTO> list = AcademicCalendarService.getInstance().getCalendarAtYear();
     	if(list ==  null || list.size() == 0) {
     		System.out.println("DB 조회 실패 또는 데이터 소실");
     		return;
@@ -136,7 +137,29 @@ public class LMSScheduleListener implements ServletContextListener {
             e.printStackTrace();
         }
     }
+    	
+    	// 일정 변경 후 맵 초기화
+    public static void setEventTimeMap(Map<String, ZonedDateTime> newMap) {
+        // 기존 Map을 새 Map으로 교체
+        eventTimeMap = newMap;
+        System.out.println("DEBUG: 스케줄러 Map이 성공적으로 갱신되었습니다.");
+    }
     
+    public static void refreshSchedule(Map<String, String> stringMap) {
+        Map<String, ZonedDateTime> newEventTimeMap = new HashMap<>();
+        
+        stringMap.forEach((key, value) -> {
+            if (value != null && !value.isEmpty()) {
+                // 여기서 딱 한 번만 변환!
+                ZonedDateTime zdt = LocalDate.parse(value)
+                                             .atStartOfDay(ZoneId.of("Asia/Seoul"));
+                newEventTimeMap.put(key, zdt);
+            }
+        });
+        
+        // 전역 변수 교체
+        eventTimeMap = newEventTimeMap;
+    }
     
 	
 }

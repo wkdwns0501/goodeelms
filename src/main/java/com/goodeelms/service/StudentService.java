@@ -117,8 +117,14 @@ public class StudentService {
 	    }
 	}
 	
-	public Map<Integer, LectureDTO> getProgressInfoByStudentId(int studentId){ // 0123 임욱(수정) / 해당 학기에 수강중인 강의를 조회
-		return LectureHistoryDAO.getInstance().getProgressInfoByStudentId(studentId);
+	public Map<Integer, LectureDTO> getProgressInfoByStudentId(int studentId) {
+	    AcademicCalendarService academicService = new AcademicCalendarService();
+	    Map<String, Integer> yearAndSemester = academicService.getCurrentYearAndSemester();
+	    
+	    int currentYear = yearAndSemester.get("year");
+	    int currentSemester = yearAndSemester.get("semester");
+
+	    return LectureHistoryDAO.getInstance().getProgressInfoByStudentId(studentId, currentYear, currentSemester);
 	}
 	
 	public Map<Integer, LectureDTO> getlectureAndLectureScoreByStudentId(int studentId){ // 0120 임욱(추가) / 수강 중인 강의 점수 조회

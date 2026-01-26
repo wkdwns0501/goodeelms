@@ -32,8 +32,9 @@
 
 
 				<div id="timerContainer" class="btn btn-sm btn-light" data-is-login="true" data-context-path="${pageContext.request.contextPath}">
-					접속 유지시간: <span id="timer">30:00</span>
-				</div>	
+   				접속 유지시간: <span id="timer">30:00</span>
+   				<button type="button" id="extendBtn" class="btn btn-xs btn-dark ms-2" style="font-size: 0.7rem; padding: 1px 5px;">연장하기</button>
+				</div>
 				
 				<%-- 학생 전용 버튼 --%>
 				<c:if test="${user_role eq 'STUDENT'}">

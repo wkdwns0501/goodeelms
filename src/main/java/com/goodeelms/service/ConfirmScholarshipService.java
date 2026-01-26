@@ -1,6 +1,7 @@
 package com.goodeelms.service;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 import com.goodeelms.dao.ScholarshipDAO;
@@ -21,33 +22,33 @@ public class ConfirmScholarshipService {
 	}
 	
 	// 현재가 2 or 8월인지 체크
-	public boolean isAccessPeriod() {
-	    LocalDate now = LocalDate.now();
-	    int month = now.getMonthValue();
-	    int day = now.getDayOfMonth();
-	    // 예: 매년 1학기(2월), 2학기(8월) 한 달 동안만 접근 가능하다고 가정
-	    // 혹은 특정 날짜 범위를 지정 (예: 2026-01-20 ~ 2026-02-28)
-	    
-	    // 2월이나 8월이면 true를 반환
-	    return (month == 2 || month == 8 || month == 1); // 테스트를 위해 현재 1월 포함
-	}
+//	public boolean isAccessPeriod() {
+//	    LocalDate now = LocalDate.now();
+//	    int month = now.getMonthValue();
+//	    int day = now.getDayOfMonth();
+//	    // 예: 매년 1학기(2월), 2학기(8월) 한 달 동안만 접근 가능하다고 가정
+//	    // 혹은 특정 날짜 범위를 지정 (예: 2026-01-20 ~ 2026-02-28)
+//	    
+//	    // 2월이나 8월이면 true를 반환
+//	    return (month == 2 || month == 8 || month == 1); // 테스트를 위해 현재 1월 포함
+//	}
 	
-	public String[] lastestSemester(String yearSemester) {
-		// 페이지 진입시 자동으로 가장 최근 학기거 조회 (메뉴 진입 즉시에는 yearSemester 값이 없음)
-		if (yearSemester == null || yearSemester.isEmpty()) {
-		    LocalDate now = LocalDate.now();
+	public String[] lastestSemester(ZonedDateTime now) {
 		    int year = now.getYear(); // 2026
 		    int month = now.getMonthValue(); // 1
-
-		    if (month >= 8) {
-		        yearSemester = year + "_1"; // 8월 넘으면 올해 1학기
-		    } else if (month >= 2) {
+		    String yearSemester = "";
+		    if (month >= 7) {
+		        yearSemester = year + "_1"; // 7월 넘으면 올해 1학기
+		    } else if (month >= 1) {
 		        yearSemester = (year - 1) + "_2"; // 2월 넘으면 작년 2학기
-		    } else {
-		        yearSemester = (year - 1) + "_1"; // 그 외(1월)는 작년 1학기 -> 2025_1
 		    }
+		    
+		    return yearSemester.split("_");
 		}
-		String[] parts = yearSemester.split("_");
-		return parts;
+
+	public int cancelScholarship(String studentId, int yearSemesterInt) {
+		ScholarshipDAO scholarshipDAO = ScholarshipDAO.getInstance();
+		return scholarshipDAO.cancelScholarship(studentId, yearSemesterInt);
 	}
+		
 }
