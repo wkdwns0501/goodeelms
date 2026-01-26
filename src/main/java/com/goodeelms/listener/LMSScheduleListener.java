@@ -111,10 +111,10 @@ public class LMSScheduleListener implements ServletContextListener {
             QuartzScheduleManager.addJobWithTimeSemester(EndEnrollmentJobScheduler.class, "EnrollmentCommitEvent", year, 1, eventTimeMap.get("student_first_enrollment_end"));  
             
             // 1학기 종강
-            QuartzScheduleManager.addJobWithTimeSemester(EndSemesterScheduler.class, "FirstSemesterEnd", year, 1, eventTimeMap.get("ac_close_first_semester"));
+            QuartzScheduleManager.addJobWithTimeSemester(EndSemesterScheduler.class, "FirstSemesterEnd", year, 1, eventTimeMap.get("ac_first_semester_end"));
             
             // 2학기 종강
-            QuartzScheduleManager.addJobWithTimeSemester(EndSemesterScheduler.class, "SecondSemesterEnd", year, 2, eventTimeMap.get("ac_close_second_semester"));
+            QuartzScheduleManager.addJobWithTimeSemester(EndSemesterScheduler.class, "SecondSemesterEnd", year, 2, eventTimeMap.get("ac_second_semester_end"));
             
             QuartzScheduleManager.printSchedulerStatus();
         } catch (SchedulerException e) {

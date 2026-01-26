@@ -135,8 +135,8 @@ public class StudentGradeController extends HttpServlet {
     private SemesterKey calcTargetSemester(ZonedDateTime now) {
         Map<String, ZonedDateTime> map = LMSScheduleListener.getEventTimeMap();
 
-        ZonedDateTime closeFirst = map.get("ac_close_first_semester");   // 1학기 종강
-        ZonedDateTime closeSecond = map.get("ac_close_second_semester"); // 2학기 종강
+        ZonedDateTime closeFirst = map.get("ac_first_semester_end");   // 1학기 종강
+        ZonedDateTime closeSecond = map.get("ac_second_semester_end"); // 2학기 종강
 
         if (closeFirst == null || closeSecond == null) {
             throw new IllegalStateException("학사 일정(종강일) 설정이 누락되었습니다. 관리자에게 문의하세요.");

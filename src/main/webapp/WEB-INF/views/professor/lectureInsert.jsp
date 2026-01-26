@@ -17,7 +17,7 @@
 <body>
   <%@ include file="/header.jsp" %>
   <%@ include file="/sideNavbar.jsp" %>
-  
+  <input type="hidden" id="ctx" value="${pageContext.request.contextPath}" />
   <main class="content">
 	  <div class="container-fluid">
 	    <div class="page-shell">
@@ -104,69 +104,44 @@
 				        <!-- 분반 -->
 				        <div class="col-md-3">
 				          <label class="form-label">분반</label>
-						  <div class="form-control bg-light text-muted">
-						    자동 배정 (최대 2개)
-						  </div>
+								  <div class="form-control bg-light text-muted">
+								    자동 배정 (최대 2개)
+								  </div>
 				        </div>
 								
-						<!-- 건물명 -->
-						<div class="col-md-6">
-						  <label class="form-label">건물 <span class="text-danger">*</span></label>
-						  <select class="form-select" name="building_id" id="building_id" required>
-						    <option value="">-- 건물 선택 --</option>
-						    <c:forEach var="b" items="${buildingList}">
-					        <option value="${b.buildingId}"
-							      <c:if test="${form.buildingId == b.buildingId}">selected</c:if>>
-							      <c:out value="${b.buildingName}"/>
-							    </option>
-						    </c:forEach>
-						  </select>
-						  <small id="buildingError" class="text-danger d-none">건물을 선택하세요</small>
-						</div>
+								<!-- 건물명 -->
+								<div class="col-md-6">
+								  <label class="form-label">건물 <span class="text-danger">*</span></label>
+								  <select class="form-select" name="building_id" id="building_id" required>
+								    <option value="">-- 건물 선택 --</option>
+								    <c:forEach var="b" items="${buildingList}">
+							        <option value="${b.buildingId}"
+									      <c:if test="${form.buildingId == b.buildingId}">selected</c:if>>
+									      <c:out value="${b.buildingName}"/>
+									    </option>
+								    </c:forEach>
+								  </select>
+								  <small id="buildingError" class="text-danger d-none">건물을 선택하세요</small>
+								</div>
 								
-				        <!-- 강의실 -->
-				        <div class="col-md-3">
-						  <label class="form-label">
-						    강의실 <span class="text-danger">*</span>
-						  </label>
-						
-						<select class="form-select"
-						        name="lecture_room"
-						        id="lecture_room"
-						        disabled>
-						  <option value="">-- 강의실 선택 --</option>
-						
-						  <c:forEach var="floor" begin="1" end="5">
-						    <c:forEach var="num" begin="1" end="5">
-						      <c:set var="roomStr" value="${floor}${num < 10 ? '0' : ''}${num}" />
-						
-						      <c:choose>
-						        <c:when test="${occupiedRooms != null && occupiedRooms.contains(roomStr)}">
-						          <option value="${roomStr}" disabled>
-						            ${roomStr} (등록됨)
-						          </option>
-						        </c:when>
-						        <c:otherwise>
-						          <option value="${roomStr}"
-						            <c:if test="${form.lectureRoom == roomStr}">selected</c:if>>
-						            ${roomStr}
-						          </option>
-						        </c:otherwise>
-						      </c:choose>
-						
-						    </c:forEach>
-						  </c:forEach>
-						</select>
-
+					      <!-- 강의실 -->
+					      <div class="col-md-3">
+								  <label class="form-label">
+								    강의실 <span class="text-danger">*</span>
+								  </label>
 							
-						  <!-- 안내 문구 -->
-						  <small id="roomGuide" class="text-muted">
-						    연도, 학기, 건물을 모두 선택해야 호수 선택이 가능합니다.
-						  </small>
-						  <small id="roomError" class="text-danger d-none">
-							강의실을 선택하세요.
-						  </small>
-						</div>
+									<select class="form-select" name="lecture_room" id="lecture_room" disabled>
+									  <option value="">-- 강의실 선택 --</option>
+									</select>
+								
+								  <!-- 안내 문구 -->
+								  <small id="roomGuide" class="text-muted">
+								    연도, 학기, 건물을 모두 선택해야 호수 선택이 가능합니다.
+								  </small>
+								  <small id="roomError" class="text-danger d-none">
+									강의실을 선택하세요.
+								  </small>
+								</div>
 				
 				        <!-- 정원 -->
 				        <div class="col-md-3">
@@ -201,7 +176,7 @@
 				      <hr class="my-4">
 				
 				      <div class="d-flex gap-2 justify-content-end">
-				        <a class="btn btn-light" href="<c:url value='/lecture/list'/>">취소</a>
+				        <a class="btn btn-light" href="<c:url value='/professor/lecture/list'/>">취소</a>
 				        <button type="submit" class="btn btn-success">등록</button>
 				      </div>
 				    </form>

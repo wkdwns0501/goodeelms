@@ -239,34 +239,27 @@ public class LectureService {
         return base + nextSeq;
     }
     
-    // 교수용 강의 리스트 (페이징, 검색 포함)
-    public List<LectureDTO> getLecturePage(
-            int professorId, int page, int limit, String keyword
-    ) {
-        if (professorId <= 0) {
-            throw new IllegalArgumentException("교수 정보가 올바르지 않습니다.");
-        }
+    // 교수용 강의 리스트
+    public List<LectureDTO> getLecturePage(int professorId, int page, int limit, String keyword, String statusFilter) {
+        if (professorId <= 0) throw new IllegalArgumentException("교수 정보가 올바르지 않습니다.");
         if (page < 1) page = 1;
         if (limit < 1) limit = 5;
 
         int majorId = lectureDAO.findMajorIdByProfessorId(professorId);
-        if (majorId <= 0) {
-            throw new IllegalArgumentException("교수의 학과 정보(major_id)를 찾을 수 없습니다.");
-        }
+        if (majorId <= 0) throw new IllegalArgumentException("교수의 학과 정보(major_id)를 찾을 수 없습니다.");
 
-        return lectureDAO.findPageByMajor(majorId, page, limit, keyword);
+        return lectureDAO.findPageByMajor(majorId, page, limit, keyword, statusFilter);
+
     }
-    
-    // 페이징을 위한 교수가 속한 학과의 강의 수
-    public int getLectureTotalCount(int professorId, String keyword) {
-        if (professorId <= 0) {
-            throw new IllegalArgumentException("교수 정보가 올바르지 않습니다.");
-        }
+
+    // 페이징을 위한 교수용 강의 수
+    public int getLectureTotalCount(int professorId, String keyword, String statusFilter) {
+        if (professorId <= 0) throw new IllegalArgumentException("교수 정보가 올바르지 않습니다.");
+
         int majorId = lectureDAO.findMajorIdByProfessorId(professorId);
-        if (majorId <= 0) {
-            throw new IllegalArgumentException("교수의 학과 정보(major_id)를 찾을 수 없습니다.");
-        }
-        return lectureDAO.countByMajor(majorId, keyword);
+        if (majorId <= 0) throw new IllegalArgumentException("교수의 학과 정보(major_id)를 찾을 수 없습니다.");
+
+        return lectureDAO.countByMajor(majorId, keyword, statusFilter);
     }
 
     // 학생용 강의 전체 리스트

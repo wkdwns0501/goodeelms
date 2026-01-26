@@ -3,6 +3,7 @@
  * 
  */
 
+// 입력 검증
 (function () {
   const form = document.querySelector("#lectureForm");
   if (!form) return;
@@ -209,6 +210,95 @@
     if (!ok) e.preventDefault();
   });
 })();
+
+function buildRoomOptions(occupiedSet) {
+  var roomSelect = document.getElementById("lecture_room");
+  if (!roomSelect) return;
+
+  // 기존 옵션 싹 비우고 기본 옵션 다시 넣기
+  roomSelect.innerHTML = "";
+  var baseOpt = document.createElement("option");
+  baseOpt.value = "";
+  baseOpt.textContent = "-- 강의실 선택 --";
+  roomSelect.appendChild(baseOpt);
+
+  // 101~505 생성 (너 JSP랑 동일 규칙)
+  for (var floor = 1; floor <= 5; floor++) {
+    for (var num = 1; num <= 5; num++) {
+      var roomStr = "" + floor + (num < 10 ? "0" : "") + num;
+
+      var opt = document.createElement("option");
+      opt.value = roomStr;
+
+      if (occupiedSet.has(roomStr)) {
+        opt.disabled = true;
+        opt.textContent = roomStr + " (등록됨)";
+      } else {
+        opt.textContent = roomStr;
+      }
+
+      roomSelect.appendChild(opt);
+    }
+  }
+}
+
+function loadOccupiedRooms() {
+  var yearEl = document.getElementById("lecture_year");
+  var semEl  = document.getElementById("lecture_semester");
+  var bldEl  = document.getElementById("building_id");
+  var roomEl = document.getElementById("lecture_room");
+  var roomGuide = document.getElementById("roomGuide");
+  var ctxEl = document.getElementById("ctx");
+
+  if (!yearEl || !semEl || !bldEl || !roomEl || !ctxEl) return;
+
+  var year = yearEl.value.trim();
+  var sem  = semEl.value;
+  var bld  = bldEl.value;
+
+  // 3개 다 선택 전이면 비활성화
+  if (!year || !sem || !bld) {
+    roomEl.disabled = true;
+    roomEl.value = "";
+    if (roomGuide) roomGuide.style.display = "block";
+    return;
+  }
+
+  // 3개 다 있으면 활성화 + 안내 숨김
+  roomEl.disabled = false;
+  if (roomGuide) roomGuide.style.display = "none";
+
+  var ctx = ctxEl.value; // 예: /goodeelms
+  var url = ctx + "/professor/lecture/rooms"
+          + "?lecture_year=" + encodeURIComponent(year)
+          + "&lecture_semester=" + encodeURIComponent(sem)
+          + "&building_id=" + encodeURIComponent(bld);
+
+  fetch(url)
+    .then(function(res){ return res.json(); })
+    .then(function(list){
+      // list: ["101","102"...]
+      var set = new Set(list);
+      buildRoomOptions(set);
+    })
+    .catch(function(){
+      // 실패하면 그냥 전체 활성화(등록됨 표시 없이)
+      buildRoomOptions(new Set());
+    });
+}
+
+// 이벤트 연결
+window.addEventListener("DOMContentLoaded", function () {
+  var yearEl = document.getElementById("lecture_year");
+  var semEl  = document.getElementById("lecture_semester");
+  var bldEl  = document.getElementById("building_id");
+
+  if (yearEl) yearEl.addEventListener("blur", loadOccupiedRooms);
+  if (semEl)  semEl.addEventListener("change", loadOccupiedRooms);
+  if (bldEl)  bldEl.addEventListener("change", loadOccupiedRooms);
+
+  loadOccupiedRooms();
+});
 
 
 // error alert 4초 후 자동 숨김
