@@ -61,9 +61,15 @@
     <div class="card shadow-sm">
       <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-2">
         <h5 class="mb-0">강의 평가 작성</h5>
+        <div class="d-flex flex-column align-items-end">
+        <span style="font-size: 0.7rem; color: #ffeb3b; margin-bottom: 4px; opacity: 0.9;">
+            * 제출 시 다음 과목으로 자동 이동됩니다.
+        </span>
         <div class="d-flex align-items-center">
       	 <label for="lectureSelect" class="me-2 mb-0 sm-text" style="font-size: 0.85rem; min-width: 80px;">평가 과목</label>
-      	  <select id="lectureSelect" class="form-select form-select-sm" style="width: 350px;" onchange="changeLecture(this.value)">
+      	  <select id="lectureSelect" class="form-select form-select-sm" 
+            style="width: 350px; background-color: #e9ecef; color: #495057;" 
+            disabled>
         	<c:forEach var="lecture" items="${lectureList}">
           		<option value="${lecture.lectureId}" ${lecture.lectureId == currentLectureId ? 'selected' : ''}
           		${lecture.evaluated ? 'disabled style="color: #ccc; background-color: #f8f9fa;"' : ''}>
@@ -74,7 +80,8 @@
           		<option disabled>평가 가능한 과목이 없습니다.</option>
         		</c:if>
       	  </select>
-    	</div>
+      	  </div>
+      	</div>
   	 </div>
       </div>
 		<div class="card-body">

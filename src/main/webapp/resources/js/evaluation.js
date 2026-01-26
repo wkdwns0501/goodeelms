@@ -42,9 +42,14 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-// select 박스 변경 함수도 스크립트 안에 같이 두세요
 function changeLecture(lectureId) {
-    if(lectureId) {
-        location.href = "<c:url value='/student/evaluation/list'/>?lectureId=" + lectureId;
+        // 1. 서버에서 인식하는 프로젝트 경로(ContextPath)를 자바스크립트 변수로 가져옵니다.
+        const contextPath = '${pageContext.request.contextPath}';
+        
+        // 2. 주소를 조합합니다. (절대 경로 방식)
+        // 결과 예시: /GoodeeLMS/student/evaluation/list?lectureId=1907
+        const targetUrl = contextPath + "/student/evaluation/list?lectureId=" + lectureId;
+        
+        console.log("이동할 주소:", targetUrl); // 디버깅용
+        location.href = targetUrl;
     }
-}

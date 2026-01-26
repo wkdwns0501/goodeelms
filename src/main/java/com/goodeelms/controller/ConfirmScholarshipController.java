@@ -3,9 +3,12 @@ package com.goodeelms.controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 import com.goodeelms.dto.LectureHistoryDTO;
+import com.goodeelms.listener.LMSScheduleListener;
+import com.goodeelms.service.AccessPeriodService;
 import com.goodeelms.service.ConfirmScholarshipService;
 import com.goodeelms.util.AlertUtil;
 
@@ -30,16 +33,17 @@ public class ConfirmScholarshipController extends HttpServlet {
 		if(command.equals("/admin/confirmScholarship/list")) {
 			ConfirmScholarshipService ssc = new ConfirmScholarshipService();
 			
-			if (!ssc.isAccessPeriod()) {
-				// alert 유틸 호출
+			AccessPeriodService aps = new AccessPeriodService();	
+			ZonedDateTime now = ZonedDateTime.now();
+//			ZonedDateTime now = ZonedDateTime.of(2026, 7, 20, 10, 0, 0, 0, LMSScheduleListener.getZONE_ID());
+			if (!aps.isAccessPeriod(now)) {
 				AlertUtil.alertAndRedirect(response, "장학 관리 기간이 아닙니다.", contextPath + "/main.jsp");
 				return;
 			}
 	        
-			String yearSemester = request.getParameter("yearSemester");
 			
 			// 
-			String[] parts = ssc.lastestSemester(yearSemester);
+			String[] parts = ssc.lastestSemester(now);
 
 			String year = parts[0];   // 2025
 			int semester = Integer.parseInt(parts[1]);   // 1
@@ -49,6 +53,9 @@ public class ConfirmScholarshipController extends HttpServlet {
 			
 			ArrayList<LectureHistoryDTO> list = ssc.getScholarshipList(year, semester);
 			
+			request.setAttribute("nowYear", year);
+			request.setAttribute("nowSemester", semester);
+			request.setAttribute("yearSemester", actualSemester);
 			request.setAttribute("scholarshipList", list);
 			request.setAttribute("currentSemester", actualSemester);
 			
@@ -84,6 +91,29 @@ public class ConfirmScholarshipController extends HttpServlet {
 			String redirectUrl = contextPath + "/admin/confirmScholarship/list?yearSemester=" + yearSemester;
   
 			response.sendRedirect(redirectUrl);
+		}
+		
+		if(command.equals("/admin/confirmScholarship/manage")) {
+			String studentId = request.getParameter("studentId");
+			String action = request.getParameter("action");
+			String yearSemester = request.getParameter("yearSemester");
+			int yearSemesterInt = Integer.parseInt(yearSemester.replace("_", ""));
+			
+			ConfirmScholarshipService ssc = new ConfirmScholarshipService();
+			int result = 0;
+	        if("insert".equals(action)) {
+	            result = ssc.writeScholarshipHistory(new String[]{studentId}, yearSemesterInt);
+	        } else if("delete".equals(action)) {
+	        	result = ssc.cancelScholarship(studentId, yearSemesterInt);
+	        }
+	        
+	        if (result > 0) {
+	        	System.out.println("장학 정보 변경 완료");
+	        } else {
+	        	System.out.println("장학 정보 변경 실패");
+	        }
+	       
+	        response.sendRedirect(contextPath + "/admin/confirmScholarship/list?yearSemester=" + yearSemester + "&tab=manage");
 		}
 	}
 

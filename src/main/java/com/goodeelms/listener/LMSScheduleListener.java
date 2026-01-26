@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -51,15 +52,15 @@ public class LMSScheduleListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce)  { 
     	
     	int year = LocalDateTime.now().getYear();
-    	
+//    	year = 2025;
     	// DB조회
-    	List<AcademicCalendarDTO> list = AcademicCalendarService.getInstance().getCalendarAtYear(year);
+    	List<AcademicCalendarDTO> list = AcademicCalendarService.getInstance().getCalendarAtYear();
     	if(list ==  null || list.size() == 0) {
     		System.out.println("DB 조회 실패 또는 데이터 소실");
     		return;
     	}
     	// year 년도 학사일정 조회해서 이름이랑 시간 매핑
-    	Map<String, ZonedDateTime> eventTimeMap = list.stream().collect(Collectors.toMap(AcademicCalendarDTO::getAcademicEventName, AcademicCalendarDTO::getEventZoneDateTime));
+    	eventTimeMap = list.stream().collect(Collectors.toMap(AcademicCalendarDTO::getAcademicEventName, AcademicCalendarDTO::getEventZoneDateTime));
     	
 //    	firstGradeInsertStart = eventTimeMap.get("ac_first_grade_insert_start");
 //    	firstGradeInsertEnd = eventTimeMap.get("ac_first_grade_insert_end");
@@ -111,10 +112,10 @@ public class LMSScheduleListener implements ServletContextListener {
             QuartzScheduleManager.addJobWithTimeSemester(EndEnrollmentJobScheduler.class, "EnrollmentCommitEvent", year, 1, eventTimeMap.get("student_first_enrollment_end"));  
             
             // 1학기 종강
-            QuartzScheduleManager.addJobWithTimeSemester(EndSemesterScheduler.class, "FirstSemesterEnd", year, 1, eventTimeMap.get("ac_close_first_semester"));
+            QuartzScheduleManager.addJobWithTimeSemester(EndSemesterScheduler.class, "FirstSemesterEnd", year, 1, eventTimeMap.get("ac_first_semester_end"));
             
             // 2학기 종강
-            QuartzScheduleManager.addJobWithTimeSemester(EndSemesterScheduler.class, "SecondSemesterEnd", year, 2, eventTimeMap.get("ac_close_second_semester"));
+            QuartzScheduleManager.addJobWithTimeSemester(EndSemesterScheduler.class, "SecondSemesterEnd", year, 2, eventTimeMap.get("ac_second_semester_end"));
             
             QuartzScheduleManager.printSchedulerStatus();
         } catch (SchedulerException e) {
@@ -136,7 +137,29 @@ public class LMSScheduleListener implements ServletContextListener {
             e.printStackTrace();
         }
     }
+    	
+    	// 일정 변경 후 맵 초기화
+    public static void setEventTimeMap(Map<String, ZonedDateTime> newMap) {
+        // 기존 Map을 새 Map으로 교체
+        eventTimeMap = newMap;
+        System.out.println("DEBUG: 스케줄러 Map이 성공적으로 갱신되었습니다.");
+    }
     
+    public static void refreshSchedule(Map<String, String> stringMap) {
+        Map<String, ZonedDateTime> newEventTimeMap = new HashMap<>();
+        
+        stringMap.forEach((key, value) -> {
+            if (value != null && !value.isEmpty()) {
+                // 여기서 딱 한 번만 변환!
+                ZonedDateTime zdt = LocalDate.parse(value)
+                                             .atStartOfDay(ZoneId.of("Asia/Seoul"));
+                newEventTimeMap.put(key, zdt);
+            }
+        });
+        
+        // 전역 변수 교체
+        eventTimeMap = newEventTimeMap;
+    }
     
 	
 }

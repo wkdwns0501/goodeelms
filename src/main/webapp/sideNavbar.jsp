@@ -13,8 +13,6 @@
 		    <a class="nav-link" href="<c:url value='/student/enrollment/competition'/>"><span class="nav-label">수강신청</span></a>
 		    <a class="nav-link" href="<c:url value='/student/myLectures'/>"><span class="nav-label">내 강의</span></a>
 		    <a class="nav-link" href="<c:url value='/student/lecture'/>"><span class="nav-label">강의목록</span></a>
-		    <a class="nav-link" href="<c:url value='/student/assignments'/>"><span class="nav-label">과제</span></a>
-		    <a class="nav-link" href="<c:url value='/student/exams'/>"><span class="nav-label">시험</span></a>
 		    <a class="nav-link" href="<c:url value='/student/grade/list'/>"><span class="nav-label">성적조회</span></a>
 		    <a class="nav-link" href="<c:url value='/student/evaluation/list'/>"><span class="nav-label">강의평가</span></a>
 		    <a class="nav-link" href="<c:url value='/student/tuition'/>"><span class="nav-label">등록금 납부 이력 </span></a>
@@ -26,6 +24,7 @@
 	   		<a class="nav-link" href="<c:url value='/admin/professorManage/page'/>"><span class="nav-label">계정관리</span></a>
 	   		<a class="nav-link" href="<c:url value='/admin/addStudent/list'/>"><span class="nav-label">학생등록</span></a>
 	    	<a class="nav-link" href="<c:url value='/admin/confirmScholarship/list'/>"><span class="nav-label">장학관리</span></a>
+	    	<a class="nav-link" href="<c:url value='/admin/setCalendar'/>"><span class="nav-label">일정관리</span></a>
 	    </c:when>
 	  	<c:when test="${sessionScope.user_role == 'PROFESSOR'}">     
 				<a class="nav-link" href="<c:url value='/professor/lecture/list'/>"><span class="nav-label">강의관리</span></a>		
