@@ -73,6 +73,16 @@
 		  <c:if test="${pageNums > 1}">
         <nav class="mt-3">
           <ul class="pagination justify-content-center">
+          	<!-- << : 이전 블록 -->
+			      <li class="page-item ${startPage <= 1 ? 'disabled' : ''}">
+			        <a class="page-link lectureCart-list"
+			           href="<c:url value=''>
+			                  <c:param name='viewPage' value='${prevBlockPage}'/>
+			                  <c:if test='${not empty search_word}'><c:param name='search_word' value='${search_word}'/></c:if>
+			                	</c:url>">
+			          &laquo;&laquo;
+			        </a>
+			      </li>
             <!-- 이전 -->
             <li class="page-item ${viewPage <= 1 ? 'disabled' : ''}">
               <a class="page-link lectureCart-list"
@@ -84,7 +94,7 @@
               </a>
             </li>
             <!-- 페이지 번호 -->
-            <c:forEach var="p" begin="1" end="${pageNums}">
+            <c:forEach var="p" begin="${startPage}" end="${endPage}">
               <li class="page-item ${p == viewPage ? 'active' : ''} ">
                 <a class="page-link lectureCart-list"
                    href="<c:url value=''>
@@ -105,6 +115,16 @@
                 다음
               </a>
             </li>
+            <!-- >> : 다음 블록 -->
+			      <li class="page-item ${endPage >= totalPage ? 'disabled' : ''}">
+			        <a class="page-link lectureCart-list"
+			           href="<c:url value=''>
+			                  <c:param name='viewPage' value='${nextBlockPage}'/>
+			                  <c:if test='${not empty search_word}'><c:param name='keyword' value='${search_word}'/></c:if>
+			                </c:url>">
+			          &raquo;&raquo;
+			        </a>
+			      </li>
           </ul>
         </nav>
       </c:if>

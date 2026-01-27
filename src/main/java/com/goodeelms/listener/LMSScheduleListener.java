@@ -125,6 +125,18 @@ public class LMSScheduleListener implements ServletContextListener {
         
         // 전역 변수 교체
         eventTimeMap = newEventTimeMap;
+        
+        // 리스케줄링
+        for(Map.Entry<String, ZonedDateTime> entry : eventTimeMap.entrySet()) {
+        	String jobName = entry.getKey();
+        	ZonedDateTime jobTime = entry.getValue();
+        	
+        	try {
+				QuartzScheduleManager.updateJobTime(jobName, jobTime);
+			} catch (SchedulerException e) {
+				e.printStackTrace();
+			}
+        }
     }
     
 	

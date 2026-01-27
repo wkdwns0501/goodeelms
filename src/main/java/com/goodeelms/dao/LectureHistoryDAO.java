@@ -164,7 +164,10 @@ public class LectureHistoryDAO {
 	
 	// 수강신청 자동 승인 대상 History에 추가
 	public int insertLectureHistoryByNewLecture(Connection conn, Set<Integer> lectureIdSet) {
-		if(lectureIdSet.size() < 1) return 0;
+		if(lectureIdSet.size() < 1) {
+			System.out.println("lectureIdSet Size == 0");
+			return 0;
+		}
 		String placeholder = lectureIdSet.stream().map(id -> "?").collect(Collectors.joining(","));
 		
 		String sql = "INSERT INTO lecture_history (student_id, lecture_id) "
