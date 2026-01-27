@@ -1,6 +1,8 @@
 package com.goodeelms.controller;
 
+import java.io.Console;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +63,7 @@ public class StudentController extends HttpServlet {
 			showTuitionAndScholarship(request, response);
 			break;
 		case "/tuition/pay":
-	        payTuitionOrScholarship(request, response);
+	        payTuition(request, response);
 	        break;
 		case "/lecture":
 	    		showLectureList(request, response);
@@ -124,6 +126,24 @@ public class StudentController extends HttpServlet {
 	    HttpSession session = request.getSession();
 	    int student_id = (Integer) session.getAttribute("student_id");
 	    
+	    try {
+			String status = studentService.getStudentById(student_id).getStudentStatus();
+			if (status.equals("졸업") || status.equals("휴학")) {
+		        response.setContentType("text/html; charset=UTF-8");
+		        PrintWriter out = response.getWriter();
+		        
+		        out.println("<script>");
+		        out.println("alert('졸업생 또는 휴학생 접근할 수 없습니다.');");
+		        out.println("location.href='" + request.getContextPath() + "/main.jsp';");
+		        out.println("</script>");
+		        
+		        out.flush();
+		        return; 
+		    }
+		} catch (Exception e) {
+			System.out.println("졸업생 또는 휴학생의 접근차단 실패");
+		} 
+	    
 	    TuitionPaymentDTO dto = new TuitionService().readTuition(student_id);
 	    List<ScholarshipDTO> scholarship = new StudentService().getScholarshipByStudentId(student_id);
 	    
@@ -162,19 +182,17 @@ public class StudentController extends HttpServlet {
 	    request.getRequestDispatcher("/WEB-INF/views/student/tuition.jsp").forward(request, response);
 	}
 
-	protected void payTuitionOrScholarship(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void payTuition(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	    HttpSession session = request.getSession();
 	    int student_id = (Integer) session.getAttribute("student_id");
+	     
 	    
 	    String payStr = request.getParameter("payment");
-	    String schStr = request.getParameter("scholarship");
 	    int paymentTuition = (payStr != null) ? Integer.parseInt(payStr) : 0;
-	    int paymentScholarship = (schStr != null) ? Integer.parseInt(schStr) : 0;
 	    
 	    TuitionService tService = new TuitionService();
 	    
 	    if(paymentTuition > 0) { tService.getTuitionPaymentAfterPay(student_id, paymentTuition); } 
-	    if(paymentScholarship > 0) { tService.getTuitionPaymentAfterPay(student_id, paymentScholarship); }
 	    
 	    response.sendRedirect(request.getContextPath() + "/student/tuition?msg=success");
 	}

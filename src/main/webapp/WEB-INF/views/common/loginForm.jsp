@@ -34,10 +34,8 @@
 									</div>
 									<c:remove var="errorMessage" scope="session" />
 								</c:if>
-
-
+s
 								<form action="${pageContext.request.contextPath}/common/login" method="post">
-
 									<div class="mb-3">
 										<label for="login_id" class="form-label text-muted small" id="label_id">아이디</label> 
 										<input type="text" class="form-control" id="login_id" name="login_id"

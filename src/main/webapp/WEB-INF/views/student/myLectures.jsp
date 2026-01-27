@@ -74,8 +74,7 @@
 						<i class="bi bi-clock-history me-2 text-secondary"></i>강의목록
 					</h5>
 					<div class="table-responsive">
-						<table table
-							class="table table-hover align-middle mb-0 text-center lecture-table">
+						<table class="table table-hover align-middle mb-0 text-center lecture-table">
 							<thead class="table-light">
 								<tr>
 									<th style="width: 10%;">강의코드</th>
@@ -109,7 +108,7 @@
 
 									<c:otherwise>
 										<tr>
-											<td colspan="6" class="text-center py-5 text-muted"><i class="bi bi-exclamation-circle d-block mb-2 fs-2"></i> 현재
+											<td colspan="7" class="text-center py-5 text-muted"><i class="bi bi-exclamation-circle d-block mb-2 fs-2"></i> 현재
 												수강 중인 강의가 없습니다.</td>
 										</tr>
 									</c:otherwise>

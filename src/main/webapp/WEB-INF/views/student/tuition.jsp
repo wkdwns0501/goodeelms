@@ -16,8 +16,10 @@
 <!-- layout CSS -->
 <link rel="stylesheet" href="<c:url value='/resources/css/layout.css'/>" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </head>
 <body>
@@ -103,15 +105,17 @@
 
 							<c:choose>
 								<c:when test="${tuition.paymentStatus != '납부완료'}">
-									<form action="${pageContext.request.contextPath}/student/tuition/pay"
+									<form
+										action="${pageContext.request.contextPath}/student/tuition/pay"
 										method="post" class="row g-3">
 										<div class="col-md-8">
 											<div class="input-group">
 												<span class="input-group-text bg-white">₩</span> <input
 													type="number" name="payment" id="paymentInput"
-													class="form-control" placeholder="납부할 금액을 입력하세요"
-													max="${4500000 - tuition.paymentAmount}" required
-													oninput="formatDisplay(this)">
+													class="form-control"
+													placeholder="<c:out value='납부할 금액을 입력하세요' />"
+													max="<c:out value='${4500000 - tuition.paymentAmount}' />"
+													required oninput="formatDisplay(this)">
 											</div>
 											<div id="amountDisplay"
 												class="mt-1 small fw-bold text-primary"
@@ -125,14 +129,14 @@
 													입력</a>
 											</small>
 										</div>
-										
+
 										<div class="col-md-4">
 											<button type="button" onclick="generatePayQR()"
 												class="btn btn-primary w-100 fw-bold">
 												<i class="bi bi-credit-card me-1"></i> 납입하기
 											</button>
 										</div>
-										
+
 									</form>
 								</c:when>
 								<c:otherwise>
@@ -171,7 +175,7 @@
 									<tr>
 										<th class="ps-4 text-muted bg-light">납부 방식</th>
 										<td class="ps-4">가상계좌 이체 <small
-											class="text-secondary ms-2">(구디은행 ${account})</small>
+											class="text-secondary ms-2">(구디은행 <c:out value="${account}"/>)</small>
 										</td>
 									</tr>
 								</tbody>
@@ -218,25 +222,33 @@
 					</div>
 				</section>
 
-				<form action="${pageContext.request.contextPath}/student/tuition/pay" method="post" id="finalPayForm">
-				    <input type="hidden" name="payment" id="hiddenPayment">
-				    
-				    <div class="modal fade" id="payModal" tabindex="-1" aria-hidden="true">
-				        <div class="modal-dialog modal-dialog-centered" style="width: 320px;">
-				            <div class="modal-content">
-				                <div class="modal-header">
-				                    <h5 class="modal-title">QR 결제 확인</h5>
-				                    <button type="submit" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				                </div>
-				                <div class="modal-body text-center">
-				                    <div id="qrcode" class="d-flex justify-content-center" style="padding: 20px; background: white;"></div>
-				                    <p class="mt-3 mb-0">스캔 후 <b>X 를 눌러주세요.</b></p>
-				                </div>
-				            </div>
-				        </div>
-				    </div>
+				<form
+					action="${pageContext.request.contextPath}/student/tuition/pay"
+					method="post" id="finalPayForm">
+					<input type="hidden" name="payment" id="hiddenPayment">
+
+					<div class="modal fade" id="payModal" tabindex="-1"
+						aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered"
+							style="width: 320px;">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title">QR 결제 확인</h5>
+									<button type="submit" class="btn-close" data-bs-dismiss="modal"
+										aria-label="Close"></button>
+								</div>
+								<div class="modal-body text-center">
+									<div id="qrcode" class="d-flex justify-content-center"
+										style="padding: 20px; background: white;"></div>
+									<p class="mt-3 mb-0">
+										스캔 후 <b>X 를 눌러주세요.</b>
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
 				</form>
-				
+
 			</div>
 		</div>
 	</main>
