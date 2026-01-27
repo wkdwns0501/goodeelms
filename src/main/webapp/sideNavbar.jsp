@@ -19,10 +19,17 @@
 		    <a class="nav-link" href="<c:url value='/student/history/majorAndStatus'/>"><span class="nav-label">전공/학과변경/학적변동</span></a>
    			<a class="nav-link" href="<c:url value='/student/history/rewardAndPunishment'/>"><span class="nav-label">학사경고/우등 이력 조회</span></a>
 	    </c:when>	
-	  	<c:when test="${sessionScope.user_role == 'PROFESSOR'}">     
-				<a class="nav-link" href="<c:url value='/professor/lecture/list'/>"><span class="nav-label">강의관리</span></a>		
-				<a class="nav-link" href="<c:url value='/professor/grade/list'/>"><span class="nav-label">성적관리</span></a>
+	  	<c:when test="${sessionScope.user_role == 'PROFESSOR'}">
+			  <a class="nav-link" href="<c:url value='/professor/lecture/list'/>">
+			    <span class="nav-label">강의관리</span>
+			  </a>
+			  <c:if test="${sessionScope.professor_status != '휴직'}">
+			    <a class="nav-link" href="<c:url value='/professor/grade/list'/>">
+			      <span class="nav-label">성적관리</span>
+			    </a>
+			  </c:if>
 			</c:when>
+
     	<c:when test="${sessionScope.user_role == 'ADMIN'}">
 	   		<a class="nav-link" href="<c:url value='/admin/professorManage/page'/>"><span class="nav-label">계정관리</span></a>
 	   		<a class="nav-link" href="<c:url value='/admin/addStudent/list'/>"><span class="nav-label">학생등록</span></a>

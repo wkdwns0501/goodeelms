@@ -118,17 +118,33 @@
           </div>
 
           <c:if test="${not empty sessionScope.professor_id}">
-              <c:choose>
-			    <c:when test="${isLectureInsertPeriod}">
-			      <a class="btn btn-success btn-sm" href="<c:url value='/professor/lecture/add'/>">+ 강의 등록</a>
-			    </c:when>
-			    <c:otherwise>
-			      <a class="btn btn-success btn-sm"
-			         href="<c:url value='/professor/lecture/list'/>"
-			         onclick="alert('현재 등록기간이 아닙니다.'); return false;">+ 강의 등록</a>
-			    </c:otherwise>
-			  </c:choose>
-          </c:if>
+					  <c:choose>
+					
+					    <c:when test="${sessionScope.professor_status == '휴직'}">
+					      <span onclick="alert('휴직 중인 교수는 강의 등록이 불가합니다.');"
+								      style="display:inline-block; cursor:not-allowed;">
+								  <button type="button" class="btn btn-outline-secondary btn-sm" disabled>
+								    + 강의 등록
+								  </button>
+								</span>
+					    </c:when>
+					
+					    <c:otherwise>
+					      <c:choose>
+					        <c:when test="${isLectureInsertPeriod}">
+					          <a class="btn btn-success btn-sm" href="<c:url value='/professor/lecture/add'/>">+ 강의 등록</a>
+					        </c:when>
+					        <c:otherwise>
+					          <a class="btn btn-success btn-sm"
+					             href="<c:url value='/professor/lecture/list'/>"
+					             onclick="alert('현재 등록기간이 아닙니다.'); return false;">+ 강의 등록</a>
+					        </c:otherwise>
+					      </c:choose>
+					    </c:otherwise>
+					
+					  </c:choose>
+					</c:if>
+
         </div>
 
         <!-- 검색창 -->
@@ -191,7 +207,7 @@
 			                <tr class="${lec.lectureStatus eq '종강' ? 'lecture-ended' : ''}">
 			                  <td class="fw-semibold">
 			                  	<span class="badge rounded-pill badge-soft-lime">
-			                  		${lec.lectureCodeDisplay}
+			                  		<c:out value="${lec.lectureCodeDisplay}"/>
 			                  	</span>
 			                  </td>
 			                  
@@ -228,16 +244,18 @@
 													</a>
 												</td>
 
-			                  <td>${lec.professorName}</td>
+			                  <td><c:out value="${lec.professorName}"/></td>
 			                  <td>
 												  <span class="badge rounded-pill
 												    ${lec.lectureType eq '전공' ? 'badge-major' : 'badge-general'}">
 												    <c:out value="${lec.lectureType}"/>
 												  </span>
 												</td>
-			                  <td>${lec.lectureCredit}</td>
-			                  <td>${lec.lectureYear} - ${lec.lectureSemester}</td>
-			                  <td>${lec.lectureSection}</td>
+			                  <td><c:out value="${lec.lectureCredit}"/></td>
+			                  <td><c:out value="${lec.lectureYear}"/> 
+			                  - 
+			                  <c:out value="${lec.lectureSemester}"/></td>
+			                  <td><c:out value="${lec.lectureSection}"/></td>
 			                  <td class="text-center td-room">
 												  <span class="truncate"
 												        title="<c:out value='${lec.buildingName} ${lec.lectureRoom}호'/>">
@@ -247,7 +265,7 @@
 			                  <td>
 												  <c:set var="filled" value="${lec.lectureCurrentPeople >= lec.lectureCapacity}" />
 												  <span class="badge rounded-pill ${filled ? 'text-bg-danger' : 'text-bg-secondary'}">
-												    ${lec.lectureCurrentPeople} / ${lec.lectureCapacity}
+												    <c:out value="${lec.lectureCurrentPeople}"/> / <c:out value="${lec.lectureCapacity}"/>
 												  </span>
 												</td>
 			                </tr>

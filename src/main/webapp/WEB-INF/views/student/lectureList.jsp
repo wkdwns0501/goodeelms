@@ -78,7 +78,7 @@
         <div class="d-flex align-items-center justify-content-between mb-3">
           <div>
             <h4 class="mb-0"><b>강의 목록</b></h4>
-            <small class="text-muted">전체 강의 정보를 확인할 수 있습니다.</small>
+            <small class="text-muted">개강/개강 예정인 강의 정보를 확인할 수 있습니다.</small>
           </div>
           
           <c:if test="${not empty sessionScope.student_id}">
@@ -162,16 +162,18 @@
 													</a>
 												</td>
 
-			                  <td>${lec.professorName}</td>
+			                  <td><c:out value="${lec.professorName}"/></td>
 			                  <td>
 												  <span class="badge rounded-pill
 												    ${lec.lectureType eq '전공' ? 'badge-major' : 'badge-general'}">
 												    <c:out value="${lec.lectureType}"/>
 												  </span>
 												</td>
-			                  <td>${lec.lectureCredit}</td>
-			                  <td>${lec.lectureYear} - ${lec.lectureSemester}</td>
-			                  <td>${lec.lectureSection}</td>
+			                  <td><c:out value="${lec.lectureCredit}"/></td>
+			                  <td><c:out value="${lec.lectureYear}"/>
+			                  - 
+			                  <c:out value="${lec.lectureSemester}"/></td>
+			                  <td><c:out value="${lec.lectureSection}"/></td>
 			                  <td class="text-center td-room">
 												  <span class="truncate"
 												        title="<c:out value='${lec.buildingName} ${lec.lectureRoom}호'/>">
@@ -181,7 +183,7 @@
 			                  <td>
 												  <c:set var="filled" value="${lec.lectureCurrentPeople >= lec.lectureCapacity}" />
 												  <span class="badge rounded-pill ${filled ? 'text-bg-danger' : 'text-bg-secondary'}">
-												    ${lec.lectureCurrentPeople} / ${lec.lectureCapacity}
+												    <c:out value="${lec.lectureCurrentPeople}"/> / <c:out value="${lec.lectureCapacity}"/>
 												  </span>
 												</td>
 			                </tr>

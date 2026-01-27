@@ -118,7 +118,7 @@
               <c:if test="${isEvalPeriod && !recentUnlocked}">
                 <div class="alert alert-warning mt-3 mb-0">
                   강의평가를 완료해야 성적을 조회할 수 있습니다.
-                  <span class="ms-2">미완료 강의 수: <b>${missingEvalCount}</b></span>
+                  <span class="ms-2">미완료 강의 수: <b><c:out value="${missingEvalCount}" /></b></span>
                 </div>
               </c:if>
             </div>
@@ -163,7 +163,7 @@
                           <!-- 강의코드 -->
                           <td class="fw-semibold">
                             <span class="badge rounded-pill badge-soft-lime">
-                              ${row.lectureCodeDisplay}
+                              <c:out value='${row.lectureCodeDisplay}'/>
                             </span>
                           </td>
 
@@ -175,10 +175,10 @@
                           </td>
 													
 													<!-- 교수 -->
-                          <td>${row.professorName}</td>
+                          <td><c:out value='${row.professorName}'/></td>
                           
                           <!-- 분반 -->
-                          <td>${row.lectureSection}</td>
+                          <td><c:out value='${row.lectureSection}'/></td>
 
                           <!-- 성적 -->
                           <td>
@@ -291,7 +291,7 @@
                         <tr>
                           <td class="fw-semibold">
                             <span class="badge rounded-pill badge-soft-lime">
-                              ${row.lectureCodeDisplay}
+                              <c:out value="${row.lectureCodeDisplay}"/>
                             </span>
                           </td>
 
@@ -304,9 +304,9 @@
                             </div>
                           </td>
 													
-                          <td>${row.professorName}</td>
+                          <td><c:out value="${row.professorName}"/></td>
 													
-                          <td>${row.lectureSection}</td>
+                          <td><c:out value="${row.lectureSection}"/></td>
 
                           <td>
                             <c:choose>

@@ -112,6 +112,7 @@ public class CommonController extends HttpServlet {
 			session.setAttribute("user_role", "PROFESSOR");
 			session.setAttribute("user_name", professorDTO.getProfessorName());
 			session.setAttribute("professor_id", professorDTO.getProfessorId());
+			session.setAttribute("professor_status", professorDTO.getProfessorStatus());
 		} else if (obj instanceof AdminDTO adminDTO) {
 			session.setAttribute("user_role", "ADMIN");
 			session.setAttribute("user_name", adminDTO.getAdminName());
