@@ -20,6 +20,7 @@ public class CommonService {
 			StudentDTO dto = studentDAO.getStudentByNo(id);
 			
 			if (dto == null) return null;
+			if (dto.getStudentStatus().equals("퇴학") || dto.getStudentStatus().equals("자퇴")) return "접근 권한이 없는 유저입니다.";
 			if (!EncryptUtil.isPasswordMatch(password, dto.getStudentPassword())) return null; // 2. 비밀번호 비교 
 			
 			obj = dto;
@@ -27,6 +28,7 @@ public class CommonService {
 			ProfessorDTO dto = professorDAO.getProfessorByEmail(id);
 			
 			if (dto == null) return null;
+			if (dto.getProfessorStatus().equals("퇴직") ) return "접근 권한이 없는 유저입니다.";
 			if (!EncryptUtil.isPasswordMatch(password, dto.getProfessorPassword())) return null; // 2. 비밀번호 비교 
 				
 			obj = dto;

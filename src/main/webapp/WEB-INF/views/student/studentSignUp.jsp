@@ -132,7 +132,8 @@
 								</div>
 
 								<div class="d-grid">
-									<button type="submit" class="btn btn-primary btn-lg fw-bold">정보 수정</button>
+									<button type="submit" class="btn btn-primary btn-lg fw-bold">정보
+										수정</button>
 								</div>
 							</form>
 						</div>
@@ -147,7 +148,7 @@
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 	<script>
-			document.getElementById('signupForm').onsubmit = function(e) {
+		document.getElementById('signupForm').onsubmit = function(e) {
 			const originPw = document.getElementById('originPw').value;
 			const newPw = document.getElementById('newPw').value;
 			const confirmNewPw = document.getElementById('confirmNewPw').value;
@@ -157,11 +158,15 @@
 			const edom = document.getElementById('emailDomain').value;
 			const addr = document.getElementById('studentAddress').value;
 
+			const newPwRegex = /^(?=.*[a-z])(?=.*\d)[a-z\d]{6,}$/;
+
 			// 1. 비밀번호 체크
-			if (!originPw || !newPw) {
-				alert("비밀번호를 입력해주세요.");
+
+			if (originPw == null || newPw == null) {
+				alert("비밀번호는 필수입니다.");
 				return false;
 			}
+
 			if (newPw !== confirmNewPw) {
 				alert("새 비밀번호 확인이 일치하지 않습니다.");
 				return false;
@@ -170,11 +175,12 @@
 				alert("새 비밀번호는 기존 비밀번호와 다르게 설정해야 합니다.");
 				return false;
 			}
-			if(originPw == null || newPw == null){
-				alert("비밀번호는 필수입니다.");
+
+			if (!newPwRegex.test(npw)) {
+				alert("새 비밀번호는 영문 소문자와 숫자를 포함한 6자 이상이어야 합니다.");
 				return false;
 			}
-			
+
 			// 2. 연락처 조합 (010-1234-5678)
 			if (!/^\d{3,4}$/.test(p2) || !/^\d{4}$/.test(p3)) {
 				alert("연락처를 올바르게 입력해주세요.");

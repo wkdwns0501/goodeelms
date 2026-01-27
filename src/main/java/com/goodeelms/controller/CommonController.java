@@ -81,6 +81,9 @@ public class CommonController extends HttpServlet {
 			request.setAttribute("errorMessage", "아이디와 비밀번호가 일치하지 않습니다.");
 			request.getRequestDispatcher("/WEB-INF/views/common/loginForm.jsp").forward(request, response);
 			return;
+		} else if (obj.toString().contains("접근 권한이 없는 유저입니다.")) {
+			request.setAttribute("errorMessage", obj.toString());
+			request.getRequestDispatcher("/WEB-INF/views/common/loginForm.jsp").forward(request, response);
 		}
 
 		// 3_2. 로그인 성공

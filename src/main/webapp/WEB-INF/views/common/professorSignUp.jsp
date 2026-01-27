@@ -24,8 +24,7 @@
 							<h5 class="card-title mb-2 fw-bold text-primary">교수 회원가입</h5>
 							<p class="text-muted small mb-4">교수 시스템 이용을 위해 정보를 입력해 주세요.</p>
 
-							<form
-								action="${pageContext.request.contextPath}/common/signup"
+							<form action="${pageContext.request.contextPath}/common/signup"
 								method="post">
 								<c:if test="${not empty errorMessage}">
 									<div class="alert alert-danger py-2 small text-center"
@@ -34,18 +33,23 @@
 
 								<div class="mb-3">
 									<label class="form-label small fw-bold">성함</label> <input
-										class="form-control" name="professor_name" type="text"
-										placeholder="성함을 입력하세요" value="${professorDTO.professorName}"
-										required>
+										class="form-control" id="professor_name" name="professor_name"
+										type="text" placeholder="성함을 입력하세요"
+										value="<c:out value='${professorDTO.professorName}'/>"
+										required pattern="^[a-zA-Z가-힣ㄱ-ㅎㅏ-ㅣ\s]+$"
+										title="성함에는 숫자나 특수문자를 입력할 수 없습니다."
+										oninput="validateName(this)">
+									<div id="nameError" class="form-text text-danger"
+										style="display: none;">숫자와 특수문자는 입력할 수 없습니다.</div>
 								</div>
 
 								<div class="mb-3">
 									<label class="form-label small fw-bold">이메일 주소</label> <input
 										type="email" class="form-control" name="professor_email"
 										placeholder="example@email.com"
-										value="${professorDTO.professorEmail}" required>
-									<div class="form-text text-danger">※ 입력하신 이메일은 로그인 아이디로
-										사용되니 정확히 입력해 주세요.</div>
+										value="<c:out value='${professorDTO.professorEmail}'/>"
+										required>
+									<div class="form-text text-danger">※ 입력하신 이메일은 로그인 아이디로 사용되니 정확히 입력해 주세요.</div>
 								</div>
 
 								<div class="mb-3">
@@ -60,20 +64,20 @@
 										onblur="this.size=1;" onchange="this.size=1; this.blur();"
 										name="major_id" required>
 
-										<option value="" ${empty professorDTO.majorId ? 'selected' : ''} disabled>전공을 선택하세요</option>
+										<option value="" ${empty professorDTO.majorId ? 'selected' : ''} disabled>
+											전공을 선택하세요</option>
 										<c:forEach var="major" items="${majorList}">
-											<option value="${major.majorId}"
+											<option value="<c:out value='${major.majorId}'></c:out>"
 												${professorDTO.majorId == major.majorId ? 'selected' : ''}>
 												${major.majorName}</option>
 										</c:forEach>
 									</select>
 								</div>
 
-
 								<div class="d-grid gap-2 mt-4">
 									<button type="submit" class="btn btn-primary">회원가입</button>
-									<a href="/main.jsp"
-										class="btn btn-outline-secondary btn-sm text-center">취소</a>
+									<a href="${pageContext.request.contextPath}/main.jsp" 
+									class="btn btn-outline-secondary btn-sm text-center">취소</a>
 								</div>
 							</form>
 						</div>
@@ -84,5 +88,21 @@
 	</main>
 
 	<%@ include file="/footer.jsp"%>
+	
+	<script>
+		function validateName(input) {
+		    const regex = /[^a-zA-Z가-힣ㄱ-ㅎㅏ-ㅣ\s]/g;
+		    const errorMsg = document.getElementById('nameError');
+		    
+		    if (regex.test(input.value)) {
+		        input.value = input.value.replace(regex, '');
+		        errorMsg.style.display = 'block';
+		    } else {
+		        errorMsg.style.display = 'none'; 
+		    }
+		    
+		}
+	</script>
+	
 </body>
 </html>
