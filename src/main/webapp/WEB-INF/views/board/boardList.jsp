@@ -52,7 +52,7 @@
                         <form action="<c:url value='/common/board/list'/>" method="get" class="d-flex">
                             <div class="input-group input-group-sm">
                                 <input type="text" name="searchKeyword" class="form-control" placeholder="제목+내용 검색"
-                                value="${param.searchKeyword}">
+                                value="<c:out value="${param.searchKeyword}"/>">
                                 <button class="btn btn-light btn-sm" type="submit text-primary">
                                     <i class="bi bi-search text-primary"></i>
                                 </button>
@@ -81,19 +81,19 @@
 						                        <span class="badge bg-danger">중요</span>
 						                    </c:when>
 						                    <c:otherwise>
-						                        ${content.boardId}
+						                        <c:out value="${content.boardId}"/>
 						                    </c:otherwise>
 						                </c:choose>
 						            </td>
 						            <td class="text-start ps-4">
 						                <a href="<c:url value='/common/board/detail?id=${content.boardId}'/>" 
 						                   class="notice-title-link ${content.isImportant == 'Y' ? 'text-danger fw-bold' : ''}">
-						                    ${content.boardTitle}
+						                    <c:out value='${content.boardTitle}'/>
 						                </a>
 						            </td>
-						            <td>관리자</td>
-						            <td>${fn:substring(content.boardRegAt, 0, 10)}</td>
-						            <td>${content.hit}</td>
+						            <td><c:out value="관리자"/></td>
+						            <td><c:out value="${fn:substring(content.boardRegAt, 0, 10)}"/></td>
+						            <td><c:out value="${content.hit}"/></td>
 						        </tr>
 						    </c:forEach>
 
@@ -116,21 +116,21 @@
                     <nav>
 					    <ul class="pagination pagination-sm mb-0">
 					        <li class="page-item ${pageNum <= 1 ? 'disabled' : ''}">
-					            <a class="page-link" href="<c:url value='/common/board/list?pageNum=${pageNum - 1}&searchKeyword=${keyword}'/>">
+					            <a class="page-link" href="<c:url value='/common/board/list?pageNum=${pageNum - 1}&searchKeyword=${fn:escapeXml(keyword)}'/>">
 					                <i class="bi bi-chevron-left"></i>
 					            </a>
 					        </li>
 					
-					        <c:forEach var="i" begin="1" end="${totalPage}">
+					        <c:forEach var="i" begin="${startPage }" end="${endPage}">
 					            <li class="page-item ${pageNum == i ? 'active' : ''}">
-					                <a class="page-link" href="<c:url value='/common/board/list?pageNum=${i}&searchKeyword=${keyword}'/>">
+					                <a class="page-link" href="<c:url value='/common/board/list?pageNum=${i}&searchKeyword=${fn:escapeXml(keyword)}'/>">
 					                    ${i}
 					                </a>
 					            </li>
 					        </c:forEach>
 					
-					        <li class="page-item ${pageNum >= totalPage ? 'disabled' : ''}">
-					            <a class="page-link" href="<c:url value='/common/board/list?pageNum=${pageNum + 1}&searchKeyword=${keyword}'/>">
+					        <li class="page-item ${endPage >= totalPage ? 'disabled' : ''}">
+					            <a class="page-link" href="<c:url value='/common/board/list?pageNum=${pageNum + 1}&searchKeyword=${fn:escapeXml(keyword)}'/>">
 					                <i class="bi bi-chevron-right"></i>
 					            </a>
 					        </li>

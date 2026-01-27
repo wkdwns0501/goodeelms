@@ -8,6 +8,7 @@ import com.goodeelms.dto.LectureHistoryDTO;
 import com.goodeelms.service.AccessPeriodService;
 import com.goodeelms.service.ConfirmScholarshipService;
 import com.goodeelms.util.AlertUtil;
+import com.goodeelms.util.StaticUtils;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -31,8 +32,7 @@ public class ConfirmScholarshipController extends HttpServlet {
 			ConfirmScholarshipService ssc = new ConfirmScholarshipService();
 			
 			AccessPeriodService aps = new AccessPeriodService();	
-			ZonedDateTime now = ZonedDateTime.now();
-//			ZonedDateTime now = ZonedDateTime.of(2026, 7, 20, 10, 0, 0, 0, LMSScheduleListener.getZONE_ID());
+			ZonedDateTime now = StaticUtils.getSettedTime();
 			if (!aps.isAccessPeriod(now)) {
 				AlertUtil.alertAndRedirect(response, "장학 관리 기간이 아닙니다.", contextPath + "/main.jsp");
 				return;
@@ -72,6 +72,12 @@ public class ConfirmScholarshipController extends HttpServlet {
 			String[] confirmedStudentsId = request.getParameterValues("checkConfirmed");
 			String yearSemester = request.getParameter("yearSemester");
 			int yearSemestertoInt = Integer.parseInt(yearSemester.replace("_", ""));
+			
+			if (confirmedStudentsId == null || confirmedStudentsId.length == 0) {
+		        // 체크된 게 없으면 로직을 수행하지 않고 리스트로 돌려보냅니다.
+				AlertUtil.alertAndRedirect(response, "해당 학기는 일괄 선택을 완료했습니다.\n관리탭에서 수정해주세요.", contextPath + "/admin/confirmScholarship/list?yearSemester=" + yearSemester);
+		        return; // 아래 코드가 실행되지 않도록 중단
+		    }
 			
 			// 추후 insert 되어야 할 학생 수
 			int studentNumbers = confirmedStudentsId.length;

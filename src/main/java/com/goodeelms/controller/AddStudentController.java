@@ -82,37 +82,46 @@ public class AddStudentController extends HttpServlet {
 			
 			// 사용중인 학번인지 확인
 			int checkResult = srs.studentExistCheck(request.getParameter("studentNo"));
-			
+			// 1. 학번 중복 체크
 			if(checkResult > 0) {
-				response.setContentType("text/html; charset=UTF-8");
-				PrintWriter out = response.getWriter();
-		        out.println("<script>");
-		        out.println("alert('이미 존재하는 학번입니다. 다시 확인해주세요.');");
-		        out.println("history.back();"); // 입력하던 내용 유지하며 뒤로가기
-		        out.println("</script>");
-		        out.flush();
-		        out.close();
-			} else {
-				// student 테이블에 학생 등록
-				int registerResult = srs.studentRegister(studentDTO);
-				
-				// 현재 등록할 학생의 student_id 가져오기
-				int newStudentId = srs.getNewStudentId();
-				
-				// student_major 테이블 작성
-				int writeResult = srs.writeStudentMajor(newStudentId, majorId);
-				if(registerResult > 0 && writeResult > 0) {
-				response.sendRedirect(request.getContextPath() + "/admin/addStudent/list");	
-				}
-				else {
-					
-				}
+			    response.setContentType("text/html; charset=UTF-8");
+			    PrintWriter out = response.getWriter();
+			    out.println("<script>");
+			    out.println("alert('이미 존재하는 학번입니다. 다시 확인해주세요.');");
+			    out.println("history.back();");
+			    out.println("</script>");
+			    out.flush();
+			    return; // ⬅️ 로직 중단 (매우 중요)
+			} 
+			// 2. 핸드폰 번호 중복 체크 (학번이 통과된 경우만 실행)
+			int checkPhone = srs.studentPhoneCheck(request.getParameter("studentPhone"));
+			System.out.println(checkPhone);
+			if(checkPhone > 0) {
+			    response.setContentType("text/html; charset=UTF-8");
+			    PrintWriter out = response.getWriter();
+			    out.println("<script>");
+			    out.println("alert('이미 존재하는 핸드폰 번호입니다. 다시 확인해주세요.');");
+			    out.println("history.back();");
+			    out.println("</script>");
+			    out.flush();
+			    return; // ⬅️ 로직 중단
+			} 
+			// 3. 둘 다 통과 시 등록 진행
+			    int registerResult = srs.studentRegister(studentDTO);
+			    int newStudentId = srs.getNewStudentId();
+			    int writeResult = srs.writeStudentMajor(newStudentId, majorId);
+			    
+			    if(registerResult > 0 && writeResult > 0) {
+			        response.sendRedirect(request.getContextPath() + "/admin/addStudent/list"); 
+			    } else {
+			        System.out.println("학생 등록 실패");
+			    }
 			}
 			
 		}
 		
 		
 	}	
-}
+
 
 
