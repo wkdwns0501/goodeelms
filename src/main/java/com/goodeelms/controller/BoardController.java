@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.goodeelms.dto.BoardDTO;
+import com.goodeelms.filter.XssFilter;
 import com.goodeelms.service.BoardService;
 
 @WebServlet("/common/board/*")
@@ -44,6 +45,18 @@ public class BoardController extends HttpServlet {
 			
 			int totalPage = (int) Math.ceil((double) totalCount / pageSize);
 			
+			// 페이지 블록 설정 (예: 한 번에 10개씩 번호 보여주기)
+			int pageBlock = 10; 
+			int startPage = ((pageNum - 1) / pageBlock) * pageBlock + 1;
+			int endPage = startPage + pageBlock - 1;
+
+			// 마지막 페이지가 전체 페이지보다 크면 조절
+			if (endPage > totalPage) {
+			    endPage = totalPage;
+			}
+
+			request.setAttribute("startPage", startPage);
+			request.setAttribute("endPage", endPage);
 			request.setAttribute("boardList"	, boardList);
 			request.setAttribute("totalCount", totalCount);
 			request.setAttribute("totalPage", totalPage);
@@ -96,8 +109,15 @@ public class BoardController extends HttpServlet {
 		// 게시글 등록
 		if(command.equals("/common/board/admin/insert")) {
 			BoardDTO boardDTO = new BoardDTO();
-			boardDTO.setBoardTitle(request.getParameter("boardTitle"));
-			boardDTO.setBoardContent(request.getParameter("boardContent"));
+			
+			String boardRawContent = request.getParameter("boardContent");
+			String cleanContent = XssFilter.basicXssFilter(boardRawContent);
+			
+			String boardTitle = request.getParameter("boardTitle");
+			boardTitle = boardTitle.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+			
+			boardDTO.setBoardTitle(boardTitle);
+			boardDTO.setBoardContent(cleanContent);
 			boardDTO.setAdminId((Integer)session.getAttribute("admin_id"));
 			// "중요(상단고정)" 체크 여부
 			String important = request.getParameter("isImportant");
@@ -132,8 +152,15 @@ public class BoardController extends HttpServlet {
 		if(command.equals("/common/board/admin/update")) {
 			BoardDTO boardDTO = new BoardDTO();
 			boardDTO.setBoardId(Integer.parseInt(request.getParameter("boardId")));
-			boardDTO.setBoardTitle(request.getParameter("boardTitle"));
-			boardDTO.setBoardContent(request.getParameter("boardContent"));
+			
+			String boardTitle = request.getParameter("boardTitle");
+			boardTitle = boardTitle.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+			boardDTO.setBoardTitle(boardTitle);
+			
+			String boardRawContent = request.getParameter("boardContent");
+			String cleanContent = XssFilter.basicXssFilter(boardRawContent);
+			boardDTO.setBoardContent(cleanContent);
+			
 			boardDTO.setAdminId((Integer)session.getAttribute("admin_id"));
 			String important = request.getParameter("isImportant");
 			boardDTO.setIsImportant(important != null ? "Y" : "N"); 

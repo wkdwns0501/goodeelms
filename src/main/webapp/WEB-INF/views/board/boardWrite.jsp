@@ -41,12 +41,12 @@
                     </div>
                     
                     <div class="card-body p-4">
-                        <form action="<c:url value='/common/board/admin/insert'/>" method="post">
+                        <form action="<c:url value='/common/board/admin/insert'/>" method="post" onsubmit="return validateForm()">
                             
                             <div class="mb-4">
                                 <label for="title" class="form-label fw-bold">제목</label>
                                 <input type="text" class="form-control" id="title" name="boardTitle" 
-                                       placeholder="공지사항 제목을 입력하세요" required>
+                                       placeholder="공지사항 제목을 입력하세요">
                             </div>
 
                             <div class="mb-4 d-flex align-items-center">
@@ -92,10 +92,36 @@
             ['para', ['ul', 'ol', 'paragraph']],
             ['table', ['table']],
             ['insert', ['link', 'picture']],
-            ['view', ['fullscreen', 'codeview', 'help']]
+            ['view', ['codeview', 'help']]
           ]
         });
       });
+      
+      function validateForm() {
+    	    const title = $('#title').val().trim();
+    	    // Summernote의 내용을 가져옴
+    	    const content = $('#summernote').summernote('code');
+    	    
+    	    // 제목 검사
+    	    if (title === "") {
+    	        alert("제목을 입력해 주세요.");
+    	        $('#title').focus();
+    	        return false;
+    	    }
+
+    	    // 내용 검사 (태그를 제외한 순수 텍스트가 있는지 확인)
+    	    // 에디터가 비어있어도 기본적으로 <p><br></p> 등이 들어있을 수 있으므로 텍스트만 추출해 검사합니다.
+    	    const plainText = $('<div>').html(content).text().trim();
+    	    
+    	    if (plainText === "" && content.indexOf('<img') === -1) {
+    	        // 텍스트도 없고 이미지도 없는 경우
+    	        alert("내용을 입력해 주세요.");
+    	        $('#summernote').summernote('focus');
+    	        return false;
+    	    }
+
+    	    return confirm('등록하시겠습니까?'); // 모두 통과 시 제출
+    	}
     </script>
 </body>
 </html>

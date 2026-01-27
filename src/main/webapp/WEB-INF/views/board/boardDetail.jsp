@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>${board.boardTitle}</title>
+<title><c:out value="${board.boardTitle}"/></title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -102,16 +102,16 @@
               <span class="text-success fw-bold small">공지사항</span>
             </div>
             <div class="meta-group">
-              <span class="meta-item"><b>조회수</b> ${board.hit}</span>
+              <span class="meta-item"><b>조회수</b> <c:out value="${board.hit}"/></span>
             </div>
           </div>
           
-          <h2 class="board-title">${board.boardTitle}</h2>
+          <h2 class="board-title"><c:out value='${board.boardTitle}'/></h2>
           
           <div class="mt-3 d-flex align-items-center meta-group">
-            <span class="meta-item"><b>작성자</b> 관리자</span>
+            <span class="meta-item"><b>작성자</b> <c:out value="관리자"/></span>
             <span class="meta-divider">|</span>
-            <span class="meta-item"><b>작성일</b> ${fn:substring(board.boardRegAt, 0, 10)}</span>
+            <span class="meta-item"><b>작성일</b> <c:out value="${fn:substring(board.boardRegAt, 0, 10)}"/></span>
           </div>
         </div>
 
@@ -131,7 +131,7 @@
 		      </a>
 		      
 		      <form action="<c:url value='/common/board/admin/delete'/>" method="post" onsubmit="return confirm('이 게시글을 삭제하시겠습니까?');" style="display:inline;">
-		        <input type="hidden" name="id" value="${board.boardId}">
+		        <input type="hidden" name="id" value="<c:out value='${board.boardId}'/>">
 		        <button type="submit" class="btn btn-sm btn-lms-delete px-3">
 		          삭제
 		        </button>

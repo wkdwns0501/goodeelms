@@ -167,6 +167,8 @@
   </div>
 </main>
 
+<%@ include file="/footer.jsp" %>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const calendarEl = document.getElementById('calendar');

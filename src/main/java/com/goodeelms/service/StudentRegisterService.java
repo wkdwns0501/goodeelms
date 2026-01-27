@@ -52,4 +52,9 @@ public class StudentRegisterService {
 		return dao.writeStudentMajor(newStudentId, majorId);
 	}
 
+	public int studentPhoneCheck(String StudentPhone) {
+		StudentRegisterDAO dao = StudentRegisterDAO.getInstance();
+		return dao.studentPhoneCheck(StudentPhone);
+	}
+
 }
