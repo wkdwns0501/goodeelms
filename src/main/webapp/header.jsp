@@ -9,7 +9,6 @@
 		<a class="brand-link" href="<c:url value='/main.jsp'/>">GoodeeLMS</a>
 	</div>
 
-
 	<div class="ms-auto d-flex align-items-center gap-3">
 		<c:choose>
 			<c:when test="${not empty user_role}">

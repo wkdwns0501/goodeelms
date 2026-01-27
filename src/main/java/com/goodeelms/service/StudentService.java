@@ -3,6 +3,7 @@ package com.goodeelms.service;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -157,6 +158,16 @@ public class StudentService {
 		}
 	}
 
+	public boolean checkPassword(int studentId, String password) {
+		boolean result = false;
+		try(Connection conn = DBUtil.getConnection() ){
+			result = !EncryptUtil.isPasswordMatch(password, studentDAO.selectPasswordById(conn, studentId));
+		} catch(Exception e){ 
+			System.out.println("studentService checkPassword() 예외:" + e.getMessage());
+		}
+		return result;
+	}
+	
 	public void deleteLastFile(String lastPhotoUUID) {
 		if(lastPhotoUUID == null || lastPhotoUUID.isEmpty() || "default.jsp".equals(lastPhotoUUID)) {
 			return;
