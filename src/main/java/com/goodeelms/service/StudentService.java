@@ -57,6 +57,10 @@ public class StudentService {
 		return dto;
 	}
 	
+	public String getStudentStatue(int student_id) {
+		return studentDAO.getStudentStatus(student_id);
+	}
+	
 	// 학생 일반 정보 수정
 	public void updateStudentProfile(int studentId, String phone, String email,
 	        						 String address, String studentBank, String confirmPw,

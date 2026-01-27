@@ -8,6 +8,7 @@ import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.dto.StudentMajorDTO;
 import com.goodeelms.service.LoadLectureService;
 import com.goodeelms.service.StudentService;
+import com.goodeelms.util.StaticUtils;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -79,6 +80,11 @@ public class LoadLectureController extends HttpServlet {
 		
 		// 어떤 단어 검색했는지
 		String searchWord = request.getParameter("search_word");
+		if(!StaticUtils.checkEscapeString(searchWord)) {
+//			response.sendRedirect("/main.jsp?error=EscapeString");
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			
+		}
 		// 장바구니에 등록 된 강의 codeSet 가져오기
 		Set<Integer> inLectureCodeSet = (Set<Integer>)session.getAttribute("lectureCodeSet");
 		// 로드 서비스 생성
@@ -92,6 +98,18 @@ public class LoadLectureController extends HttpServlet {
 		int pageNums = (int)Math.ceil((double) total_record / viewLen);
 		if (pageNums == 0) pageNums = 1;
 		if (viewPage > pageNums) viewPage = pageNums;
+		
+		// 블록 시작/끝 계산
+		final int pageLen = 10;
+		final int startPage = ((viewPage - 1) / pageLen) * pageLen + 1;
+		final int endPage = Math.min(startPage + pageLen - 1, pageNums);
+		
+		System.out.println("StartPage: " + startPage);
+		System.out.println("EndPage: " + endPage);
+		// 블록 이동 (없으면 1)
+	    final int prevBlockPage = (startPage > 1) ? (startPage - 1) : 1;
+	    final int nextBlockPage = (endPage < pageNums) ? (endPage + 1) : pageNums;
+	    
 //		if(pageNums > 1 && viewPage == 1) viewLen = total_record % viewLen;
 		
 		List<LectureDTO> list = loadS.getLectureList(cat, searchWord, viewPage, viewLen, inLectureCodeSet, majorIds);
@@ -100,6 +118,10 @@ public class LoadLectureController extends HttpServlet {
 		request.setAttribute("cat", cat);
 		request.setAttribute("viewPage", viewPage);
 		request.setAttribute("pageNums", pageNums);
+		request.setAttribute("startPage", startPage);	
+		request.setAttribute("endPage", endPage);
+        request.setAttribute("prevBlockPage", prevBlockPage);
+        request.setAttribute("nextBlockPage", nextBlockPage);
 		request.setAttribute("lectureList", list);
 		request.setAttribute("totalCount", total_record);
 		

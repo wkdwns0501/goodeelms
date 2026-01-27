@@ -6,6 +6,7 @@ import java.time.ZonedDateTime;
 import java.util.Map;
 
 import com.goodeelms.listener.LMSScheduleListener;
+import com.goodeelms.service.StudentService;
 import com.goodeelms.util.StaticUtils;
 
 import jakarta.servlet.RequestDispatcher;
@@ -14,6 +15,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class StudentURLForwardServlet
@@ -30,6 +32,15 @@ public class StudentURLForwardController extends HttpServlet {
 		String requestURI = request.getRequestURI();
 		String contextPath = request.getContextPath() + "/student/enrollment";
 		String command = requestURI.substring(contextPath.length());
+		
+		HttpSession session = request.getSession();
+		int studentId = (Integer)session.getAttribute("student_id");
+		
+		String status = new StudentService().getStudentStatue(studentId);
+		if(!"재학".equals(status)) {
+			response.sendRedirect("/main.jsp?error=NoAccessRights");
+			return;
+		}
 		
 		System.out.println(command);
 		RequestDispatcher rd = null;

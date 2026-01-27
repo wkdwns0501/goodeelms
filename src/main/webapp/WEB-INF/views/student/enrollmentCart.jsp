@@ -47,7 +47,7 @@
 				      <form class="ms-lg-auto" id="lectureSearchForm" role="search">
 				        <div class="input-group input-group-sm" style="max-width: 360px;">
 				          <input type="search" class="form-control" id="lectureKeyword" name="search_word" placeholder="과목명/교수명 검색"
-				            aria-label="과목명 또는 교수명 검색" autocomplete="off">
+				            aria-label="과목명 또는 교수명 검색" autocomplete="off" value="<c:out value='${userInput}'/>">
 				          <button class="btn btn-primary" type="submit" id="btnLectureSearch">검색</button>
 				        </div>
 				      </form>
