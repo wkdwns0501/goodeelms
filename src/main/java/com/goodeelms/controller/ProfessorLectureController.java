@@ -31,6 +31,12 @@ public class ProfessorLectureController extends HttpServlet {
         }
 	    
 	    if (path.equals("/add")) { // 강의 등록 페이지 조회
+	    	String profStatus = (String) request.getSession().getAttribute("professor_status");
+	    	if ("휴직".equals(profStatus)) {
+	    	    response.sendRedirect(request.getContextPath() + "/professor/lecture/list?error=OnLeave");
+	    	    return;
+	    	}
+	    	
 	    	if (!lectureService.isLectureInsertPeriod()) {
 	            response.sendRedirect(request.getContextPath() 
 	                + "/professor/lecture/list?error=NoLectureInsertPeriod");
@@ -139,6 +145,12 @@ public class ProfessorLectureController extends HttpServlet {
         	Integer professorId = (Integer) request.getSession().getAttribute("professor_id");
             if (professorId == null) {
                 response.sendRedirect(request.getContextPath() + "/common/login");
+                return;
+            }
+            
+            String profStatus = (String) request.getSession().getAttribute("professor_status");
+            if ("휴직".equals(profStatus)) {
+                response.sendRedirect(request.getContextPath() + "/professor/lecture/list?error=OnLeave");
                 return;
             }
             

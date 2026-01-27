@@ -95,8 +95,8 @@
 				          <label class="form-label">학기 <span class="text-danger">*</span></label>
 				          <select class="form-select" name="lecture_semester" id="lecture_semester" required>
 				             <option value="">-- 선택 --</option>
-							 <option value="1" <c:if test="${form.lectureSemester == 1}">selected</c:if>>1학기</option>
-							 <option value="2" <c:if test="${form.lectureSemester == 2}">selected</c:if>>2학기</option>
+										 <option value="1" <c:if test="${form.lectureSemester == 1}">selected</c:if>>1학기</option>
+										 <option value="2" <c:if test="${form.lectureSemester == 2}">selected</c:if>>2학기</option>
 				          </select>
 				          <small id="semesterError" class="text-danger d-none">학기를 선택하세요</small>
 				        </div>
@@ -153,7 +153,7 @@
 				                 placeholder="예: 30" 
 				                 value="<c:out value='${form.lectureCapacity}'/>"
 				                 required/>
-				          <small id="capacityError" class="text-danger d-none">1~50만 입력 가능합니다</small>
+				          <small id="capacityError" class="text-danger d-none">5~50만 입력 가능합니다</small>
 				        </div>
 				
 				        <!-- 강의 설명 -->

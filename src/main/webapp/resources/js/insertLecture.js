@@ -171,9 +171,9 @@
       ok = false;
     }
 
-    // 정원 1~50
+    // 정원 5~50
     const cap = Number(capacityEl ? capacityEl.value : NaN);
-    if (!Number.isInteger(cap) || cap < 1 || cap > 50) {
+    if (!Number.isInteger(cap) || cap < 5 || cap > 50) {
       if (capacityErr) capacityErr.classList.remove("d-none");
       if (capacityEl) capacityEl.classList.add("is-invalid");
       ok = false;

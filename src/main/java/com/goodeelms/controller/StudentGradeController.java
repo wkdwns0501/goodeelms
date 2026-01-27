@@ -8,6 +8,7 @@ import java.util.Map;
 import com.goodeelms.dto.StudentGradeDTO;
 import com.goodeelms.listener.LMSScheduleListener;
 import com.goodeelms.service.StudentGradeService;
+import com.goodeelms.util.StaticUtils;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -48,9 +49,7 @@ public class StudentGradeController extends HttpServlet {
         String tab = request.getParameter("tab");
         if (tab == null || tab.isBlank()) tab = "recent"; // 기본: 직전학기
         
-        ZonedDateTime now = ZonedDateTime.now(LMSScheduleListener.getZONE_ID());
-        // 성적 조회 기간 테스트
-//        ZonedDateTime now = ZonedDateTime.of(2026, 8, 1, 10, 0, 0, 0, LMSScheduleListener.getZONE_ID()); // 두번째 값 만 변경
+        ZonedDateTime now = StaticUtils.getSettedTime();
         // 직전학기 계산
         SemesterKey target = calcTargetSemester(now);
         // 평가 기간 여부(2월/8월)

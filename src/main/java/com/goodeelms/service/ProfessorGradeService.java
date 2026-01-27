@@ -11,6 +11,7 @@ import com.goodeelms.dao.ProfessorGradeDAO;
 import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.dto.LectureHistoryDTO;
 import com.goodeelms.listener.LMSScheduleListener;
+import com.goodeelms.util.StaticUtils;
 
 public class ProfessorGradeService {
 	private static final ProfessorGradeService instance = new ProfessorGradeService();
@@ -61,7 +62,7 @@ public class ProfessorGradeService {
 		if (professorId <= 0) throw new IllegalArgumentException("로그인이 필요합니다.");
 		if (lectureId <= 0) throw new IllegalArgumentException("강의 정보가 올바르지 않습니다.");
 		
-		ZonedDateTime now = ZonedDateTime.now(LMSScheduleListener.getZONE_ID());
+		ZonedDateTime now = StaticUtils.getSettedTime();
 		
 		// 성적 기입 기간 체크 + 어떤 기간인지 결과 받기
 		int period = validateGradeInputPeriod(now); // 1 또는 2 반환

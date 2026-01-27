@@ -10,6 +10,7 @@ import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.dto.LectureHistoryDTO;
 import com.goodeelms.listener.LMSScheduleListener;
 import com.goodeelms.service.ProfessorGradeService;
+import com.goodeelms.util.StaticUtils;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -58,10 +59,14 @@ public class ProfessorGradeController extends HttpServlet {
     		response.sendRedirect(request.getContextPath() + "/common/login");
     		return;
     	}
+    	String profStatus = (String) request.getSession().getAttribute("professor_status");
+    	if ("휴직".equals(profStatus)) {
+    	    response.sendRedirect(request.getContextPath() + "/common/dashboard?error=OnLeave");
+    	    return;
+    	}
+
     	
-    	ZonedDateTime now = ZonedDateTime.now(LMSScheduleListener.getZONE_ID());
-    	// 성적 기입 기간 테스트용
-//        ZonedDateTime now = ZonedDateTime.of(2026, 1, 1, 10, 0, 0, 0, LMSScheduleListener.getZONE_ID()); // 두번째 값 만 변경
+    	ZonedDateTime now = StaticUtils.getSettedTime();
         // 직전학기(종강) 강의 대상 학기 계산
         SemesterKey target = calcTargetSemester(now);
         // 수정 가능 여부(성적 기입 기간 = 1월/7월)
@@ -135,6 +140,12 @@ public class ProfessorGradeController extends HttpServlet {
     		response.sendRedirect(request.getContextPath() + "/common/login");
     		return;
     	}
+    	String profStatus = (String) request.getSession().getAttribute("professor_status");
+    	if ("휴직".equals(profStatus)) {
+    	    response.sendRedirect(request.getContextPath() + "/common/dashboard?error=OnLeave");
+    	    return;
+    	}
+
 
         // lectureId / page 유지
         int lectureId = parseIntOrDefault(request.getParameter("lectureId"), 0);
@@ -143,7 +154,7 @@ public class ProfessorGradeController extends HttpServlet {
         if (keyword != null && keyword.isBlank()) keyword = null;
 
         // 성적 기입 기간이 아니면 서버에서 차단해야 함
-        ZonedDateTime now = ZonedDateTime.now(LMSScheduleListener.getZONE_ID());
+        ZonedDateTime now = StaticUtils.getSettedTime();
         gradeService.validateGradeInputPeriod(now);  // 기간 아니면 예외 던지게
         
         // 배열 파라미터(페이지당 10명)

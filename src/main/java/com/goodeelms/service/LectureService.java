@@ -1,18 +1,15 @@
 package com.goodeelms.service;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.goodeelms.dao.LectureCartDAO;
 import com.goodeelms.dao.LectureDAO;
 import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.listener.LMSScheduleListener;
-import com.goodeelms.util.DBUtil;
+import com.goodeelms.util.StaticUtils;
 
 public class LectureService {
 	private LectureDAO lectureDAO = LectureDAO.getInstance();
@@ -133,7 +130,7 @@ public class LectureService {
     
     // 강의 등록 기간 체크
     private void validateLectureInsertPeriod(LectureDTO lecture) {
-        ZonedDateTime now = ZonedDateTime.now(LMSScheduleListener.getZONE_ID());
+    	ZonedDateTime now = StaticUtils.getSettedTime();
 
         Map<String, ZonedDateTime> map = LMSScheduleListener.getEventTimeMap();
 
@@ -182,9 +179,7 @@ public class LectureService {
     
     // 강의 등록 기간 여부 판단
     public boolean isLectureInsertPeriod() {
-        ZonedDateTime now = ZonedDateTime.now(LMSScheduleListener.getZONE_ID());
-    	// 테스트용
-//    	ZonedDateTime now = ZonedDateTime.of(2026, 3, 1, 10, 0, 0, 0, LMSScheduleListener.getZONE_ID());
+    	ZonedDateTime now = StaticUtils.getSettedTime();
 
         Map<String, ZonedDateTime> map = LMSScheduleListener.getEventTimeMap();
         if (map == null || map.isEmpty()) return false;
