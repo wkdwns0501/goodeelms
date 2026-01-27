@@ -40,7 +40,7 @@
 					<div id="resultAlert"
 						class="alert alert-success alert-dismissible fade show"
 						role="alert">
-						${msg}
+						<c:out value="${msg}" />
 						<button type="button" class="btn-close" data-bs-dismiss="alert"
 							aria-label="Close"></button>
 					</div>
@@ -53,8 +53,9 @@
 					</h4>
 					<p class="text-muted mb-3">당해 학기 납부 내역과 장학 수혜 정보를 한눈에 확인하세요.</p>
 					<span
-						class="badge ${tuition.paymentStatus == '납부완료' ? 'bg-success' : 'bg-warning text-dark'} p-2 px-4 fs-6 shadow-sm">
-						현재 상태: ${tuition.paymentStatus} </span>
+						class="badge ${tuition.paymentStatus == '완납' ? 'bg-success' : 'bg-warning text-dark'} p-2 px-4 fs-6 shadow-sm">
+						현재 상태: <c:out value="${tuition.paymentStatus}" />
+					</span>
 				</div>
 
 				<section class="mb-5">
@@ -104,17 +105,17 @@
 							</h6>
 
 							<c:choose>
-								<c:when test="${tuition.paymentStatus != '납부완료'}">
+								<c:when test="${tuition.paymentStatus != '완납'}">
 									<form
 										action="${pageContext.request.contextPath}/student/tuition/pay"
 										method="post" class="row g-3">
 										<div class="col-md-8">
 											<div class="input-group">
-												<span class="input-group-text bg-white">₩</span> <input
-													type="number" name="payment" id="paymentInput"
-													class="form-control"
-													placeholder="<c:out value='납부할 금액을 입력하세요' />"
-													max="<c:out value='${4500000 - tuition.paymentAmount}' />"
+												<span class="input-group-text bg-white">₩</span> 
+												<input type="number" name="payment" id="paymentInput" class="form-control"
+													placeholder="<c:out value='납부할 금액을 입력하세요'/>"
+													step="100000"
+													max="<c:out value='${4500000 - tuition.paymentAmount}'/>"
 													required oninput="formatDisplay(this)">
 											</div>
 											<div id="amountDisplay"
@@ -140,6 +141,20 @@
 									</form>
 								</c:when>
 								<c:otherwise>
+									<div class="row g-3">
+										<div class="col-md-8">
+											<input type="text" class="form-control bg-light"
+												value="등록금 납부가 완료되었습니다." readonly>
+										</div>
+										<div class="col-md-4">
+											<button type="button" class="btn btn-secondary w-100 fw-bold"
+												disabled style="cursor: not-allowed;">
+												<i class="bi bi-check-circle me-1"></i> 납부 완료
+											</button>
+										</div>
+									</div>
+
+
 									<div class="text-center py-2">
 										<p class="text-success mb-0 fw-bold">
 											<i class="bi bi-check-all me-1"></i>이번 학기 등록금을 모두 납부하셨습니다.
@@ -166,7 +181,9 @@
 										<th class="ps-4 text-muted bg-light" style="width: 250px;">최종
 											납부 일시</th>
 										<td class="ps-4 fw-bold text-dark"><c:choose>
-												<c:when test="${not empty tuition.paymentDate}">${tuition.formattedPaymentDate}</c:when>
+												<c:when test="${not empty tuition.paymentDate}">
+													<c:out value="${tuition.formattedPaymentDate}" />
+												</c:when>
 												<c:otherwise>
 													<span class="text-muted fw-normal">납부 기록 없음</span>
 												</c:otherwise>
@@ -174,8 +191,10 @@
 									</tr>
 									<tr>
 										<th class="ps-4 text-muted bg-light">납부 방식</th>
-										<td class="ps-4">가상계좌 이체 <small
-											class="text-secondary ms-2">(구디은행 <c:out value="${account}"/>)</small>
+										<td class="ps-4">가상계좌 이체 
+											<small class="text-secondary ms-2">
+												(구디은행 <c:out value="${account}"/>)
+											</small>
 										</td>
 									</tr>
 								</tbody>
@@ -203,17 +222,19 @@
 								<tbody>
 									<c:forEach var="scholarshipDTO" items="${scholarship}">
 										<tr class="text-center">
-											<td>${scholarshipDTO.formattedSemester}</td>
-											<td class="text-muted small">교내 장학금(성적우수)</td>
-											<td class="text-end pe-5 fw-bold text-success">+ <fmt:formatNumber
-													value="${scholarshipDTO.scholarshipAmount}" type="number" />원
+											<td><c:out value="${scholarshipDTO.formattedSemester}" /></td>
+											<td class="text-muted small">
+												<c:out value="${scholarshipDTO.scholarshipName != null ? scholarshipDTO.scholarshipName : '교내 장학금(성적우수)'}" />
+											</td>
+											<td class="text-end pe-5 fw-bold text-success">+ 
+												<fmt:formatNumber value="${scholarshipDTO.scholarshipAmount}" type="number" />원
 											</td>
 										</tr>
 									</c:forEach>
+									
 									<c:if test="${empty scholarship}">
 										<tr>
-											<td colspan="3" class="py-5 text-center text-muted small">장학수혜
-												내역이 존재하지 않습니다.</td>
+											<td colspan="3" class="py-5 text-center text-muted small">장학수혜 내역이 존재하지 않습니다.</td>
 										</tr>
 									</c:if>
 								</tbody>
@@ -222,20 +243,15 @@
 					</div>
 				</section>
 
-				<form
-					action="${pageContext.request.contextPath}/student/tuition/pay"
-					method="post" id="finalPayForm">
+				<form action="${pageContext.request.contextPath}/student/tuition/pay" method="post" id="finalPayForm">
 					<input type="hidden" name="payment" id="hiddenPayment">
-
-					<div class="modal fade" id="payModal" tabindex="-1"
-						aria-hidden="true">
+					<div class="modal fade" id="payModal" tabindex="-1" aria-hidden="true">
 						<div class="modal-dialog modal-dialog-centered"
 							style="width: 320px;">
 							<div class="modal-content">
 								<div class="modal-header">
 									<h5 class="modal-title">QR 결제 확인</h5>
-									<button type="submit" class="btn-close" data-bs-dismiss="modal"
-										aria-label="Close"></button>
+									<button type="submit" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 								</div>
 								<div class="modal-body text-center">
 									<div id="qrcode" class="d-flex justify-content-center"
@@ -255,7 +271,8 @@
 
 	<%@ include file="/footer.jsp"%>
 
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 	<script>
 		function formatDisplay(input) {
 			const display = document.getElementById('amountDisplay');
@@ -276,18 +293,29 @@
 		    setTimeout(() => resultAlert.classList.add("d-none"), 4000);
 		}
 
-		
 		// QR 영역
 		function generatePayQR() { 		
-	    const amount = document.getElementById('paymentInput').value;
+			const paymentInput = document.getElementById('paymentInput');
+		  const amount = Number(paymentInput.value); 
+		  const maxAmount = ${4500000 - tuition.paymentAmount};
 	    
-	    if(!amount || amount <= 0) {
-	        alert("납부할 금액을 입력해주세요.");
-	        return;
-	    }
+		  if(!amount || amount <= 0) {
+		        alert("납부할 금액을 입력해주세요.");
+		        return;
+		  }
+		  
+		  if (amount > 100000000) { 
+			    alert("입력 범위를 초과하는 금액입니다.");
+			    return;
+			}
+		  
+		  if (amount > maxAmount) {
+		        alert("미납 잔액(" + maxAmount.toLocaleString() + "원) 이하로 입력해주세요.");
+		        return;
+		  }
 
+		  
 	    document.getElementById('hiddenPayment').value = amount;
-
 	    const qrContainer = document.getElementById("qrcode"); // QR 영역 초기화 (중복 생성 방지)
 	    qrContainer.innerHTML = ""; 
 
@@ -301,7 +329,6 @@
 	    // 모달 띄우기
 	    var myModal = new bootstrap.Modal(document.getElementById('payModal'));
 	    myModal.show();
-	    
 	}
 </script>
 
