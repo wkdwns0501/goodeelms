@@ -218,8 +218,17 @@ public class SelectLectureDAO {
 			else pstmt.setString(queryIndex, "교양");
 			queryIndex++;
 		}
-		if("major".equals(cat) || majorIds.length == 1) pstmt.setInt(queryIndex++, majorIds[0]);
-		else if("minor".equals(cat)) pstmt.setInt(queryIndex++, majorIds[1]);
+		if(!"liberal".equals(cat) && !"all".equals(cat)) {
+		    // 쿼리에 major_id = ? 가 추가된 상태이므로 무조건 index를 하나 채워야 함
+		    if("minor".equals(cat) && majorIds.length >= 2) {
+		        pstmt.setInt(queryIndex++, majorIds[1]); // 부전공
+		    } else if (majorIds.length >= 1) {
+		        pstmt.setInt(queryIndex++, majorIds[0]); // 전공 (기본)
+		    } else {
+		        // 만약 전달된 majorIds가 없다면 SQL 에러 방지를 위해 기본값이라도 넣어야 함
+		        pstmt.setInt(queryIndex++, 0); 
+		    }
+		}
 		if(searchWord != null && !searchWord.isBlank()) {
 			pstmt.setString(queryIndex++, "%" + searchWord.trim() + "%");
 			if(professorIdSet.size() > 0) {
@@ -229,6 +238,7 @@ public class SelectLectureDAO {
 			}
 		}
 		if(lectureCodeSet.size() > 0) {
+			System.out.println("lectureCodeSet: " + lectureCodeSet.size());
 			for(Integer id : lectureCodeSet) {
 				pstmt.setInt(queryIndex++, id);
 			}

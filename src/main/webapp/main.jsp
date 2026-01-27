@@ -46,6 +46,16 @@
 	  			alert("이용 가능한 기간이 아닙니다.");
 	  		</script>
 	  	</c:when>
+	  	<c:when test="${param.error == 'EscapeString'}">
+	  		<script type="text/javascript">
+	  			alert("'<','>','"','"&"' 입력 불가");
+	  		</script>
+	  	</c:when>
+	  	<c:when test="${param.error == 'NoAccessRights'}">
+	  		<script type="text/javascript">
+	  			alert("접근 권한이 없는 사용자입니다.");
+	  		</script>
+	  	</c:when>
 	  </c:choose>
   </c:if>
 

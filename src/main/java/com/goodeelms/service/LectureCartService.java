@@ -95,6 +95,7 @@ public class LectureCartService {
 			
 			conn.commit();
 			System.out.println("수강 신청 처리가 성공적으로 완료되었습니다.");
+			return true;
 		}
 		catch(SQLException e) {
 			if(conn != null) {

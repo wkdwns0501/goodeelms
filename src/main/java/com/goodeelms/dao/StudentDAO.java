@@ -209,6 +209,23 @@ public class StudentDAO {
 		return null;
 	}
 	
+	public String getStudentStatus(int studentId) {
+		String sql = "SELECT student_status FROM student WHERE student_id = ?";
+		
+		try(Connection conn = DBUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)){
+			pstmt.setInt(1, studentId);
+			try(ResultSet rs = pstmt.executeQuery()){
+				if(!rs.next()) return null;
+				return rs.getString("student_status");
+			}
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	// 학생 정보 수정을 위한 조회
 	public StudentDTO selectById(Connection conn, int studentId) throws SQLException {
         String sql =

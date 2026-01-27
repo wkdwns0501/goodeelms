@@ -33,4 +33,25 @@ public class StaticUtils {
 			e.printStackTrace();
 		}
 	}
+	
+	public static String escapeChangeString(String text) {
+		StringBuilder sb = new StringBuilder();
+		
+		for(char c : text.toCharArray()){
+		    if (c == '<') sb.append("&lt;");
+		    else if (c == '>') sb.append("&gt;");
+		    else if (c == '"') sb.append("&quot;");
+		    else if (c == '&') sb.append("&amp;");
+		    else sb.append(c);
+		}
+		
+		return sb.toString();
+	}
+	
+	public static boolean checkEscapeString(String text) {
+		for(char c : text.toCharArray()) {
+			if (c == '<' || c == '>' ||c == '"' ||c == '&') return false;
+		}
+		return true;
+	}
 }

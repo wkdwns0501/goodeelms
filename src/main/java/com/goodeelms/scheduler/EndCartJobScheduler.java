@@ -22,7 +22,7 @@ public class EndCartJobScheduler implements Job {
         try {
             // 로직 수행 (예: DB 상태 업데이트)
             boolean isSuccess = new LectureCartService().closeCartStatus();
-            
+            System.out.println("장바구니 마감 로직 성공 여부: " + isSuccess);
             if (!isSuccess) {
                 throw new Exception("비즈니스 로직 실패");
             }

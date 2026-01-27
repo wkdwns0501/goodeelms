@@ -2,7 +2,7 @@
 
 <footer class="app-footer d-flex align-items-center px-3">
 	<div class="d-flex gap-3" id="hiddenTimeChange">
-	  <div >© 2026 LMS Project</div>
+	  <div>© 2026 LMS Project</div>
 	  <div id="timeView">${sessionScope.time}</div>
 	</div>
   <div class="ms-auto">문의: admin@lms.local</div>

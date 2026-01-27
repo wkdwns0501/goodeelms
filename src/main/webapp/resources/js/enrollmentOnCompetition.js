@@ -51,6 +51,9 @@ async function loadLectures(cat, word, page){
 	}
 			
 	if (!res.ok) {
+		if(res.status === 400){
+			alert("특수문자를 입력할 수 없습니다.");
+		}
     console.error('강의 리스트 로드 실패', res.status);
     return;
 	}
