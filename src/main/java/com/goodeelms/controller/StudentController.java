@@ -96,6 +96,7 @@ public class StudentController extends HttpServlet {
 
       HttpSession session = request.getSession();
       StudentDTO updateStudent = (StudentDTO) session.getAttribute("studentDTO");
+      if(updateStudent == null) updateStudent = new StudentDTO();
 
 		if (newPw.equals(originPw)) { // 기존 비밀번호와 동일하면 다시 입력하도록
 			request.setAttribute("errorMessage", "기존 비밀번호와 동일합니다.");
@@ -112,10 +113,11 @@ public class StudentController extends HttpServlet {
 		boolean isUpdated = studentService.updateStudent(updateStudent);
 
 		if (isUpdated) {
-			session.setAttribute("studentDTO", updateStudent);
+			session.removeAttribute("studentDTO");
 			response.sendRedirect(request.getContextPath() + "/main.jsp");
 			return;
 		} else {
+			session.setAttribute("studentDTO", updateStudent);
 			request.setAttribute("errorMessage", "이미 사용 중인 이메일/연락처 입니다.");
 			request.getRequestDispatcher("/WEB-INF/views/student/studentSignUp.jsp").forward(request, response);
 			return;
