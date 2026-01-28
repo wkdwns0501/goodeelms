@@ -50,7 +50,6 @@ public class StudentService {
 	}
 	
 	public boolean updateStudent(StudentDTO studentDTO) { 	// 0118 임욱 추가 - 학생 정보를 업데이트 (학생 정보 수정, 초기 로그인 경우에 사용)
-		studentDTO.setStudentGender(GenderUtil.getGenderByIdentityNumber(studentDTO.getStudentIdentityNumber())); // 주민번호에 따른 자동 성별 설정
 	    studentDTO.setStudentPassword(EncryptUtil.encryptPassword(studentDTO.getStudentPassword())); // 비밀번호 암호화 후 저장
 		
 		return studentDAO.updateStudent(studentDTO);
@@ -65,6 +64,23 @@ public class StudentService {
 	
 	public String getStudentStatue(int student_id) {
 		return studentDAO.getStudentStatus(student_id);
+	}
+	
+	public String resetStudentPassword(String studentNo, String studentIdentityNum) {
+	    StudentDTO dto = studentDAO.getStudentByNo(studentNo);
+	    
+	    if (dto == null || !studentIdentityNum.equals(dto.getStudentIdentityNumber())) {
+	        return "입력하신 정보와 일치하는 유저가 없습니다.";
+	    }
+
+	    String initialPw = studentIdentityNum.substring(7); 
+	    dto.setStudentPassword(EncryptUtil.encryptPassword(initialPw)); 
+	    
+	    if (studentDAO.updateStudent(dto)) {
+	        return "초기 비밀번호 재설정에 성공했습니다.";
+	    }
+	    
+	    return "시스템 오류로 인해 비밀번호 변경에 실패했습니다.";
 	}
 	
 	// 학생 일반 정보 수정

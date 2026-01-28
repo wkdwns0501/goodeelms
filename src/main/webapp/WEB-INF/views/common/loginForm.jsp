@@ -52,6 +52,13 @@
 									</div>
 								</form>
 								
+								<div class="mt-4 pt-3 border-top">
+								   <div class="text-center mt-2">
+						            <a href="${pageContext.request.contextPath}/common/resetPassword" class="text-decoration-none small text-muted">
+						                <i class="bi bi-question-circle me-1"></i> 비밀번호 초기화
+						            </a>
+						        </div>
+								</div>
 								
 							</div>
 						</div>
