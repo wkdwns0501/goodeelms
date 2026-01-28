@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.rmi.Remote;
 import java.util.List;
 
@@ -201,29 +202,44 @@ public class CommonController extends HttpServlet {
 	private void resetPassword(HttpServletRequest request, HttpServletResponse response)
 	        throws ServletException, IOException {
 	    String userRole = request.getParameter("userRole");
-	    
-	    if (ExistUtil.isNull(userRole)) {
+	    if (ExistUtil.isNull(userRole)) { // 아무런 역할 선택이 없을 경우
 	        request.getRequestDispatcher("/WEB-INF/views/common/resetPassword.jsp").forward(request, response);
 	        return;
 	    }
 	    
 	    String userId = request.getParameter("userId");
 	    String newPassword = request.getParameter("newPassword"); 
-	    String msg = "유효하지 않은 접근입니다.";
+	    String msg = "필수 입력 정보가 누락되었습니다."; 
 
-	    if ("PROFESSOR".equals(userRole)) {
-	        String professorEmail = request.getParameter("professorEmail");
-	        ProfessorSignUpService professorService = new ProfessorSignUpService();
-	        msg = professorService.resetPassowordByEmailAndName(professorEmail, newPassword);
-	    } else if ("STUDENT".equals(userRole)) {
+	    if ("STUDENT".equals(userRole)) {
 	        String studentIdentityNum = request.getParameter("studentIdentityNum");
-	        StudentService studentService = new StudentService();
-	        msg = studentService.resetStudentPassword(userId, studentIdentityNum);
+	        if (!ExistUtil.isNull(userId) && !ExistUtil.isNull(studentIdentityNum)) {
+	            StudentService studentService = new StudentService();
+	            msg = studentService.resetStudentPassword(userId, studentIdentityNum);
+	        }
+	    } else if ("PROFESSOR".equals(userRole)) {
+	        String professorEmail = request.getParameter("professorEmail");
+	        if (!ExistUtil.isNull(professorEmail) && !ExistUtil.isNull(newPassword)) {
+	            ProfessorSignUpService professorService = new ProfessorSignUpService();
+	            msg = professorService.resetPassowordByEmailAndName(professorEmail, newPassword);
+	        }
 	    }
 
-	    request.setAttribute("msg", msg); 
-	    request.getRequestDispatcher("/WEB-INF/views/common/loginForm.jsp").forward(request, response);
-	    return;
+	    if (msg != null && msg.contains("성공")) {
+	        response.setContentType("text/html; charset=UTF-8");
+	        PrintWriter out = response.getWriter();
+	        out.println("<script>");
+	        out.println("    alert('" + msg + "');");
+	        out.println("    location.href='" + request.getContextPath() + "/common/login';");
+	        out.println("</script>");
+	        out.flush();
+	        return; 
+	    } else {
+	        request.setAttribute("msg", msg); 
+	        request.setAttribute("prevId", ("STUDENT".equals(userRole) ? userId : request.getParameter("professorEmail")));
+	        request.getRequestDispatcher("/WEB-INF/views/common/resetPassword.jsp").forward(request, response);
+	        return;
+	    }
 	}
 	
 	

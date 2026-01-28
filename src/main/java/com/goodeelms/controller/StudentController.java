@@ -45,10 +45,13 @@ public class StudentController extends HttpServlet {
 		String path = request.getPathInfo(); // /student 뒤의 경로
 		if (path == null) path = "";
 
-		if (!path.equals("/login") && !path.equals("/signup")) {
-		    response.sendRedirect(request.getContextPath() + "/common/login");
-		    return;
-		}
+		if (!path.equals("/signup")) {   // 세션이 없거나, 세션에 student_id가 없으면 로그인 창으로 보냄.
+	        HttpSession session = request.getSession(false);
+	        if (session == null || session.getAttribute("student_id") == null) {
+	            response.sendRedirect(request.getContextPath() + "/common/login");
+	            return;
+	        }
+	    }
 
 		switch (path) {
 		case "/signup":
