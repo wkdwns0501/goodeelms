@@ -29,6 +29,11 @@
 </style>
 </head>
 <body>
+	<%
+	response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+	response.setHeader("Pragma", "no-cache");
+	response.setDateHeader("Expires", 0);
+	%>
 
 	<%@ include file="/header.jsp"%>
 
@@ -63,11 +68,12 @@
 						<div class="card-body p-4 p-md-5">
 							<form method="post" id="signupForm"
 								action="${pageContext.request.contextPath}/student/signup">
-
-								<input type="hidden" name="student_phone"
-									id="studentPhoneHidden" /> <input type="hidden"
-									name="student_email" id="studentEmailHidden" /> <input
-									type="hidden" name="student_bank" id="studentBankHidden" />
+								<input type="hidden" name="student_id"
+									value="<c:out value="${studentId}"/>"> <input
+									type="hidden" name="student_phone" id="studentPhoneHidden" />
+								<input type="hidden" name="student_email"
+									id="studentEmailHidden" /> <input type="hidden"
+									name="student_bank" id="studentBankHidden" />
 
 								<div class="p-4 bg-light rounded-3 mb-4 border">
 									<h6 class="fw-bold mb-3 text-secondary">비밀번호 변경</h6>
@@ -75,18 +81,16 @@
 										<div class="col-md-12">
 											<label class="form-label small">현재 비밀번호</label> <input
 												type="password" name="origin_student_password" id="originPw"
-												class="form-control" required>
+												class="form-control">
 										</div>
 										<div class="col-md-6">
 											<label class="form-label small">새 비밀번호</label> <input
 												type="password" name="new_student_password" id="newPw"
-												class="form-control" placeholder="영문 소문자와 숫자를 포함한 6자 이상"
-												required>
+												class="form-control" placeholder="영문 소문자와 숫자를 포함한 6자 이상">
 										</div>
 										<div class="col-md-6">
 											<label class="form-label small">새 비밀번호 확인</label> <input
-												type="password" id="confirmNewPw" class="form-control"
-												required>
+												type="password" id="confirmNewPw" class="form-control">
 										</div>
 									</div>
 								</div>
@@ -120,7 +124,7 @@
 												<option value="daum.net"
 													${emailDomain == 'daum.net' ? 'selected' : ''}>daum.net</option>
 												<option value="google.com"
-													${emailDomain == 'google.com' ? 'selected' : ''}>google.com</option>
+													${emailDomain == 'gmail.com' ? 'selected' : ''}>gmail.com</option>
 												<option value="goodee.ac.kr"
 													${emailDomain == 'goodee.ac.kr' ? 'selected' : ''}>goodee.ac.kr</option>
 											</select>
@@ -171,6 +175,17 @@
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 	<script
 		src="${pageContext.request.contextPath}/resources/js/studentSignup.js"></script>
+	<script>
+		window.onpageshow = function(event) {
+			const isBackNavigation = event.persisted
+					|| (window.performance && window.performance
+							.getEntriesByType("navigation")[0].type === 'back_forward');
 
+			if (isBackNavigation) {
+				location
+						.replace("${pageContext.request.contextPath}/common/logout");
+			}
+		};
+	</script>
 </body>
 </html>

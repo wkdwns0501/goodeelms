@@ -42,9 +42,14 @@ public class StudentService {
         }
 	}
 
+	
+	public boolean checkColumnByDTO(StudentDTO studentDTO) {
+		boolean result = false;
+		if (studentDAO.existsStudentUniqueColumn(studentDTO)) result = true;
+		return result;
+	}
+	
 	public boolean updateStudent(StudentDTO studentDTO) { 	// 0118 임욱 추가 - 학생 정보를 업데이트 (학생 정보 수정, 초기 로그인 경우에 사용)
-		if(studentDAO.existsStudentUniqueColumn(studentDTO)) return false; 	
-		
 		studentDTO.setStudentGender(GenderUtil.getGenderByIdentityNumber(studentDTO.getStudentIdentityNumber())); // 주민번호에 따른 자동 성별 설정
 	    studentDTO.setStudentPassword(EncryptUtil.encryptPassword(studentDTO.getStudentPassword())); // 비밀번호 암호화 후 저장
 		

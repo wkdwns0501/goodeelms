@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.rmi.Remote;
 import java.util.List;
 
 import com.goodeelms.dto.AdminDTO;
@@ -102,7 +103,11 @@ public class CommonController extends HttpServlet {
 				String initialPassword = identityNum.substring(identityNum.length() - 7);
 
 				if (loginPassword.equals(initialPassword)) {
+					session.removeAttribute("student_id");
+					session.removeAttribute("user_role");
+
 					session.setAttribute("studentDTO", studentDTO);
+					request.setAttribute("studentId", studentDTO.getStudentId());
 					request.getRequestDispatcher("/WEB-INF/views/student/studentSignUp.jsp").forward(request, response);
 					return;
 				}
