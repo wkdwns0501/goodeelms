@@ -50,6 +50,10 @@ public class AddStudentController extends HttpServlet {
 			StudentRegisterService srs = new StudentRegisterService();
 			ArrayList<StudentDTO> list = srs.getStudentList(studentName,majorName,studentNo);
 			
+			// 학생 등록에 학과 목록 호출
+			ArrayList<MajorDTO> majorList = srs.getMajorList();
+			
+			request.setAttribute("majorList", majorList);
 			request.setAttribute("studentList", list);
 			
 			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/admin/addStudent.jsp");
@@ -67,7 +71,7 @@ public class AddStudentController extends HttpServlet {
 		if(command.equals("/admin/addStudent/register")) {
 			StudentDTO studentDTO = new StudentDTO();
 			studentDTO.setStudentName(request.getParameter("studentName")); 
-			studentDTO.setStudentGender(request.getParameter("studentGender")); 
+			studentDTO.setStudentGender(request.getParameter("studentGender"));
 			studentDTO.setStudentIdentityNumber
 			// 주민번호 연결
 			(request.getParameter("identityFront")+"-"+request.getParameter("identityBack")); 
@@ -80,32 +84,40 @@ public class AddStudentController extends HttpServlet {
 			int majorId = Integer.parseInt(request.getParameter("majorId"));
 			StudentRegisterService srs = new StudentRegisterService();
 			
-			// 사용중인 학번인지 확인
-			int checkResult = srs.studentExistCheck(request.getParameter("studentNo"));
-			// 1. 학번 중복 체크
-			if(checkResult > 0) {
-			    response.setContentType("text/html; charset=UTF-8");
-			    PrintWriter out = response.getWriter();
-			    out.println("<script>");
-			    out.println("alert('이미 존재하는 학번입니다. 다시 확인해주세요.');");
-			    out.println("history.back();");
-			    out.println("</script>");
-			    out.flush();
+			
+			// 1. 이름 공백 체크
+			String studentName = request.getParameter("studentName");
+			if (studentName == null || studentName.trim().isEmpty() || studentName.contains(" ") || !studentName.matches("^[가-힣a-zA-Z]*$")) {
+		        sendAlert(response, "이름에 공백 및 특수문자를 포함할 수 없으며 필수 입력 사항입니다.");
+		        return;
+		    }
+			// 2. 주민번호 중복 체크
+			String identityNumber = studentDTO.getStudentIdentityNumber();
+			int checkIdenNum = srs.studentIdentityCheck(identityNumber);
+			if(checkIdenNum > 0) {
+				sendAlert(response, "이미 존재하는 주민등록번호입니다. 다시 확인해주세요.");
+				return;
+			}
+			// 3. 학번 중복 체크
+			int checkNo = srs.studentExistCheck(request.getParameter("studentNo"));
+			if(checkNo > 0) {
+				sendAlert(response, "이미 존재하는 학번입니다. 다시 확인해주세요.");
 			    return; // ⬅️ 로직 중단 (매우 중요)
 			} 
-			// 2. 핸드폰 번호 중복 체크 (학번이 통과된 경우만 실행)
+			// 4. 학번 길이 체크
+			String studentNo = studentDTO.getStudentNo();
+			if (studentNo == null || studentNo.trim().isEmpty() || studentNo.contains(" ") || studentNo.length() != 9) {
+				sendAlert(response, "학번은 9자리로 입력해주세요.");
+		        return;
+			}
+			// 4. 핸드폰 번호 중복 체크 (학번이 통과된 경우만 실행)
 			int checkPhone = srs.studentPhoneCheck(request.getParameter("studentPhone"));
-			System.out.println(checkPhone);
 			if(checkPhone > 0) {
-			    response.setContentType("text/html; charset=UTF-8");
-			    PrintWriter out = response.getWriter();
-			    out.println("<script>");
-			    out.println("alert('이미 존재하는 핸드폰 번호입니다. 다시 확인해주세요.');");
-			    out.println("history.back();");
-			    out.println("</script>");
-			    out.flush();
+				sendAlert(response, "이미 존재하는 핸드폰 번호입니다. 다시 확인해주세요.");
 			    return; // ⬅️ 로직 중단
-			} 
+			}
+			
+			
 			// 3. 둘 다 통과 시 등록 진행
 			    int registerResult = srs.studentRegister(studentDTO);
 			    int newStudentId = srs.getNewStudentId();
@@ -119,7 +131,16 @@ public class AddStudentController extends HttpServlet {
 			}
 			
 		}
-		
+		// alert 서비스
+		private void sendAlert(HttpServletResponse response, String msg) throws IOException {
+		    response.setContentType("text/html; charset=UTF-8");
+		    PrintWriter out = response.getWriter();
+		    out.println("<script>");
+		    out.println("alert('" + msg + "');");
+		    out.println("history.back();");
+		    out.println("</script>");
+		    out.flush();
+	}
 		
 	}	
 

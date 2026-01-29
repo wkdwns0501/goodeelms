@@ -1,12 +1,14 @@
 package com.goodeelms.service;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import com.goodeelms.dao.EvalutationDAO;
 import com.goodeelms.dto.LectureDTO;
 import com.goodeelms.dto.LectureEvaluationDTO;
+import com.goodeelms.util.StaticUtils;
 
 public class LectureEvaluationService {
 	
@@ -33,18 +35,19 @@ public class LectureEvaluationService {
 	
 	// 평가해야 할 학기 확인
 	public String[] getEvaluationTargetTerm() {
-		Calendar cal = Calendar.getInstance();
-	    int currentYear = cal.get(Calendar.YEAR);
-//	    int currentMonth = cal.get(Calendar.MONTH) + 1;
-	    int currentMonth = 8; // 테스트용
+		ZonedDateTime now = StaticUtils.getSettedTime();
+		
+	    int currentYear = now.getYear();
+	    int currentMonth = now.getMonthValue();
+//	    int currentMonth = 8; // 테스트용
 
 	    String targetYear;
 	    String targetSemester;
 
-	    if (currentMonth == 8) {
+	    if (currentMonth > 6) {
 	        targetYear = String.valueOf(currentYear);
 	        targetSemester = "1"; // 8월엔 올해 1학기 평가
-	    } else if (currentMonth == 2) {
+	    } else if (currentMonth <= 6) {
 	        targetYear = String.valueOf(currentYear - 1);
 	        targetSemester = "2"; // 2월엔 작년 2학기 평가
 	    } else {

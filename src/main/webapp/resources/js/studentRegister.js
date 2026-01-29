@@ -63,7 +63,7 @@ function validateStudentForm() {
         { el: form.majorId, msg: "학과를 선택해주세요." },
         { el: form.identityFront, msg: "주민번호 앞자리 6자리를 확인해주세요.", len: 6 },
         { el: form.identityBack, msg: "주민번호 뒷자리 7자리를 확인해주세요.", len: 7 },
-        { el: form.studentNo, msg: "학번을 입력해주세요." },
+        { el: form.studentNo, msg: "학번을 입력해주세요.", len: 9 },
         { el: form.studentPhone, msg: "핸드폰 번호 13자리를 확인해주세요.", len: 13 }
     ];
 
