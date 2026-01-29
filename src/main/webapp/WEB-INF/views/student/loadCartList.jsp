@@ -16,7 +16,7 @@
           <div>
             <div class="fw-semibold">${lec.lectureName}</div>
             <div class="text-muted small">
-              ${lec.majorName} · ${lec.professorName} · ${lec.lectureType} · ${lec.lectureCredit}학점
+              ${lec.majorName} · ${lec.professorName} · ${lec.lectureType} · ${lec.lectureSection}반 · ${lec.lectureCredit}학점
               <c:set var="totalCartCredit" value="${totalCartCredit + lec.lectureCredit}"/>
             </div>
           </div>

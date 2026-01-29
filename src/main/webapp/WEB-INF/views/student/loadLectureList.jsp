@@ -37,7 +37,7 @@
 	          <td>
 	            <div class="fw-semibold">${lec.lectureName}</div>
 	            <div class="text-muted small">
-	              ${lec.majorName} · ${lec.lectureType}
+	              ${lec.majorName} · ${lec.lectureType} · ${lec.lectureSection}반
 	            </div>
 	          </td>
 	          <td>${lec.professorName}</td>

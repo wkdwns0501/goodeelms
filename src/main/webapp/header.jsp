@@ -6,7 +6,14 @@
 		☰</button>
 
 	<div class="fw-semibold ms-2">
-		<a class="brand-link" href="<c:url value='/main.jsp'/>">GoodeeLMS</a>
+		<c:choose>
+		  <c:when test="${not empty user_role}">
+		    <a class="brand-link" href="<c:url value='/common/board/list'/>">GoodeeLMS</a>
+		  </c:when>
+		  <c:otherwise>
+		    <a class="brand-link" href="<c:url value='/main.jsp'/>">GoodeeLMS</a>
+		  </c:otherwise>
+		</c:choose>
 	</div>
 
 	<div class="ms-auto d-flex align-items-center gap-3">
