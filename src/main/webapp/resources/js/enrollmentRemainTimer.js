@@ -6,6 +6,7 @@
 const timerEl = document.querySelector("#enrollTimer");
 const remainEl = document.querySelector("#remainTimeSet");
 const endUtcMs = Number(remainEl.dataset.endTime);
+let nowTime = Number(remainEl.dataset.nowTime);
 
 let lastText = null;
 let rafPending = false;
@@ -38,11 +39,10 @@ function render(text) {
 }
 
 function tick() {
-  if (!timerEl || !Number.isFinite(endUtcMs)){
+  if (!timerEl || !Number.isFinite(endUtcMs) || !Number.isFinite(nowTime)){
 		return;
-	} 
-	
-  const remain = endUtcMs - Date.now();
+	}  
+  const remain = endUtcMs - nowTime;
   const text = formatRemain(remain);
 	
   if (text !== lastText) {
@@ -61,6 +61,7 @@ function tick() {
 
   // "정확히 초 경계"에 맞춰 다음 tick 예약 (드리프트 최소화)
   const nextInMs = 1000 - (Date.now() % 1000);
+	nowTime += 1000;
   setTimeout(tick, nextInMs);
 }
 

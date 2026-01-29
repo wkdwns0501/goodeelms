@@ -38,8 +38,6 @@ public class ConfirmScholarshipController extends HttpServlet {
 				return;
 			}
 	        
-			
-			// 
 			String[] parts = ssc.lastestSemester(now);
 
 			String year = parts[0];   // 2025
@@ -115,7 +113,7 @@ public class ConfirmScholarshipController extends HttpServlet {
 	        } else {
 	        	System.out.println("장학 정보 변경 실패");
 	        }
-	       
+	        
 	        response.sendRedirect(contextPath + "/admin/confirmScholarship/list?yearSemester=" + yearSemester + "&tab=manage");
 		}
 	}

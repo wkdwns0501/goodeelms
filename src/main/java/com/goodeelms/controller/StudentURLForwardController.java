@@ -42,7 +42,6 @@ public class StudentURLForwardController extends HttpServlet {
 			return;
 		}
 		
-		System.out.println(command);
 		RequestDispatcher rd = null;
 		// 시간 설정
 		Map<String, ZonedDateTime> timeMap = LMSScheduleListener.getEventTimeMap();
@@ -70,6 +69,7 @@ public class StudentURLForwardController extends HttpServlet {
 				Instant endCartInstant = endCartTime.toInstant();
 				long endCartTimeMS = endCartInstant.toEpochMilli();
 				request.setAttribute("endTime", endCartTimeMS);
+				request.setAttribute("nowTime", nowCartTime.toInstant().toEpochMilli());
 				rd = request.getRequestDispatcher("/WEB-INF/views/student/enrollmentCart.jsp");
 				rd.forward(request, response);
 				break;
@@ -97,6 +97,7 @@ public class StudentURLForwardController extends HttpServlet {
 				Instant endComInstant = endComTime.toInstant();
 				long endComTimeMS = endComInstant.toEpochMilli();
 				request.setAttribute("endTime", endComTimeMS);
+				request.setAttribute("nowTime", nowComTime.toInstant().toEpochMilli());
 				
 				rd = request.getRequestDispatcher("/WEB-INF/views/student/enrollmentCompetition.jsp");
 				rd.forward(request, response);

@@ -104,8 +104,6 @@ public class LoadLectureController extends HttpServlet {
 		final int startPage = ((viewPage - 1) / pageLen) * pageLen + 1;
 		final int endPage = Math.min(startPage + pageLen - 1, pageNums);
 		
-		System.out.println("StartPage: " + startPage);
-		System.out.println("EndPage: " + endPage);
 		// 블록 이동 (없으면 1)
 	    final int prevBlockPage = (startPage > 1) ? (startPage - 1) : 1;
 	    final int nextBlockPage = (endPage < pageNums) ? (endPage + 1) : pageNums;

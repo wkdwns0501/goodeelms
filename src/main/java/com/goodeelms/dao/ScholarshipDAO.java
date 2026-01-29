@@ -68,7 +68,6 @@ public class ScholarshipDAO {
 	public int writeScholarshipHistory(String[] confirmedStudentsId, int yearSemestertoInt) {
 		String sql = "INSERT INTO scholarship_history (scholarship_semester, student_id) " +
 					 "VALUES(?, ?)";
-		
 		try(Connection conn = DBUtil.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			// 자동 커밋 off -> 모두 성공해야 성공 -> 데이터 꼬임 방지
