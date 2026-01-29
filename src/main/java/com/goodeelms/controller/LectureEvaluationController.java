@@ -38,7 +38,7 @@ public class LectureEvaluationController extends HttpServlet {
 			AccessPeriodService aps = new AccessPeriodService();	
 			ZonedDateTime now = StaticUtils.getSettedTime();
 			if (!aps.isAccessPeriod(now)) {
-				AlertUtil.alertAndRedirect(response, "강의 평가 기간이 아닙니다.", contextPath + "/main.jsp");
+				AlertUtil.alertAndRedirect(response, "강의 평가 기간이 아닙니다.", contextPath + "/common/board/list");
 				return;
 			}
 			
@@ -66,11 +66,11 @@ public class LectureEvaluationController extends HttpServlet {
 
 			if (targetLecture == null && !lectureList.isEmpty()) {
 			    // [추가] 모든 과목 평가 완료 시 처리
-				AlertUtil.alertAndRedirect(response, "강의 평가를 완료했습니다.", contextPath + "/main.jsp"); 
+				AlertUtil.alertAndRedirect(response, "강의 평가를 완료했습니다.", contextPath + "/common/board/list"); 
 				return;
 				// target 기간에 해당하는 과목이 없을 때
 			} else if (lectureList.isEmpty()) {
-				AlertUtil.alertAndRedirect(response, "지난 학기 수강 과목이 없습니다.", contextPath + "/main.jsp");
+				AlertUtil.alertAndRedirect(response, "지난 학기 수강 과목이 없습니다.", contextPath + "/common/board/list");
 				return;
 			}
 
