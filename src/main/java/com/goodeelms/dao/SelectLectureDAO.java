@@ -222,10 +222,10 @@ public class SelectLectureDAO {
 		    // 쿼리에 major_id = ? 가 추가된 상태이므로 무조건 index를 하나 채워야 함
 		    if("minor".equals(cat) && majorIds.length >= 2) {
 		        pstmt.setInt(queryIndex++, majorIds[1]); // 부전공
-		    } else if (majorIds.length >= 1) {
+		    } else if ("major".equals(cat)) {
 		        pstmt.setInt(queryIndex++, majorIds[0]); // 전공 (기본)
 		    } else {
-		        // 만약 전달된 majorIds가 없다면 SQL 에러 방지를 위해 기본값이라도 넣어야 함
+		        // 만약 전달된 majorIds가 없거나 부전공을 선택했는데 부전공이 없으면
 		        pstmt.setInt(queryIndex++, 0); 
 		    }
 		}
@@ -238,7 +238,6 @@ public class SelectLectureDAO {
 			}
 		}
 		if(lectureCodeSet.size() > 0) {
-			System.out.println("lectureCodeSet: " + lectureCodeSet.size());
 			for(Integer id : lectureCodeSet) {
 				pstmt.setInt(queryIndex++, id);
 			}

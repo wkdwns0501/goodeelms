@@ -57,7 +57,7 @@
 				  <!-- 우측: 남은 시간 -->
 				  <div class="col-12 col-lg-4">
 				    <div class="d-flex align-items-center justify-content-between gap-2">
-				      <span class="text-muted fw-bold" id="remainTimeSet" data-end-time ="${endTime}">남은 시간</span>
+				      <span class="text-muted fw-bold" id="remainTimeSet" data-end-time ="${endTime}" data-now-time="${nowTime}">남은 시간</span>
 				      <span class="badge text-bg-success px-3 py-2 me-lg-2" id="enrollTimer" aria-live="polite">--:--</span>
 				    </div>
 				  </div>
