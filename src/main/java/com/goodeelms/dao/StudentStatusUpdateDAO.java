@@ -114,11 +114,10 @@ public class StudentStatusUpdateDAO {
 	}
 	
 	// student_status를 수정하는 메서드
-	public int updateStudentStatus(String studentId, String newStudentStatus) {
+	public int updateStudentStatus(Connection conn, String studentId, String newStudentStatus) {
 		String sql = "UPDATE student SET student_status = ? WHERE student_id = ?";
 		
-		try (Connection conn = DBUtil.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(sql)) {	
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {	
 			pstmt.setString(1, newStudentStatus);
 			pstmt.setInt(2, Integer.parseInt(studentId));
 			return pstmt.executeUpdate();
@@ -129,12 +128,11 @@ public class StudentStatusUpdateDAO {
 	}
 	
 	// student_status_history 에 기록을 작성하는 메서드
-	public int writeStatusHistory(String studentId, String newStudentStatus, String statusReason, int adminId) {
+	public int writeStatusHistory(Connection conn, String studentId, String newStudentStatus, String statusReason, int adminId) {
 		String sql = "INSERT INTO student_status_history (status_type, status_reason, student_id, admin_id) "
 					+ "VALUES (?, ?, ?, ?)";
 		
-		try (Connection conn = DBUtil.getConnection();
-			 PreparedStatement pstmt = conn.prepareStatement(sql)) {	
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {	
 			pstmt.setString(1, newStudentStatus);
 			pstmt.setString(2, statusReason);
 			pstmt.setInt(3, Integer.parseInt(studentId));
