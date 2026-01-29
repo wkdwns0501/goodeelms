@@ -384,7 +384,7 @@ public class LectureDAO {
 	    String sql =
 	        "SELECT l.lecture_id, l.lecture_code, l.lecture_name, l.lecture_room, " +
 	        "       l.lecture_credit, l.lecture_year, l.lecture_semester, l.lecture_section, " +
-	        "       l.lecture_type, l.lecture_current_people, l.lecture_capacity, " +
+	        "       l.lecture_type, l.lecture_current_people, l.lecture_capacity, l.lecture_status, " +
 	        "       l.lecture_description, l.professor_id, l.major_id, p.professor_name, " +
 	        "       b.building_name " +
 	        "FROM lecture l " +
@@ -424,6 +424,7 @@ public class LectureDAO {
 	                lecture.setLectureType(rs.getString("lecture_type"));
 	                lecture.setLectureCurrentPeople(rs.getInt("lecture_current_people"));
 	                lecture.setLectureCapacity(rs.getInt("lecture_capacity"));
+	                lecture.setLectureStatus(rs.getString("lecture_status"));
 	                lecture.setLectureDescription(rs.getString("lecture_description"));
 	                lecture.setProfessorId(rs.getInt("professor_id"));
 	                lecture.setMajorId(rs.getInt("major_id"));

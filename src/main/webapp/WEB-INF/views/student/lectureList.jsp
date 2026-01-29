@@ -64,6 +64,28 @@
 	.subline{
 	  font-size: 0.78rem;
 	}
+	
+	/* 강의 상태 서브 뱃지  */
+	.badge-lecture-status {
+	  font-size: 0.7rem;
+	  padding: 2px 6px;
+	  border-radius: 999px;
+	  margin-left: 6px;
+	  vertical-align: middle;
+	  font-weight: 400;
+	  line-height: 1.2;
+	}
+	
+	/* 상태별 색상 */
+	.badge-status-open {        /* 개강 */
+	  background-color: #e6f4ea;
+	  color: #1e7e34;
+	}
+	
+	.badge-status-ready {       /* 예정 */
+	  background-color: #eef2f6;
+	  color: #5f6f82;
+	}
 </style>
 
 </head>
@@ -156,9 +178,18 @@
 														   data-room="<c:out value='${lec.lectureRoom}'/>"
 														   data-current="<c:out value='${lec.lectureCurrentPeople}'/>"
 														   data-capacity="<c:out value='${lec.lectureCapacity}'/>"
+														   data-status="<c:out value='${lec.lectureStatus}'/>"
 														   data-desc="<c:out value='${lec.lectureDescription}'/>"
 														   title="<c:out value='${lec.lectureName}'/>">
 														  <c:out value="${lec.lectureName}"/>
+														  <c:choose>
+														    <c:when test="${lec.lectureStatus eq '개강'}">
+														      <span class="badge-lecture-status badge-status-open">개강</span>
+														    </c:when>
+														    <c:when test="${lec.lectureStatus eq '예정'}">
+														      <span class="badge-lecture-status badge-status-ready">예정</span>
+														    </c:when>
+														  </c:choose>
 													</a>
 												</td>
 
@@ -280,7 +311,7 @@
 	  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"> 
 	  	<div class="modal-content border-0 shadow"> 
 	  		<div class="modal-header bg-dark text-white"> 
-	  			<h5 class="modal-title fw-bold"><span id="mLectureName"></span></h5>
+	  			<h5 class="modal-title fw-bold"><span id="mLectureName"></span><span id="mLectureStatus"></span></h5>
 	      	<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
 	      </div>
 	
@@ -374,6 +405,16 @@
 		
 		    // --- 기본 정보 (텍스트) ---
 		    setText("#mLectureName", d.name);
+		 		// 강의 상태 뱃지
+		    const statusEl = document.querySelector("#mLectureStatus");
+		    statusEl.innerHTML = "";
+		    if (d.status === "개강") {
+		      statusEl.innerHTML =
+		        '<span class="badge-lecture-status badge-status-open ms-2">개강</span>';
+		    } else if (d.status === "예정") {
+		      statusEl.innerHTML =
+		        '<span class="badge-lecture-status badge-status-ready ms-2">예정</span>';
+		    }
 		    setText("#mLectureProf", d.prof);
 		    setText("#mLecturePlace", d.building + " " + d.room + "호");
 		    setText("#mLectureCredit", d.credit + "학점");

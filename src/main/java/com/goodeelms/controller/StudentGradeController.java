@@ -52,7 +52,7 @@ public class StudentGradeController extends HttpServlet {
         ZonedDateTime now = StaticUtils.getSettedTime();
         // 직전학기 계산
         SemesterKey target = calcTargetSemester(now);
-        // 평가 기간 여부(2월/8월)
+        // 평가 기간 여부
         boolean isEvalPeriod = gradeService.isEvaluationPeriod(now);
         
         // 검색 / 페이징
@@ -72,7 +72,7 @@ public class StudentGradeController extends HttpServlet {
         	boolean unlocked = true;
         	int missingEvalCount = 0;
         	
-        	 // 평가 기간(2,8월)에는 직전학기 종강 강의 전부 평가 완료해야 공개
+        	 // 평가 기간에는 직전학기 종강 강의 전부 평가 완료해야 공개
         	if (isEvalPeriod) {
         		missingEvalCount = gradeService.countMissEval(studentId, target.year, target.semester);
         		unlocked = (missingEvalCount == 0);
@@ -156,9 +156,6 @@ public class StudentGradeController extends HttpServlet {
         // 1학기 종강 전(=1학기 진행 중): 직전학기 = 전년도 2학기
         return new SemesterKey(year - 1, 2);
     }
-
-
-
 
     // int 변환 아니면 기본값 반환
     private int parseIntOrDefault(String s, int def) {
