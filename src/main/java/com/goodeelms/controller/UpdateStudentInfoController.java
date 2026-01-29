@@ -48,7 +48,7 @@ public class UpdateStudentInfoController extends HttpServlet {
 
     private void handleDisplayFile(HttpServletRequest request, HttpServletResponse response) {
 		String fileName = request.getParameter("fileName");
-		String uploadPath = "D:/goodeelmsfile";
+		String uploadPath = "C:/goodeelmsfile";
 		
 		File file = new File(uploadPath, fileName);
 		
@@ -184,7 +184,7 @@ public class UpdateStudentInfoController extends HttpServlet {
         	photoUUID = UUID.randomUUID().toString() + ext;
         	
         	// 저장 경로 설정 (폴더 없다면 생성까지)
-        	String uploadPath = "D:/goodeelmsfile";
+        	String uploadPath = "C:/goodeelmsfile";
         	File uploadDir = new File(uploadPath);
         	if (!uploadDir.exists()) uploadDir.mkdirs();
         	
