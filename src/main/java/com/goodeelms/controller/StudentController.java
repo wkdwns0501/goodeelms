@@ -81,7 +81,6 @@ public class StudentController extends HttpServlet {
 		default:
 			System.out.println("정의되지 않은 경로 요청됨: " + path);
 			response.sendRedirect(request.getContextPath() + "/main.jsp");
-
 		}
 	}
 

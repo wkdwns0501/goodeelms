@@ -228,6 +228,20 @@ public class StudentRegisterDAO {
 				System.out.println("studentPhoneCheck() 예외 발생: " + e);
 			}	return 0 ;
 	}
+
+	public int studentIdentityCheck(String identityNumber) {
+		String sql = "SELECT COUNT(*) FROM student WHERE student_identity_number = ? ";
+		
+		try(Connection conn = DBUtil.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, identityNumber);
+			try(ResultSet rs = pstmt.executeQuery()) {
+				if(rs.next()) return rs.getInt(1);
+			}
+		} catch (Exception e) {
+			System.out.println("studentPhoneCheck() 예외 발생: " + e);
+		}	return 0;
+	}
 	
 	
 }

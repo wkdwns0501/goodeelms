@@ -48,6 +48,13 @@
 	
     .btn-save { background-color: #1e293b; color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: 700; margin-top: 10px; }
     /* 학기별 색상 구분 (선택사항) */
+    /* 마우스 올렸을 때(hover) 스타일 추가 */
+	.btn-save:hover {
+	    background-color: solid white; /* 배경색을 약간 밝게 변경 */
+	    border : solid black;
+	    cursor: pointer;
+	}
+	
     .schedule-item[data-type*="first"] { border-left-color: #3b82f6; }
     .schedule-item[data-type*="second"] { border-left-color: #f59e0b; }
 </style>
@@ -76,7 +83,7 @@
                 <input type="hidden" name="ac_first_grade_insert_end" id="ac_first_grade_insert_end" value="${schedule.ac_first_grade_insert_end}">
             </div>
 
-			<div class="schedule-item active" data-type="ac_first_lecture_insert">
+			<div class="schedule-item" data-type="ac_first_lecture_insert">
                 <div class="item-title">1학기 강의 등록</div>
                 <div class="date-display">일정: <span id="text_ac_first_lecture_insert">${empty schedule.ac_first_lecture_insert_start ? '미설정' : schedule.ac_first_lecture_insert_start} ~ ${empty schedule.ac_first_lecture_insert_end ? '미설정' : schedule.ac_first_lecture_insert_end}</span></div>
                 <input type="hidden" name="ac_first_lecture_insert_start" id="ac_first_lecture_insert_start" value="${schedule.ac_first_lecture_insert_start}">

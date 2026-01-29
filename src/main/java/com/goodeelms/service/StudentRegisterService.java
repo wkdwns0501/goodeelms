@@ -57,4 +57,9 @@ public class StudentRegisterService {
 		return dao.studentPhoneCheck(StudentPhone);
 	}
 
+	public int studentIdentityCheck(String identityNumber) {
+		StudentRegisterDAO dao = StudentRegisterDAO.getInstance();
+		return dao.studentIdentityCheck(identityNumber);
+	}
+
 }

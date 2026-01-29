@@ -136,10 +136,11 @@
 
                 <div class="row mb-4">				
                   <div class="col-md-6">
-                    <label class="form-label">학번</label>
-                    <input type="text" name="studentNo" class="form-control form-control-sm">
-                    <div class="invalid-feedback">학번을 입력해주세요.</div>
-                  </div>
+				  	<label class="form-label">학번</label>
+				  	<input type="text" name="studentNo" class="form-control form-control-sm" 
+				         maxlength="9" placeholder="숫자 9자리 입력">
+				  	<div class="invalid-feedback">학번 9자리를 입력해주세요.</div>
+				  </div>
                   <div class="col-md-6">
                     <label class="form-label">핸드폰 번호</label>
                     <input type="text" name="studentPhone" class="form-control form-control-sm" placeholder="010-0000-0000" maxlength="13" oninput="autoHyphen(this)">
