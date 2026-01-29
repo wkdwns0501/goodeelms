@@ -7,7 +7,7 @@
 
 ![Ajax](https://img.shields.io/badge/Ajax-Async-green)
 ![MySQL](https://img.shields.io/badge/DB-MySQL-blue)
-![Tomcat](https://img.shields.io/badge/Server-Tomcat%210-red)
+![Tomcat](https://img.shields.io/badge/Server-Tomcat%2010.1-red)
 ![MVC](https://img.shields.io/badge/Pattern-MVC-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-brightgreen)
 ![Team](https://img.shields.io/badge/Team-4%20Members-purple)
