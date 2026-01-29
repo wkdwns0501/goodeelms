@@ -211,10 +211,7 @@
                               <c:when test="${empty row.lectureScore}">
                                 <span class="badge rounded-pill bg-secondary">미정</span>
                               </c:when>
-                              <c:when test="${row.lectureScore <= 0.5}">
-                                <span class="badge rounded-pill bg-danger">재수강 필요</span>
-                              </c:when>
-                              <c:when test="${row.lectureScore >= 1.0 && row.lectureScore <= 3.0}">
+                              <c:when test="${row.lectureScore < 3.5}">
                                 <span class="badge rounded-pill bg-info">재수강 가능</span>
                               </c:when>
                               <c:otherwise>
@@ -336,10 +333,7 @@
                               <c:when test="${empty row.lectureScore}">
                                 <span class="badge rounded-pill bg-secondary">미정</span>
                               </c:when>
-                              <c:when test="${row.lectureScore <= 0.5}">
-                                <span class="badge rounded-pill bg-danger">재수강 필요</span>
-                              </c:when>
-                              <c:when test="${row.lectureScore >= 1.0 && row.lectureScore <= 3.0}">
+                              <c:when test="${row.lectureScore < 3.5}">
                                 <span class="badge rounded-pill bg-info">재수강 가능</span>
                               </c:when>
                               <c:otherwise>
