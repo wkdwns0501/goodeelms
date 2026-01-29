@@ -29,12 +29,12 @@ public class SelectLectureDAO {
 	
 	public List<LectureDTO> SelectLectures(String cat, String searchWord, int viewPage, int viewLen, Set<Integer> lectureCodeSet, Set<Integer> professorIdSet, int ...majorIds){
 		String sql = "SELECT  lecture_id, lecture_code, lecture_name, lecture_description, lecture_room, lecture_credit, lecture_type, "
-				+ "lecture_capacity, major_id, professor_id, lecture_current_people ";
+				+ "lecture_capacity, major_id, professor_id, lecture_current_people, lecture_section ";
 		
 		// 쿼리 조건 삽입
 		sql += getQueryString(searchWord, cat, lectureCodeSet, professorIdSet);
 
-		sql += "ORDER BY lecture_id DESC LIMIT ? OFFSET ?";
+		sql += "ORDER BY lecture_code DESC LIMIT ? OFFSET ?";
 		
 		try(PreparedStatement pstmt = getPrepareStatement(sql, searchWord, cat, lectureCodeSet, professorIdSet, majorIds)){
 			// Limit, Offset
@@ -51,6 +51,7 @@ public class SelectLectureDAO {
 					dto.setLectureDescription(rs.getString("lecture_description"));
 					dto.setLectureRoom(rs.getString("lecture_room"));
 					dto.setLectureCredit(Integer.parseInt(rs.getString("lecture_credit")));
+					dto.setLectureSection(rs.getString("lecture_section"));
 					dto.setLectureType(rs.getString("lecture_type"));
 					dto.setLectureCurrentPeople(Integer.parseInt(rs.getString("lecture_current_people")));
 					dto.setLectureCapacity(Integer.parseInt(rs.getString("lecture_capacity")));
@@ -125,6 +126,7 @@ public class SelectLectureDAO {
 					dto.setLectureDescription(rs.getString("lecture_description"));
 					dto.setLectureRoom(rs.getString("lecture_room"));
 					dto.setLectureCredit(Integer.parseInt(rs.getString("lecture_credit")));
+					dto.setLectureSection(rs.getString("lecture_section"));
 					dto.setLectureType(rs.getString("lecture_type"));
 					dto.setLectureCurrentPeople(Integer.parseInt(rs.getString("lecture_current_people")));
 					dto.setLectureCapacity(Integer.parseInt(rs.getString("lecture_capacity")));
