@@ -17,7 +17,7 @@
 수강 신청, 강의 관리, 성적 관리, 게시판 등 대학 학사 운영을 위한 웹 플랫폼 프로젝트입니다.<br>
 설계/ERD/요구정의서 등 산출물 완비 및 GitHub 브랜치 전략을 기반으로 한 **실무형 협업 프로젝트**입니다.
 
-🎬 [프로젝트 시연 영상 보러가기]([유튜브링크](https://youtu.be/hPClybp4v5A)) | 📁 [GitHub 저장소 바로가기](https://github.com/wkdwns0501/goodeelms.git)
+🎬 [프로젝트 시연 영상 보러가기]([(https://youtu.be/hPClybp4v5A)]) | 📁 [GitHub 저장소 바로가기](https://github.com/wkdwns0501/goodeelms.git)
 
 ---
 
