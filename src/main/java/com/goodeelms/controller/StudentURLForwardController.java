@@ -38,7 +38,7 @@ public class StudentURLForwardController extends HttpServlet {
 		
 		String status = new StudentService().getStudentStatue(studentId);
 		if(!"재학".equals(status)) {
-			response.sendRedirect("/main.jsp?error=NoAccessRights");
+			response.sendRedirect("/common/board/list?error=NoAccessRights");
 			return;
 		}
 		
@@ -62,7 +62,7 @@ public class StudentURLForwardController extends HttpServlet {
 					endCartTime = timeMap.get("student_second_lecture_cart_end");
 				}
 				else {
-					response.sendRedirect("/main.jsp?error=NoAccessEnrollTime");
+					response.sendRedirect("/common/board/list?error=NoAccessEnrollTime");
 					return;
 				}
 				
@@ -90,7 +90,7 @@ public class StudentURLForwardController extends HttpServlet {
 					endComTime = timeMap.get("student_second_enrollment_end");
 				}
 				else {
-					response.sendRedirect("/main.jsp?error=NoAccessEnrollTime");
+					response.sendRedirect("/common/board/list?error=NoAccessEnrollTime");
 					return;
 				}
 				

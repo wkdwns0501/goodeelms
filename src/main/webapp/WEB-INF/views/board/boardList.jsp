@@ -152,5 +152,19 @@
     <%@ include file="/footer.jsp" %>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <c:if test="${not empty param.error}">
+		<c:choose>
+			<c:when test="${param.error == 'NoAccessEnrollTime'}">
+				<script type="text/javascript">
+              alert("이용 가능한 기간이 아닙니다.");
+           </script>
+			</c:when>
+			<c:when test="${param.error == 'NoAccessRights'}">
+				<script type="text/javascript">
+              alert("접근 권한이 없는 사용자입니다.");
+           </script>
+			</c:when>
+		</c:choose>
+	</c:if>
 </body>
 </html>

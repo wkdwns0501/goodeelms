@@ -27,7 +27,6 @@
 <aside class="sidebar py-2">
   <div class="px-3 pt-2 pb-1 small text-uppercase text-muted">메뉴</div>
   <nav class="nav flex-column">
-		<a class="nav-link" href="<c:url value='/common/dashboard'/>"><span class="nav-label">대시보드</span></a>
     <a class="nav-link" href="<c:url value='/common/board/list'/>"><span class="nav-label">공지사항</span></a> 
     <hr class="my-2 mx-3" /> 
   	<c:choose>
