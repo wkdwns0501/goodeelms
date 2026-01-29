@@ -37,6 +37,7 @@ public class ProfessorGradeController extends HttpServlet {
             handleList(request, response);
             return;
         }
+        
         response.sendRedirect(request.getContextPath() + "/professor/grade/list");
     }
 
@@ -59,20 +60,20 @@ public class ProfessorGradeController extends HttpServlet {
     		response.sendRedirect(request.getContextPath() + "/common/login");
     		return;
     	}
+    	
     	String profStatus = (String) request.getSession().getAttribute("professor_status");
     	if ("휴직".equals(profStatus)) {
     	    response.sendRedirect(request.getContextPath() + "/common/dashboard?error=OnLeave");
     	    return;
     	}
-
     	
     	ZonedDateTime now = StaticUtils.getSettedTime();
         // 직전학기(종강) 강의 대상 학기 계산
         SemesterKey target = calcTargetSemester(now);
-        // 수정 가능 여부(성적 기입 기간 = 1월/7월)
+        // 수정 가능 여부(성적 기입 기간인지)
         boolean isEditable = gradeService.isGradeInputPeriod(now);
         
-        // 교수의 직전학기 종강 강의 목록
+        // 교수의 직전학기(종강) 강의 목록
         List<LectureDTO> lectureList =
                 gradeService.listCompletedLectures(professorId, target.year, target.semester);
         
@@ -117,7 +118,7 @@ public class ProfessorGradeController extends HttpServlet {
         request.setAttribute("selectedLectureId", lectureId);
         
         // 선택된 강의 아이디
-        System.out.println("lecture_id = " + lectureId);
+//        System.out.println("lecture_id = " + lectureId);
         
         request.setAttribute("keyword", keyword);
         request.setAttribute("page", page);
@@ -126,7 +127,7 @@ public class ProfessorGradeController extends HttpServlet {
         request.setAttribute("lastPage", lastPage);
         request.setAttribute("navStart", navStart);
         request.setAttribute("navEnd", navEnd);
-
+        // 선택된 강의의 학생 목록
         request.setAttribute("historyList", historyList);
 
         request.getRequestDispatcher("/WEB-INF/views/professor/gradeManage.jsp")
@@ -140,12 +141,12 @@ public class ProfessorGradeController extends HttpServlet {
     		response.sendRedirect(request.getContextPath() + "/common/login");
     		return;
     	}
+    	
     	String profStatus = (String) request.getSession().getAttribute("professor_status");
     	if ("휴직".equals(profStatus)) {
     	    response.sendRedirect(request.getContextPath() + "/common/dashboard?error=OnLeave");
     	    return;
     	}
-
 
         // lectureId / page 유지
         int lectureId = parseIntOrDefault(request.getParameter("lectureId"), 0);
@@ -155,17 +156,18 @@ public class ProfessorGradeController extends HttpServlet {
 
         // 성적 기입 기간이 아니면 서버에서 차단해야 함
         ZonedDateTime now = StaticUtils.getSettedTime();
+        
         gradeService.validateGradeInputPeriod(now);  // 기간 아니면 예외 던지게
         
         // 배열 파라미터(페이지당 10명)
         // studentId[], oldScore[], newScore[]
-        String[] studentIdArr = request.getParameterValues("studentId");
-        String[] oldScoreArr = request.getParameterValues("oldScore");
-        String[] newScoreArr = request.getParameterValues("newScore");
+        String[] studentIdArr = request.getParameterValues("studentId"); // 학생
+        String[] oldScoreArr = request.getParameterValues("oldScore"); 	 // 원래 점수
+        String[] newScoreArr = request.getParameterValues("newScore"); 	 // 새로운 점수
 
         try {
-        	int updated = gradeService.updateGrades(professorId, lectureId,
-            			studentIdArr,oldScoreArr,newScoreArr
+        	int updated = gradeService.updateGrades(
+        		professorId, lectureId, studentIdArr, oldScoreArr, newScoreArr
             );
             // 수정 성공
         	String msg;
@@ -201,7 +203,6 @@ public class ProfessorGradeController extends HttpServlet {
      *   3~6이면 전년도 2학기,
      *   9~12이면 해당년도 1학기
      */
-    // => 년/월로 학기 계산
     private SemesterKey calcTargetSemester(ZonedDateTime now) {
         Map<String, ZonedDateTime> map = LMSScheduleListener.getEventTimeMap();
 
