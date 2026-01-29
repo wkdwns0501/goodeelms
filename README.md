@@ -12,7 +12,7 @@
 ![License](https://img.shields.io/badge/License-MIT-brightgreen)
 ![Team](https://img.shields.io/badge/Team-4%20Members-purple)
 
-# 📚 GoodeeLMS Project – 학사 관리 시스템 (Academic Management System)
+# 📚 GoodeeLMS Project – 학사 관리 시스템 <br> (Academic Management System)
 
 수강 신청, 강의 관리, 성적 관리, 게시판 등 대학 학사 운영을 위한 웹 플랫폼 프로젝트입니다.<br>
 설계/ERD/요구정의서 등 산출물 완비 및 GitHub 브랜치 전략을 기반으로 한 **실무형 협업 프로젝트**입니다.
@@ -31,7 +31,8 @@
 | **개발 도구** | Eclipse, Apache Tomcat 10.x, MySQL 8.x |
 | **기술 스택** | Java, JSP, Servlet, HTML/CSS/JS, JSTL |
 | **주요 기능** | 회원가입(학생/교수), 수강신청, 장바구니, 강의/성적 관리, 게시판, 관리자 기능 등 |
-| **산출물** | 💡 ERD, 화면설계서, 요구정의서, PPT 포함 모든 산출물 완비 |
+
+> 💡 **ERD, UI 화면설계서, 사용자 요구사항 정의서, 테이블 정의서, 프로젝트 발표 PPT 등 모든 산출물 완비**
 
 <br>
 
@@ -91,11 +92,12 @@ goodeelms/
 ## 🗃️ 데이터베이스 설계 (ERD + 정의서)
 
 👉 [🗂️ ERD 이미지 보기](./docs/ERD%20-%20GoodeeLMS(2조).png)  
-👉 [📑 사용자 요구사항 정의서 (Excel)](./docs/사용자%20요구사항%20정의서%20-%20GoodeeLMS(2조).xlsx)  
-👉 [📑 테이블 정의서 (Excel)](./docs/테이블%20정의서%20-%20GoodeeLMS(2조).xlsx)
+👉 [🛢️ DB 스키마 SQL](./docs/GoodeeLMS.sql)  
+👉 [📗 테이블 정의서 (Excel)](./docs/테이블%20정의서%20-%20GoodeeLMS(2조).xlsx)  
+👉 [📗 사용자 요구사항 정의서 (Excel)](./docs/사용자%20요구사항%20정의서%20-%20GoodeeLMS(2조).xlsx)
 
 * **정규화된 16개의 테이블**을 기반으로 데이터 무결성을 고려한 실무형 ERD 작성
-* **주요 테이블:** 학생, 교수, 강의, 학과, 수강 내역, 장바구니, 학사일정, 게시판 등
+* **주요 테이블:** 학생, 교수, 강의, 장바구니, 학과, 수강 내역, 학사 일정, 게시판 등
 
 <br>
 
