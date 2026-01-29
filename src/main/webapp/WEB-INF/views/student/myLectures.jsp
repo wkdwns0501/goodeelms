@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>GoodeeLMS</title>
+<title>현 학기 수강 강의</title>
 
 <!-- Bootstrap 5 -->
 <link

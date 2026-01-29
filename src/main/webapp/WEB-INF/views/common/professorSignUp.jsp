@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>교수 회원가입</title>
+<title>회원가입</title>
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
 	rel="stylesheet" />
@@ -22,7 +22,7 @@
 					<div class="card shadow-sm border-0 mt-5">
 						<div class="card-body p-4">
 							<h5 class="card-title mb-2 fw-bold text-primary">교수 회원가입</h5>
-							<p class="text-muted small mb-4">교수 시스템 이용을 위해 정보를 입력해 주세요.</p>
+							<p class="text-muted small mb-4">시스템 이용을 위해 정보를 입력해 주세요.</p>
 
 							<form action="${pageContext.request.contextPath}/common/signup"
 								method="post">

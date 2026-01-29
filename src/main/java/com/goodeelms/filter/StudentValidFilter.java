@@ -23,9 +23,20 @@ public class StudentValidFilter extends HttpFilter implements Filter {
 	}
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    	HttpServletRequest req = (HttpServletRequest) request;
+        String uri = req.getRequestURI();
+
+        if (uri.contains("studentSignUp.jsp") || 
+            uri.contains("/student/signup") || 
+            uri.contains("/common/login")) {
+            
+            chain.doFilter(request, response); 
+            return;
+        }
+    	
     	HttpSession session = getSession(request);
     	String valid = null;
-	
+    	
     	try { 
     		valid = ((Integer)session.getAttribute("student_id")).toString(); 
     	} catch(NullPointerException | NumberFormatException e) { 

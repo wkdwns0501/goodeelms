@@ -153,4 +153,21 @@ public class ProfessorDAO {
 	}
 		
 	
+	public boolean updateProfessorPassword(String email, String newPassword) {
+		String sql = "update professor set professor_password = ? WHERE professor_email = ?;";
+		boolean result = false;
+		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, newPassword); 
+			pstmt.setString(2, email); 
+			
+			if(pstmt.executeUpdate() > 0) result = true;
+		} catch(Exception e) {
+			System.out.println("updateProfessorPassword() DB 연결 실패: " + e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	
 }

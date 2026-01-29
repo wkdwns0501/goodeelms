@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Login</title>
+<title>로그인</title>
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
 	rel="stylesheet" />
@@ -52,6 +52,13 @@
 									</div>
 								</form>
 								
+								<div class="mt-4 pt-3 border-top">
+								   <div class="text-center mt-2">
+						            <a href="${pageContext.request.contextPath}/common/resetPassword" class="text-decoration-none small text-muted">
+						                <i class="bi bi-question-circle me-1"></i> 비밀번호 초기화
+						            </a>
+						        </div>
+								</div>
 								
 							</div>
 						</div>
