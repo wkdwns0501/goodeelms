@@ -28,7 +28,7 @@
 | **프로젝트명** | GoodeeLMS Project |
 | **개발 기간** | 2026.01.12 ~ 2026.01.30 (19일간) |
 | **팀 구성** | 윤재훈, 임 욱, 장 준, 최준희 (4인 프로젝트) |
-| **개발 도구** | Eclipse, Apache Tomcat 9.x, MySQL 8.x |
+| **개발 도구** | Eclipse, Apache Tomcat 10.x, MySQL 8.x |
 | **기술 스택** | Java, JSP, Servlet, HTML/CSS/JS, JSTL |
 | **주요 기능** | 회원가입(학생/교수), 수강신청, 장바구니, 강의/성적 관리, 게시판, 관리자 기능 등 |
 | **산출물** | 💡 ERD, 화면설계서, 요구정의서, PPT 포함 모든 산출물 완비 |
@@ -74,7 +74,7 @@ goodeelms/
 
 ## 🖼️ 화면 설계서 (UI 설계 기반)
 
-👉 [📄 화면 설계서 PDF 보기](./docs/화면%20설계서%20-%20GoodeeLMS(2팀).pdf)
+👉 [📄 화면 설계서 PDF 보기](./docs/화면%20설계서%20-%20GoodeeLMS(2조).pdf)
 
 위 링크를 클릭하면 GitHub 내 `docs/` 폴더로 이동하여 상세 설계서를 확인할 수 있습니다.
 
@@ -90,9 +90,9 @@ goodeelms/
 
 ## 🗃️ 데이터베이스 설계 (ERD + 정의서)
 
-👉 [🗂️ ERD 이미지 보기](./docs/ERD%20-%20GoodeeLMS(2팀).png)  
-👉 [📑 사용자 요구사항 정의서 (Excel)](./docs/사용자%20요구사항%20정의서%20-%20GoodeeLMS(2팀).xlsx)  
-👉 [📑 테이블 정의서 (Excel)](./docs/테이블%20정의서%20-%20GoodeeLMS(2팀).xlsx)
+👉 [🗂️ ERD 이미지 보기](./docs/ERD%20-%20GoodeeLMS(2조).png)  
+👉 [📑 사용자 요구사항 정의서 (Excel)](./docs/사용자%20요구사항%20정의서%20-%20GoodeeLMS(2조).xlsx)  
+👉 [📑 테이블 정의서 (Excel)](./docs/테이블%20정의서%20-%20GoodeeLMS(2조).xlsx)
 
 * **정규화된 16개의 테이블**을 기반으로 데이터 무결성을 고려한 실무형 ERD 작성
 * **주요 테이블:** 학생, 교수, 강의, 학과, 수강 내역, 장바구니, 학사일정, 게시판 등
@@ -114,7 +114,7 @@ goodeelms/
 
 ## 🎬 프로젝트 발표자료
 
-👉 [📊 프로젝트 발표자료 PDF 보기](./docs/발표자료%20-%20GoodeeLMS(2팀).pdf)
+👉 [📊 프로젝트 발표자료 PDF 보기](./docs/프로젝트%20발표%20PPT%20-%20GoodeeLMS(2조).pdf)
 
 **발표 순서 및 구성:**
 1.  **개요:** 프로젝트 목표 및 팀 소개
@@ -151,7 +151,7 @@ goodeelms/
 
 | 항목 | 링크 |
 | --- | --- |
-| 📁 **GitHub 저장소** | [https://github.com/wkdwns0501/goodeelms.git](https://github.com/wkdwns0501/goodeelms.git) |
-| 🎥 **시연 영상** | [YouTube 영상 보러가기](유튜브링크) |
+| 📁 **GitHub 저장소** | [github.com/wkdwns0501/goodeelms.git](https://github.com/wkdwns0501/goodeelms.git) |
+| 🎥 **시연 영상** | [YouTube 영상 보러가기](https://youtu.be/hPClybp4v5A) |
 | 📂 **전체 산출물** | [docs/ 폴더 바로가기](./docs/) |
 
