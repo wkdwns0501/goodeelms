@@ -17,7 +17,6 @@
 <link rel="stylesheet" href="<c:url value='/resources/css/layout.css'/>" />
 
 <style>
-    <style>
     .info-table {
         height: 240px; 
         margin-bottom: 0 !important;
@@ -45,7 +44,6 @@
         padding-left: 15px !important;
     }
 </style>
-</style>
 
 </head>
 <body>
@@ -57,7 +55,7 @@
 			<div class="page-shell">
 				<div class="page-title mb-4">
 					<h4 class="fw-bold">마이페이지</h4>
-					<p class="text-muted mb-3">학생 인적사항 조회 및 수정</p>
+					<p class="text-muted mb-3">학생 인적사항 조회 및 수정할 수 있습니다.</p>
 
 					<c:if test="${not empty msg}">
 						<div id="resultAlert"
@@ -137,6 +135,16 @@
 											<th class="table-light">이메일</th>
 											<td>${student.studentEmail}</td>
 										</tr>
+										<tr>
+										  <th class="table-light">학과</th>
+										  <td class="text-start" colspan="3">
+										    <c:choose>
+										      <c:when test="${empty student.majorName}">미지정</c:when>
+										      <c:otherwise>${student.majorName}</c:otherwise>
+										    </c:choose>
+										  </td>
+										</tr>
+										
 										<tr>
 											<th class="table-light">은행명 / 계좌 정보</th>
 											<td class="text-start" colspan="3"><c:set var="bankParts"
@@ -250,8 +258,7 @@
 															<select class="form-select" style="max-width: 180px;" id="emailDomain">
 															  <option value="<c:out value='naver.com'/>"  ${emailDomain=='naver.com' ? 'selected' : ''}>naver.com</option>
 															  <option value="<c:out value='daum.net'/>"   ${emailDomain=='daum.net' ? 'selected' : ''}>daum.net</option>
-															  <option value="<c:out value='hanmail.net'/>" ${emailDomain=='hanmail.net' ? 'selected' : ''}>hanmail.net</option>
-															  <option value="<c:out value='google.com'/>" ${emailDomain=='google.com' ? 'selected' : ''}>google.com</option>
+															  <option value="<c:out value='gmail.com'/>" ${emailDomain=='gmail.com' ? 'selected' : ''}>gmail.com</option>
 															  <option value="<c:out value='goodee.ac.kr'/>" ${emailDomain=='goodee.ac.kr' ? 'selected' : ''}>goodee.ac.kr</option>
 															</select>
 														</div>

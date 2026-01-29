@@ -83,6 +83,9 @@ public class UpdateStudentInfoController extends HttpServlet {
     	}
         try {
             StudentDTO student = studentService.getStudentById(loginId);
+            if (student != null && student.getMajorName() == null) {
+                student.setMajorName(""); // 또는 "미지정"
+            }
             request.setAttribute("student", student);
             
             // 전화번호 기본값 분리
