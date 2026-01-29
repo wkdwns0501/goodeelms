@@ -228,32 +228,44 @@ public class StudentDAO {
 	
 	// 학생 정보 수정을 위한 조회
 	public StudentDTO selectById(Connection conn, int studentId) throws SQLException {
-        String sql =
-            "SELECT student_id, student_no, student_name, student_phone, " +
-            "       student_gender, student_address, student_status, student_email, student_bank, " +
-            " 		student_photofile, student_photoUUID " +	
-            "FROM student WHERE student_id = ?";
-        
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)){
-			pstmt.setInt(1, studentId);
-			try (ResultSet rs = pstmt.executeQuery()) {
-				if(!rs.next()) return null;
-				StudentDTO student = new StudentDTO();
-				student.setStudentId(rs.getInt("student_id"));
-				student.setStudentNo(rs.getString("student_no"));
-				student.setStudentName(rs.getString("student_name"));
-				student.setStudentPhone(rs.getString("student_phone"));
-				student.setStudentGender(rs.getString("student_gender"));
-				student.setStudentAddress(rs.getString("student_address"));
-				student.setStudentStatus(rs.getString("student_status"));
-				student.setStudentEmail(rs.getString("student_email"));
-				student.setStudentBank(rs.getString("student_bank"));
-				student.setPhotoFile(rs.getString("student_photofile"));
-				student.setPhotoUUID(rs.getString("student_photoUUID"));
-				return student;
-			}
-		}
-    }
+
+	    String sql =
+	        "SELECT " +
+	        "  s.student_id, s.student_no, s.student_name, s.student_phone, " +
+	        "  s.student_gender, s.student_address, s.student_status, s.student_email, s.student_bank, " +
+	        "  s.student_photofile, s.student_photoUUID, " +
+	        "  GROUP_CONCAT(m.major_name ORDER BY m.major_name SEPARATOR ', ') AS major_name " +
+	        "FROM student s " +
+	        "LEFT JOIN student_major sm ON sm.student_id = s.student_id " +
+	        "LEFT JOIN major m ON m.major_id = sm.major_id " +
+	        "WHERE s.student_id = ? " +
+	        "GROUP BY " +
+	        "  s.student_id, s.student_no, s.student_name, s.student_phone, " +
+	        "  s.student_gender, s.student_address, s.student_status, s.student_email, s.student_bank, " +
+	        "  s.student_photofile, s.student_photoUUID";
+
+	    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setInt(1, studentId);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (!rs.next()) return null;
+	            StudentDTO student = new StudentDTO();
+	            student.setStudentId(rs.getInt("student_id"));
+	            student.setStudentNo(rs.getString("student_no"));
+	            student.setStudentName(rs.getString("student_name"));
+	            student.setStudentPhone(rs.getString("student_phone"));
+	            student.setStudentGender(rs.getString("student_gender"));
+	            student.setStudentAddress(rs.getString("student_address"));
+	            student.setStudentStatus(rs.getString("student_status"));
+	            student.setStudentEmail(rs.getString("student_email"));
+	            student.setStudentBank(rs.getString("student_bank"));
+	            student.setPhotoFile(rs.getString("student_photofile"));
+	            student.setPhotoUUID(rs.getString("student_photoUUID"));
+	            student.setMajorName(rs.getString("major_name")); // null 가능
+	            return student;
+	        }
+	    }
+	}
+
 	
 	// 학생 일반 정보 수정
 	public void updateProfile(Connection conn, int studentId, String phone, 
