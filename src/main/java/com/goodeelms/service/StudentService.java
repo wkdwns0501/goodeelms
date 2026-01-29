@@ -3,7 +3,6 @@ package com.goodeelms.service;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -18,7 +17,6 @@ import com.goodeelms.dto.ScholarshipDTO;
 import com.goodeelms.dto.StudentDTO;
 import com.goodeelms.dto.StudentMajorDTO;
 import com.goodeelms.util.EncryptUtil;
-import com.goodeelms.util.GenderUtil;
 import com.goodeelms.util.DBUtil;
 
 public class StudentService {

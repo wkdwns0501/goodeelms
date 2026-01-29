@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>GoodeeLMS</title>
+<title>등록금 납부 현황</title>
 
 <!-- Bootstrap 5 -->
 <link
