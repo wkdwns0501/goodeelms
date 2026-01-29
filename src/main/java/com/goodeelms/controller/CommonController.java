@@ -42,7 +42,12 @@ public class CommonController extends HttpServlet {
 		String path = request.getPathInfo();
 
 		if (ExistUtil.isNull(path) || path.equals("/")) {
-			response.sendRedirect(request.getContextPath() + "/main.jsp");
+			HttpSession session = request.getSession();
+			if (session.getAttribute("user_role") == null) {
+				response.sendRedirect(request.getContextPath() + "/main.jsp");
+			} else {
+				response.sendRedirect(request.getContextPath() + "/common/board/list");
+			}
 			return;
 		}
 
@@ -70,14 +75,14 @@ public class CommonController extends HttpServlet {
 		String loginPassword = request.getParameter("login_password");
 
 		if (loginId == null && loginPassword == null) { // 1. 페이지 첫 진입 시 (파라미터가 아예 없는 경우)
-			request.getRequestDispatcher("/WEB-INF/views/common/loginForm.jsp").forward(request, response);
+			request.getRequestDispatcher("/main.jsp").forward(request, response);
 			return;
 		}
 
 		// 1. 로그인 버튼을 눌렀으나 값을 누락한 경우 (파라미터는 존재하나 비어있는 경우)
 		if (ExistUtil.isNull(loginId) || ExistUtil.isNull(loginPassword)) {
 			request.setAttribute("errorMessage", "아이디와 비밀번호를 입력해주세요");
-			request.getRequestDispatcher("/WEB-INF/views/common/loginForm.jsp").forward(request, response);
+			request.getRequestDispatcher("/main.jsp").forward(request, response);
 			return;
 		}
 
@@ -88,11 +93,11 @@ public class CommonController extends HttpServlet {
 		// 3_1. 로그인 실패
 		if (obj == null) {
 			request.setAttribute("errorMessage", "아이디와 비밀번호가 일치하지 않습니다.");
-			request.getRequestDispatcher("/WEB-INF/views/common/loginForm.jsp").forward(request, response);
+			request.getRequestDispatcher("/main.jsp").forward(request, response);
 			return;
 		} else if (obj.toString().contains("접근 권한이 없는 유저입니다.")) {
 			request.setAttribute("errorMessage", obj.toString());
-			request.getRequestDispatcher("/WEB-INF/views/common/loginForm.jsp").forward(request, response);
+			request.getRequestDispatcher("/main.jsp").forward(request, response);
 			return;
 		}
 
@@ -132,7 +137,7 @@ public class CommonController extends HttpServlet {
 
 			session.setAttribute("admin_id", adminDTO.getAdminId());
 		}
-		response.sendRedirect(request.getContextPath() + "/main.jsp");
+		response.sendRedirect(request.getContextPath() + "/common/board/list");
 		return;
 	}
 
@@ -200,48 +205,47 @@ public class CommonController extends HttpServlet {
 	}
 
 	private void resetPassword(HttpServletRequest request, HttpServletResponse response)
-	        throws ServletException, IOException {
-	    String userRole = request.getParameter("userRole");
-	    if (ExistUtil.isNull(userRole)) { // 아무런 역할 선택이 없을 경우
-	        request.getRequestDispatcher("/WEB-INF/views/common/resetPassword.jsp").forward(request, response);
-	        return;
-	    }
-	    
-	    String userId = request.getParameter("userId");
-	    String newPassword = request.getParameter("newPassword"); 
-	    String msg = "필수 입력 정보가 누락되었습니다."; 
+			throws ServletException, IOException {
+		String userRole = request.getParameter("userRole");
+		if (ExistUtil.isNull(userRole)) { // 아무런 역할 선택이 없을 경우
+			request.getRequestDispatcher("/WEB-INF/views/common/resetPassword.jsp").forward(request, response);
+			return;
+		}
 
-	    if ("STUDENT".equals(userRole)) {
-	        String studentIdentityNum = request.getParameter("studentIdentityNum");
-	        if (!ExistUtil.isNull(userId) && !ExistUtil.isNull(studentIdentityNum)) {
-	            StudentService studentService = new StudentService();
-	            msg = studentService.resetStudentPassword(userId, studentIdentityNum);
-	        }
-	    } else if ("PROFESSOR".equals(userRole)) {
-	        String professorEmail = request.getParameter("professorEmail");
-	        if (!ExistUtil.isNull(professorEmail) && !ExistUtil.isNull(newPassword)) {
-	            ProfessorSignUpService professorService = new ProfessorSignUpService();
-	            msg = professorService.resetPassowordByEmailAndName(professorEmail, newPassword);
-	        }
-	    }
+		String userId = request.getParameter("userId");
+		String newPassword = request.getParameter("newPassword");
+		String msg = "필수 입력 정보가 누락되었습니다.";
 
-	    if (msg != null && msg.contains("성공")) {
-	        response.setContentType("text/html; charset=UTF-8");
-	        PrintWriter out = response.getWriter();
-	        out.println("<script>");
-	        out.println("    alert('" + msg + "');");
-	        out.println("    location.href='" + request.getContextPath() + "/common/login';");
-	        out.println("</script>");
-	        out.flush();
-	        return; 
-	    } else {
-	        request.setAttribute("msg", msg); 
-	        request.setAttribute("prevId", ("STUDENT".equals(userRole) ? userId : request.getParameter("professorEmail")));
-	        request.getRequestDispatcher("/WEB-INF/views/common/resetPassword.jsp").forward(request, response);
-	        return;
-	    }
+		if ("STUDENT".equals(userRole)) {
+			String studentIdentityNum = request.getParameter("studentIdentityNum");
+			if (!ExistUtil.isNull(userId) && !ExistUtil.isNull(studentIdentityNum)) {
+				StudentService studentService = new StudentService();
+				msg = studentService.resetStudentPassword(userId, studentIdentityNum);
+			}
+		} else if ("PROFESSOR".equals(userRole)) {
+			String professorEmail = request.getParameter("professorEmail");
+			if (!ExistUtil.isNull(professorEmail) && !ExistUtil.isNull(newPassword)) {
+				ProfessorSignUpService professorService = new ProfessorSignUpService();
+				msg = professorService.resetPassowordByEmailAndName(professorEmail, newPassword);
+			}
+		}
+
+		if (msg != null && msg.contains("성공")) {
+			response.setContentType("text/html; charset=UTF-8");
+			PrintWriter out = response.getWriter();
+			out.println("<script>");
+			out.println("    alert('" + msg + "');");
+			out.println("    location.href='" + request.getContextPath() + "/common/login';");
+			out.println("</script>");
+			out.flush();
+			return;
+		} else {
+			request.setAttribute("msg", msg);
+			request.setAttribute("prevId",
+					("STUDENT".equals(userRole) ? userId : request.getParameter("professorEmail")));
+			request.getRequestDispatcher("/WEB-INF/views/common/resetPassword.jsp").forward(request, response);
+			return;
+		}
 	}
-	
-	
-	
+
 }
