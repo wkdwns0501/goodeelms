@@ -224,7 +224,8 @@
 										<tr class="text-center">
 											<td><c:out value="${scholarshipDTO.formattedSemester}" /></td>
 											<td class="text-muted small">
-												<c:out value="${scholarshipDTO.scholarshipName != null ? scholarshipDTO.scholarshipName : '교내 장학금(성적우수)'}" />
+												교내 장학금(성적우수)
+												<%-- <c:out value="${scholarshipDTO.scholarshipName != null ? scholarshipDTO.scholarshipName : '교내 장학금(성적우수)'}" /> --%>
 											</td>
 											<td class="text-end pe-5 fw-bold text-success">+ 
 												<fmt:formatNumber value="${scholarshipDTO.scholarshipAmount}" type="number" />원
