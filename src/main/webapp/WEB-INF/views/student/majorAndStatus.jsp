@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>GoodeeLMS</title>
+<title>학적/전공 - GoodeeLMS</title>
 
 <!-- Bootstrap 5 -->
 <link
