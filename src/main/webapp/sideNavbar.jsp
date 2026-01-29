@@ -1,6 +1,44 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+	<style>
+	  /* 기본 상태: 텍스트 색상을 약간 부드럽게 */
+	  .nav-link {
+	    color: #495057;
+	    transition: all 0.2s ease;
+	    border-left: 4px solid transparent; /* 좌측에 투명한 선 미리 확보 */
+	  }
+	
+	  /* 활성화(Active) 상태: 깔끔한 초록색 포인트 */
+	  .nav-link.active {
+	    background-color: #f1f8f4 !important; /* 아주 연한 초록색 배경 */
+	    color: #2c5f3c !important;           /* 헤더와 맞춘 진한 초록색 글씨 */
+	    font-weight: 600 !important;         /* 글자 살짝 두껍게 */
+	    border-left: 4px solid #2c5f3c !important; /* 좌측에 포인트 선 */
+	  }
+	
+	  /* 마우스 올렸을 때도 살짝 반응 */
+	  .nav-link:hover {
+	    background-color: #f8f9fa;
+	    color: #2c5f3c;
+	  }
+	</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const currentPath = window.location.pathname; // 현재 접속한 경로 (예: /professor/lecture/list)
+    const navLinks = document.querySelectorAll('.sidebar .nav-link');
+
+    navLinks.forEach(link => {
+      // link.pathname은 <a> 태그의 href에서 경로 부분만 추출합니다.
+      // 현재 경로가 메뉴의 경로를 포함하고 있다면 active 클래스 추가
+      if (currentPath.includes(link.getAttribute('href'))) {
+        link.classList.add('active');
+      }
+    });
+  });
+</script>
+
 <aside class="sidebar py-2">
   <div class="px-3 pt-2 pb-1 small text-uppercase text-muted">메뉴</div>
   <nav class="nav flex-column">
@@ -40,41 +78,6 @@
 		</c:choose>
   </nav>
   <div class="sidebar-handle" id="sidebarHandle" title="메뉴 열기/닫기"></div>
-	<style>
-	  /* 기본 상태: 텍스트 색상을 약간 부드럽게 */
-	  .nav-link {
-	    color: #495057;
-	    transition: all 0.2s ease;
-	    border-left: 4px solid transparent; /* 좌측에 투명한 선 미리 확보 */
-	  }
-	
-	  /* 활성화(Active) 상태: 깔끔한 초록색 포인트 */
-	  .nav-link.active {
-	    background-color: #f1f8f4 !important; /* 아주 연한 초록색 배경 */
-	    color: #2c5f3c !important;           /* 헤더와 맞춘 진한 초록색 글씨 */
-	    font-weight: 600 !important;         /* 글자 살짝 두껍게 */
-	    border-left: 4px solid #2c5f3c !important; /* 좌측에 포인트 선 */
-	  }
-	
-	  /* 마우스 올렸을 때도 살짝 반응 */
-	  .nav-link:hover {
-	    background-color: #f8f9fa;
-	    color: #2c5f3c;
-	  }
-	</style>
+
 </aside>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const currentPath = window.location.pathname; // 현재 접속한 경로 (예: /professor/lecture/list)
-    const navLinks = document.querySelectorAll('.sidebar .nav-link');
-
-    navLinks.forEach(link => {
-      // link.pathname은 <a> 태그의 href에서 경로 부분만 추출합니다.
-      // 현재 경로가 메뉴의 경로를 포함하고 있다면 active 클래스 추가
-      if (currentPath.includes(link.getAttribute('href'))) {
-        link.classList.add('active');
-      }
-    });
-  });
-</script>

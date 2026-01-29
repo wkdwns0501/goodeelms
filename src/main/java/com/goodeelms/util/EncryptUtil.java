@@ -37,7 +37,7 @@ public class EncryptUtil {
         // 1. 입력받은 데이터를  암호화한다.
         String encryptedInput = encryptPassword(rawPassword);
         
-        // 2. 암호화된 두 결과가 일치하는지 확인한다. 
+        // 2. 암호화된 두 결과가 일치하는지 확인한다.
         return encryptedInput != null && encryptedInput.equals(encryptedPassword);
     }
 	
