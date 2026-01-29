@@ -64,6 +64,7 @@
 	.subline{
 	  font-size: 0.78rem;
 	}
+	
 	/* 강의 상태 서브 뱃지  */
 	.badge-lecture-status {
 	  font-size: 0.7rem;
@@ -146,6 +147,14 @@
 					</c:if>
 
         </div>
+        
+        <c:if test="${param.msg == 'insert_ok'}">
+				  <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert">
+				    강의가 등록되었습니다.
+				    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+				  </div>
+				</c:if>
+        
 
         <!-- 검색창 -->
         <div class="card shadow-sm border-0 mb-3">
@@ -436,9 +445,9 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   
   <script>
-  	// 성공 alert 3초
+  	// 성공 alert 4초
 	  const success = document.getElementById("successAlert");
-	  if (success) setTimeout(() => success.classList.add("d-none"), 3000);
+	  if (success) setTimeout(() => success.classList.add("d-none"), 4000);
 	</script>
 	
 	<script> 

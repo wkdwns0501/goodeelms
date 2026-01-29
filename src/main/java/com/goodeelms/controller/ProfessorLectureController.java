@@ -30,7 +30,7 @@ public class ProfessorLectureController extends HttpServlet {
             return;
         }
 	    
-	    if (path.equals("/add")) { // 강의 등록 페이지 조회
+	    if ("/add".equals(path)) { // 강의 등록 페이지 조회
 	    	String profStatus = (String) request.getSession().getAttribute("professor_status");
 	    	if ("휴직".equals(profStatus)) {
 	    	    response.sendRedirect(request.getContextPath() + "/professor/lecture/list?error=OnLeave");
@@ -46,7 +46,7 @@ public class ProfessorLectureController extends HttpServlet {
 	        request.getRequestDispatcher("/WEB-INF/views/professor/lectureInsert.jsp")
 	               .forward(request, response);
 	        return;
-	    } else if (path.equals("/list")) { // 강의 목록 조회
+	    } else if ("/list".equals(path)) { // 강의 목록 조회
 	    	boolean isLectureInsertPeriod = lectureService.isLectureInsertPeriod(); 
 	    	request.setAttribute("isLectureInsertPeriod", isLectureInsertPeriod);
 	    	
@@ -106,7 +106,7 @@ public class ProfessorLectureController extends HttpServlet {
 	        request.getRequestDispatcher("/WEB-INF/views/professor/lectureList.jsp")
 	               .forward(request, response);
 	        return;
-	    }  else if (path.equals("/rooms")) { // 강의 등록시 강의실 호수 조회용
+	    }  else if ("/rooms".equals(path)) { // 강의 등록시 강의실 호수 조회용
 	        String year = request.getParameter("lecture_year");
 	        String semesterParam = request.getParameter("lecture_semester");
 	        String buildingParam = request.getParameter("building_id");
@@ -141,7 +141,7 @@ public class ProfessorLectureController extends HttpServlet {
 		String path = request.getPathInfo(); // /insert
         if (path == null) path = "";
 
-        if (path.equals("/insert")) {// 강의 등록
+        if ("/insert".equals(path)) {// 강의 등록
         	Integer professorId = (Integer) request.getSession().getAttribute("professor_id");
             if (professorId == null) {
                 response.sendRedirect(request.getContextPath() + "/common/login");
