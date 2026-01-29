@@ -25,7 +25,6 @@ public class BoardController extends HttpServlet {
 		
 		// 첫 진입 or 그냥 목록으로 올때
 		if(command.equals("/common/board/list"))  {
-			
 			String keyword = request.getParameter("searchKeyword");
 			if(keyword == null) keyword = "";
 			
@@ -62,7 +61,12 @@ public class BoardController extends HttpServlet {
 			request.setAttribute("pageNum", pageNum);
 			request.setAttribute("keyword", keyword);
 			
-			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/board/boardList.jsp");
+			String error = request.getParameter("error");
+			String url = "/WEB-INF/views/board/boardList.jsp";
+			if(error != null && !error.isBlank()) {
+				url += "?error="+error;
+			}
+			RequestDispatcher rd = request.getRequestDispatcher(url);
 			rd.forward(request, response);
 		}
 		
