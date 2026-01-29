@@ -63,7 +63,7 @@ public class ProfessorGradeController extends HttpServlet {
     	
     	String profStatus = (String) request.getSession().getAttribute("professor_status");
     	if ("휴직".equals(profStatus)) {
-    	    response.sendRedirect(request.getContextPath() + "/common/dashboard?error=OnLeave");
+    	    response.sendRedirect(request.getContextPath() + "/professor/grade/list?error=OnLeave");
     	    return;
     	}
     	
@@ -144,7 +144,7 @@ public class ProfessorGradeController extends HttpServlet {
     	
     	String profStatus = (String) request.getSession().getAttribute("professor_status");
     	if ("휴직".equals(profStatus)) {
-    	    response.sendRedirect(request.getContextPath() + "/common/dashboard?error=OnLeave");
+    		response.sendRedirect(request.getContextPath() + "/professor/grade/list?error=OnLeave");
     	    return;
     	}
 

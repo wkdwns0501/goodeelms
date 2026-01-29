@@ -190,13 +190,13 @@
 															test="${fn:trim(student.photoUUID) == 'default.jsp'}">
 															<img id="previewImg"
 																src="<c:url value='/resources/images/defaultUserProfile.jpg'/>"
-																class="img-thumbnail"
+																class="rounded-3 border shadow-sm"
 																style="width: 160px; height: 200px; object-fit: cover;">
 														</c:when>
 														<c:otherwise>
 															<img id="previewImg"
 																src="<c:url value='/student/mypage/display?fileName='/>${student.photoUUID}"
-																class="img-thumbnail"
+																class="rounded-3 border shadow-sm"
 																style="width: 160px; height: 200px; object-fit: cover;">
 														</c:otherwise>
 													</c:choose>
@@ -342,7 +342,7 @@
 											<div class="col-md-6">
 												<label class="form-label">새 비밀번호</label> <input
 													type="password" name="newPassword" class="form-control"
-													placeholder="바꿀 비밀번호를 입력하세요" required>
+													placeholder="변경할 비밀번호를 입력하세요" required>
 												<div id="newPwError" class="invalid-feedback d-none"></div>
 											</div>
 										</div>
