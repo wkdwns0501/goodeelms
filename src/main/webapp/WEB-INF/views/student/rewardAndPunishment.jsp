@@ -7,7 +7,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>GoodeeLMS</title>
+<title>학사경고/우등이력 - GoodeeLMS</title>
 
 <!-- Bootstrap 5 -->
 <link
@@ -43,7 +43,7 @@
 
 				<div class="mb-5 text-center">
 					<h4 class="fw-bold mb-2">
-						<i class="bi bi-credit-card-2-front me-2 text-primary"></i>학사경보 / 장학이력
+						<i class="bi bi-credit-card-2-front me-2 text-primary"></i>학사경고 / 장학이력
 					</h4>
 					<p class="text-muted mb-3">학사경고와 장학이력을 조회합니다.</p>
 				</div>

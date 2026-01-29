@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>비밀번호 초기화</title>
+<title>비밀번호 초기화 - GoodeeLMS</title>
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
 	rel="stylesheet" />
@@ -126,7 +126,7 @@
 								<div class="d-grid">
 									<button type="button" onclick="handleResetSubmit()"
 										class="btn btn-success btn-lg fw-bold shadow-sm text-white">
-										비밀번호 재설정</button>
+										비밀번호 초기화</button>
 								</div>
 							</form>
 						</div>

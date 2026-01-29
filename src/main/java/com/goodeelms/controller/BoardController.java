@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.goodeelms.dto.BoardDTO;
-import com.goodeelms.filter.XssFilter;
 import com.goodeelms.service.BoardService;
 
 @WebServlet("/common/board/*")
@@ -111,7 +110,7 @@ public class BoardController extends HttpServlet {
 			BoardDTO boardDTO = new BoardDTO();
 			
 			String boardRawContent = request.getParameter("boardContent");
-			String cleanContent = XssFilter.basicXssFilter(boardRawContent);
+			String cleanContent = basicXssFilter(boardRawContent);
 			
 			String boardTitle = request.getParameter("boardTitle");
 			boardTitle = boardTitle.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
@@ -158,7 +157,7 @@ public class BoardController extends HttpServlet {
 			boardDTO.setBoardTitle(boardTitle);
 			
 			String boardRawContent = request.getParameter("boardContent");
-			String cleanContent = XssFilter.basicXssFilter(boardRawContent);
+			String cleanContent = basicXssFilter(boardRawContent);
 			boardDTO.setBoardContent(cleanContent);
 			
 			boardDTO.setAdminId((Integer)session.getAttribute("admin_id"));
@@ -176,5 +175,14 @@ public class BoardController extends HttpServlet {
 			}
 		}
 	}
-
+	public static String basicXssFilter(String content) {
+	    if (content == null) return null;
+	    
+	    // HTML을 허용하되 스크립트 실행만 막는 최소한의 조치
+	    return content.replaceAll("(?i)<script", "&lt;script")
+                .replaceAll("(?i)javascript", "x-javascript")
+                .replaceAll("(?i)onload", "x-onload")
+                .replaceAll("(?i)onerror", "x-onerror") 
+                .replaceAll("(?i)onclick", "x-onclick");
+	}
 }

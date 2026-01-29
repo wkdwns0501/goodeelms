@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>등록금 납부 현황</title>
+<title>등록금 납부 - GoodeeLMS</title>
 
 <!-- Bootstrap 5 -->
 <link
@@ -64,7 +64,7 @@
 							class="card-body p-4 d-flex justify-content-between align-items-center">
 							<span class="text-muted fw-bold"><i
 								class="bi bi-dash-square me-2"></i>총 등록금</span>
-							<h3 class="fw-bold text-dark mb-0">4,500,000원</h3>
+							<h3 class="fw-bold text-dark mb-0">4,500,000 원</h3>
 						</div>
 					</div>
 
@@ -224,8 +224,7 @@
 										<tr class="text-center">
 											<td><c:out value="${scholarshipDTO.formattedSemester}" /></td>
 											<td class="text-muted small">
-												교내 장학금(성적우수)
-												<%-- <c:out value="${scholarshipDTO.scholarshipName != null ? scholarshipDTO.scholarshipName : '교내 장학금(성적우수)'}" /> --%>
+												<c:out value="교내 장학금(성적우수)" />
 											</td>
 											<td class="text-end pe-5 fw-bold text-success">+ 
 												<fmt:formatNumber value="${scholarshipDTO.scholarshipAmount}" type="number" />원

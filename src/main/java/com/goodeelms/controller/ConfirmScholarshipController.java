@@ -34,7 +34,7 @@ public class ConfirmScholarshipController extends HttpServlet {
 			AccessPeriodService aps = new AccessPeriodService();	
 			ZonedDateTime now = StaticUtils.getSettedTime();
 			if (!aps.isAccessPeriod(now)) {
-				AlertUtil.alertAndRedirect(response, "장학 관리 기간이 아닙니다.", contextPath + "/main.jsp");
+				AlertUtil.alertAndRedirect(response, "장학 관리 기간이 아닙니다.", contextPath + "/common/board/list");
 				return;
 			}
 	        
