@@ -205,7 +205,14 @@ public class CommonController extends HttpServlet {
 			request.getRequestDispatcher("/WEB-INF/views/common/professorSignUp.jsp").forward(request, response);
 			return;
 		} else if (result > 0) {
-			response.sendRedirect(request.getContextPath() + "/main.jsp");
+			response.setContentType("text/html; charset=UTF-8");
+			PrintWriter out = response.getWriter();
+
+			out.println("<script>");
+			out.println("alert('회원가입에 성공했습니다.');");
+			out.println("location.href='" + request.getContextPath() + "/main.jsp';");
+			out.println("</script>");
+			out.flush();
 			return;
 		} else {
 			request.setAttribute("errorMessage", "회원가입 중 오류가 발생했습니다.");
