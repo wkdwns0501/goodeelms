@@ -1,5 +1,210 @@
+
 package com.goodeelms.service;
 
-public class StudentService {
+import java.io.File;
+import java.sql.Connection;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
+import com.goodeelms.dao.ChangedMajorDAO;
+import com.goodeelms.dao.LectureHistoryDAO;
+import com.goodeelms.dao.ScholarshipDAO;
+import com.goodeelms.dao.StudentDAO;
+import com.goodeelms.dto.ChangeMajorHistoryDTO;
+import com.goodeelms.dto.LectureDTO;
+import com.goodeelms.dto.ScholarshipDTO;
+import com.goodeelms.dto.StudentDTO;
+import com.goodeelms.dto.StudentMajorDTO;
+import com.goodeelms.util.EncryptUtil;
+import com.goodeelms.util.DBUtil;
+
+public class StudentService {
+	private StudentDAO studentDAO = StudentDAO.getInstance();
+	// 비밀번호 영문 소문자 + 숫자, 6자 이상
+	private static final Pattern PW_PATTERN =
+	        Pattern.compile("^(?=.*[a-z])(?=.*\\d)[a-z\\d]{6,}$");
+	
+	public List<StudentMajorDTO> getMajors(String studentId) {
+		return studentDAO.getMajors(studentId);
+	}
+	
+	public String getStudentId(String studentNo) {
+		return studentDAO.getStudentId(studentNo);
+	}
+	
+	// 학생 정보 수정을 위한 조회
+	public StudentDTO getStudentById(int studentId) throws Exception {
+		try (Connection conn = DBUtil.getConnection()) {
+            return studentDAO.selectById(conn, studentId);
+        }
+	}
+
+	
+	public boolean checkColumnByDTO(StudentDTO studentDTO) {
+		boolean result = false;
+		if (studentDAO.existsStudentUniqueColumn(studentDTO)) result = true;
+		return result;
+	}
+	
+	public boolean updateStudent(StudentDTO studentDTO) { 	// 0118 임욱 추가 - 학생 정보를 업데이트 (학생 정보 수정, 초기 로그인 경우에 사용)
+	    studentDTO.setStudentPassword(EncryptUtil.encryptPassword(studentDTO.getStudentPassword())); // 비밀번호 암호화 후 저장
+		
+		return studentDAO.updateStudent(studentDTO);
+	}
+	
+
+	public StudentDTO getStudentByNo(StudentDTO studentDTO) { 	// 0118 임욱 추가 - 노출하지 않을 비밀번호를 제외한 정보를 획득
+		StudentDTO dto = studentDAO.getStudentByNo(studentDTO.getStudentNo());
+		dto.setStudentPassword("");
+		return dto;
+	}
+	
+	public String getStudentStatue(int student_id) {
+		return studentDAO.getStudentStatus(student_id);
+	}
+	
+	public String resetStudentPassword(String studentNo, String studentIdentityNum) {
+	    StudentDTO dto = studentDAO.getStudentByNo(studentNo);
+	    
+	    if (dto == null || !studentIdentityNum.equals(dto.getStudentIdentityNumber())) {
+	        return "입력하신 정보와 일치하는 유저가 없습니다.";
+	    }
+
+	    String initialPw = studentIdentityNum.substring(7); 
+	    dto.setStudentPassword(EncryptUtil.encryptPassword(initialPw)); 
+	    
+	    if (studentDAO.updateStudent(dto)) {
+	        return "초기 비밀번호 재설정에 성공했습니다.";
+	    }
+	    
+	    return "시스템 오류로 인해 비밀번호 변경에 실패했습니다.";
+	}
+	
+	// 학생 일반 정보 수정
+	public void updateStudentProfile(int studentId, String phone, String email,
+	        						 String address, String studentBank, String confirmPw,
+	        						 String photoFile, String photoUUID) throws Exception {
+		if (address == null || address.trim().isEmpty() || address.trim().length() > 255) {
+		        throw new IllegalArgumentException("ADDR_RULE");
+		}
+		
+		if (studentBank == null) {
+		    throw new IllegalArgumentException("ACC_RULE");
+		}
+		
+		String[] parts = studentBank.trim().split("\\s+", 2);
+		if (parts.length < 2) {
+		    throw new IllegalArgumentException("ACC_RULE");
+		}
+		
+		String accountNo = parts[1].replaceAll("\\s+", "");
+		if (!accountNo.matches("^\\d{3}-\\d{7}$")) {
+		    throw new IllegalArgumentException("ACC_RULE");
+		}
+		
+	    try (Connection conn = DBUtil.getConnection()) {
+	    	String dbPwHash = studentDAO.selectPasswordById(conn, studentId);
+	    	if (!EncryptUtil.isPasswordMatch(confirmPw, dbPwHash)) {
+	    	    throw new IllegalArgumentException("PROFILE_PW_MISMATCH");
+	    	}
+	        studentDAO.updateProfile(conn, studentId, phone, email, address, studentBank, photoFile, photoUUID);
+	    }
+	}
+	
+	// 학생 비밀번호 수정
+	public boolean changePassword(int studentId, String currentPw, String newPw) throws Exception {
+	    if (newPw == null || !PW_PATTERN.matcher(newPw).matches()) {
+	        throw new IllegalArgumentException("PW_RULE");
+	    }
+		
+	    try (Connection conn = DBUtil.getConnection()) {
+	    	// 현재 비번이 맞는지 확인 (해시 비교)
+	    	String dbPwHash = studentDAO.selectPasswordById(conn, studentId);
+	        if (dbPwHash == null || !EncryptUtil.isPasswordMatch(currentPw, dbPwHash)) {
+	            throw new IllegalArgumentException("PROFILE_PW_MISMATCH");
+	        }
+	        
+	        if (EncryptUtil.isPasswordMatch(newPw, dbPwHash)) {
+	            throw new IllegalArgumentException("PW_SAME");
+	        }
+
+	        // 새 비번 해시 저장
+	        String newPwHash = EncryptUtil.encryptPassword(newPw);
+	        if (newPwHash == null) {
+	            throw new Exception("PW_HASH_FAIL");
+	        }
+
+	        // 맞으면 새 비번 업데이트
+	        studentDAO.updatePassword(conn, studentId, newPwHash);
+	        return true;
+	    }
+	}
+	
+	public Map<Integer, LectureDTO> getProgressInfoByStudentId(int studentId) {
+	    AcademicCalendarService academicService = new AcademicCalendarService();
+	    Map<String, Integer> yearAndSemester = academicService.getCurrentYearAndSemester();
+	    
+	    int currentYear = yearAndSemester.get("year");
+	    int currentSemester = yearAndSemester.get("semester");
+
+	    return LectureHistoryDAO.getInstance().getProgressInfoByStudentId(studentId, currentYear, currentSemester);
+	}
+	
+	public Map<Integer, LectureDTO> getlectureAndLectureScoreByStudentId(int studentId){ // 0120 임욱(추가) / 수강 중인 강의 점수 조회
+		return LectureHistoryDAO.getInstance().getLectureHistoryByStudentId(studentId);
+	}
+
+	public ChangeMajorHistoryDTO getChangedMajorHistory(int studentId) { // 0120 임욱(추가) / 학생 전과 이력 조회
+		return ChangedMajorDAO.getInstance().getChangeMajorHistoryNameByStudentId(studentId);
+	}
+
+	public List<ScholarshipDTO> getScholarshipByStudentId(int studentId){ // 0120 임욱(추가) / 학생 장학 정보 조회
+		return ScholarshipDAO.getInstance().getSemesterAndAmountByStudentId(studentId);
+	}
+	
+	public List<LectureDTO> getProbationByStudentId(int studentId){ // 0120 임욱(추가) / 학사경고(평균2.0이하) 조회
+		return LectureHistoryDAO.getInstance().getProbationByStudentId(studentId);
+	}
+	
+	public StudentDTO getIdentityNumAndNo(int studentId) {
+		StudentDTO student = studentDAO.getIdentityNumAndNo(studentId);
+		if (student == null) {
+			System.out.println("studentService 예외 발생 (값이 null)");
+			return null;
+		} else {
+			return student;
+		}
+	}
+
+	public boolean checkPassword(int studentId, String password) {
+		boolean result = false;
+		try(Connection conn = DBUtil.getConnection() ){
+			result = !EncryptUtil.isPasswordMatch(password, studentDAO.selectPasswordById(conn, studentId));
+		} catch(Exception e){ 
+			System.out.println("studentService checkPassword() 예외:" + e.getMessage());
+		}
+		return result;
+	}
+	
+	public void deleteLastFile(String lastPhotoUUID) {
+		if(lastPhotoUUID == null || lastPhotoUUID.isEmpty() || "default.jsp".equals(lastPhotoUUID)) {
+			return;
+		}
+		String uploadPath = "D:/goodeelmsFile";
+		File file = new File(uploadPath, lastPhotoUUID);
+		
+		try {
+			if(file.exists()) {
+				if (file.delete()) {
+					System.out.println("파일 삭제 성공, UUID: " + lastPhotoUUID);
+				} else {
+					System.out.println("파일 삭제 실패");
+				}
+			}
+		}	catch (Exception e) {
+			System.out.println("파일 삭제 도중 오류 발생: " + e);
+		}
+	}
+	
 }

@@ -14,4 +14,5 @@ public class ProfessorDTO {
 	private String professorPassword;
 	private String professorStatus;
 	private int majorId;
+	private String majorName;
 }

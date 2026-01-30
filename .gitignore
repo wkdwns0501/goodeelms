@@ -1,7 +1,29 @@
-/build/
-.idea
-.vscode
-.DS_Store
-.metadata
+# ==========================
+# IDE / Editor 설정 파일
+# ==========================
+.idea/            
+.vscode/      
+.metadata    
+.settings/    
+.classpath    
+.project      
 
-Servers
+# ==========================
+# OS / 시스템 자동 생성 파일
+# ==========================
+.DS_Store 
+
+# ==========================
+# Server / Runtime 관련
+# ==========================
+Servers/    
+
+# ==========================
+# Build / Output 디렉토리
+# ==========================
+/build/ 
+/bin/    
+/target/
+
+DBUtil.java
+/.apt_generated/

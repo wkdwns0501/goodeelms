@@ -19,4 +19,7 @@ public class StudentDTO {
 	private String studentStatus;
 	private String studentEmail;
 	private String studentBank;
+	private String majorName;
+	private String photoFile;
+	private String photoUUID;
 }

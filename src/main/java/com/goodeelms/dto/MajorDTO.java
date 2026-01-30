@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MajorDTO {
 	private int majorId;
-	private int majorCode;
+	private String majorCode;
 	private String majorName;
 }
