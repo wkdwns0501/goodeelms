@@ -92,7 +92,6 @@ public class LectureHistoryDAO {
 	                dto.setProfessorName(rs.getString("professor_name"));
 	                dto.setBuildingName(rs.getString("building_name"));
 	                dto.setMajorName(rs.getString("major_name"));
-	                
 	                map.put(lectureId, dto);
 	            }
 	        }
