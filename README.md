@@ -153,7 +153,7 @@ goodeelms/
 
 | 항목 | 링크 |
 | --- | --- |
-| 📁 **GitHub 저장소** | [github.com/wkdwns0501/goodeelms.git](https://github.com/wkdwns0501/goodeelms.git) |
+| 📁 **GitHub 저장소** | [github.com/wkdwns0501/goodeelms](https://github.com/wkdwns0501/goodeelms.git) |
 | 🎥 **시연 영상** | [YouTube 영상 보러가기](https://youtu.be/hPClybp4v5A) |
 | 📂 **전체 산출물** | [docs/ 폴더 바로가기](./docs/) |
 
