@@ -155,23 +155,47 @@ public class CommonController extends HttpServlet {
 		List<MajorDTO> majorList = new MajorService().getAllMajor();
 		request.setAttribute("majorList", majorList);
 
+		if ("GET".equalsIgnoreCase(request.getMethod())) {
+	        request.getRequestDispatcher("/WEB-INF/views/common/professorSignUp.jsp").forward(request, response);
+	        return;
+	    }
+		
 		String professor_email = request.getParameter("professor_email");
 		String professor_password = request.getParameter("professor_password");
 		String professor_name = request.getParameter("professor_name");
 		String major_id = request.getParameter("major_id");
 
+		ProfessorDTO dto = new ProfessorDTO();
+		dto.setProfessorName(professor_name);
+		dto.setProfessorEmail(professor_email);
+		
+		if (!ExistUtil.isNull(major_id)) {
+		    dto.setMajorId(Integer.parseInt(major_id));
+		} else {
+		    dto.setMajorId(0); 
+		}
+		
+		request.setAttribute("professorDTO", dto);
+		
 		if (ExistUtil.isNull(professor_email) || ExistUtil.isNull(professor_password)
 				|| ExistUtil.isNull(professor_name) || ExistUtil.isNull(major_id)) {
+			request.setAttribute("errorMessage", "모든 필수 정보를 입력해 주세요.");
 			request.getRequestDispatcher("/WEB-INF/views/common/professorSignUp.jsp").forward(request, response);
 			return;
 		}
 
-		ProfessorDTO dto = new ProfessorDTO();
-		dto.setProfessorName(professor_name);
-		dto.setProfessorEmail(professor_email);
-		dto.setMajorId(Integer.parseInt(major_id));
-		request.setAttribute("professorDTO", dto);
-
+		if (!professor_name.matches("^[a-zA-Z가-힣\\s]+$")) {
+		    request.setAttribute("errorMessage", "성함에 유효하지 않은 문자가 포함되어 있습니다.");
+		    request.getRequestDispatcher("/WEB-INF/views/common/professorSignUp.jsp").forward(request, response);
+		    return;
+		}
+		
+		if (ExistUtil.isNull(major_id)) {
+		    request.setAttribute("errorMessage", "전공을 선택해 주세요.");
+		    request.getRequestDispatcher("/WEB-INF/views/common/professorSignUp.jsp").forward(request, response);
+		    return;
+		}
+		
 		dto.setProfessorPassword(EncryptUtil.encryptPassword(professor_password));
 
 		int result = new ProfessorSignUpService().signup(dto);
